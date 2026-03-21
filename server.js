@@ -13,10 +13,16 @@ app.use(express.static(path.join(__dirname)));
 const client = new Anthropic();
 
 // Supabase admin client (service role — server-side only)
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.warn('[WARN] SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set. Auth and review storage will not work.');
+}
+
+const supabaseAdmin = supabaseUrl && supabaseKey
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
 
 // ===== AUTH MIDDLEWARE =====
 async function requireAuth(req, res, next) {
