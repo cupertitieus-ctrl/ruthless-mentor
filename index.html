@@ -21,7 +21,13 @@
             <a href="#problem">About</a>
             <a href="#writing">Writers</a>
             <a href="#pricing">Pricing</a>
-            <a href="review.html" class="nav-cta">First review free</a>
+            <!-- Logged out -->
+            <a href="/auth.html" class="nav-link-muted" id="nav-signin">Sign in</a>
+            <a href="review.html" class="nav-cta" id="nav-cta-out">First review free</a>
+            <!-- Logged in (hidden by default) -->
+            <a href="/dashboard.html" class="nav-link-muted hidden" id="nav-dash">Dashboard</a>
+            <a href="/review.html" class="nav-cta hidden" id="nav-cta-in">New review</a>
+            <a href="#" class="nav-link-muted hidden" id="nav-signout">Sign out</a>
         </div>
     </nav>
 
@@ -134,7 +140,7 @@
             <details class="anim-fade d05"><summary>Does my draft need to be finished?</summary><p>No. Rough drafts, single chapters, half-baked ideas. All welcome.</p></details>
             <details class="anim-fade d1"><summary>What formats?</summary><p>PDF, DOCX, TXT, or paste text directly.</p></details>
             <details class="anim-fade d15"><summary>Is my stuff private?</summary><p>Yes. Processed and gone. Nothing stored, shared, or trained on.</p></details>
-            <details class="anim-fade d2"><summary>How does pricing work?</summary><p>Four tiers by word count: Picture Book $5, Chapter Book $7, Middle Grade $10, Young Adult $12. Auto-detected. Optional PDF +$2. First review free.</p></details>
+            <details class="anim-fade d2"><summary>How does pricing work?</summary><p>Four tiers by word count: Children's $5, Chapter Book $10, Middle Grade $15, Young Adult $15. Auto-detected. PDF included. First review free.</p></details>
         </div>
     </section>
 
@@ -144,6 +150,8 @@
         <span class="footer-copy">&copy; 2026</span>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

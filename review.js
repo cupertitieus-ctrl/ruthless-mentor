@@ -1,3 +1,31 @@
+// ===== AUTH GATE =====
+let _session = null;
+let _isFirstFree = false;
+
+(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = '/auth.html?redirect=/review.html';
+        return;
+    }
+    _session = session;
+
+    // Check first-free status
+    try {
+        const res = await fetch('/api/me', {
+            headers: { 'Authorization': 'Bearer ' + session.access_token }
+        });
+        const data = await res.json();
+        _isFirstFree = data.isFirstFree;
+        if (_isFirstFree) {
+            const note = document.querySelector('.form-note');
+            if (note) note.textContent = 'This is your first review — it\'s free!';
+        }
+    } catch (e) { /* ignore */ }
+
+    updateCost();
+})();
+
 // ===== ANIMATIONS =====
 const animEls = document.querySelectorAll('.anim-fade,.anim-slide-up,.anim-scale');
 const animObs = new IntersectionObserver((entries) => {
@@ -32,17 +60,18 @@ function updateCost() {
     if (wordCountEl) wordCountEl.textContent = words.toLocaleString();
 
     const tier = words > 0 ? getTier(words) : null;
-    const total = tier ? tier.price : 0;
+    const total = _isFirstFree ? 0 : (tier ? tier.price : 0);
 
     if (estTierEl) estTierEl.textContent = words === 0 ? '--' : tier.name;
-    if (estCostEl) estCostEl.textContent = words === 0 ? 'Free' : '$' + total;
-    if (totalEl) totalEl.textContent = words === 0 ? 'Free' : '$' + total;
+    if (estCostEl) estCostEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? 'Free' : '$' + tier.price);
+    if (totalEl) totalEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? 'Free' : '$' + total);
 
     // Highlight active tier in sidebar
     document.querySelectorAll('.sidebar-tier').forEach(el => el.classList.remove('active'));
     if (tier) {
         const tiers = document.querySelectorAll('.sidebar-tier');
-        const idx = { 'Picture Book': 0, 'Chapter Book': 1, 'Middle Grade': 2, 'Young Adult': 3 }[tier.name];
+        const tierMap = { "Children's / Picture Book": 0, 'Chapter Book': 1, 'Middle Grade': 2, "Young Adult / Adult": 3 };
+        const idx = tierMap[tier.name];
         if (tiers[idx]) tiers[idx].classList.add('active');
     }
 }
@@ -93,9 +122,9 @@ if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const text = textarea.value.trim();
-        const email = document.getElementById('co-email').value.trim();
 
         if (!text) { alert('Paste your text or upload a file first.'); return; }
+        if (!_session) { window.location.href = '/auth.html?redirect=/review.html'; return; }
 
         const btn = document.getElementById('submit-btn');
         btn.textContent = 'Reviewing... this may take a minute';
@@ -105,8 +134,11 @@ if (form) {
         try {
             const res = await fetch('/api/review', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, email })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + _session.access_token
+                },
+                body: JSON.stringify({ text })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Review failed');
@@ -124,12 +156,16 @@ if (form) {
 // ===== REVIEW SCREEN =====
 function showReviewScreen(data) {
     const screen = document.getElementById('review-screen');
+    const costLabel = data.isFirstFree ? 'Free' : '$' + data.totalCost;
     document.getElementById('review-meta').textContent =
-        `${data.tier} \u00B7 ${data.wordCount.toLocaleString()} words \u00B7 $${data.totalCost}`;
+        `${data.tier} \u00B7 ${data.wordCount.toLocaleString()} words \u00B7 ${costLabel}`;
     document.getElementById('review-body').innerHTML = markdownToHtml(data.review);
     screen.classList.remove('hidden');
     window.scrollTo(0, 0);
     window._lastReview = data.review;
+    // After submitting, next review won't be free
+    _isFirstFree = false;
+    updateCost();
 }
 
 document.getElementById('back-btn').addEventListener('click', (e) => {

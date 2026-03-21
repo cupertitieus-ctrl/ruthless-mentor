@@ -2,6 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const Anthropic = require('@anthropic-ai/sdk');
+const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
 
 const app = express();
@@ -11,6 +12,28 @@ app.use(express.static(path.join(__dirname)));
 
 const client = new Anthropic();
 
+// Supabase admin client (service role — server-side only)
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// ===== AUTH MIDDLEWARE =====
+async function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  const token = authHeader.split(' ')[1];
+  const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !user) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+  req.user = user;
+  next();
+}
+
+// ===== TIERS =====
 const TIERS = [
   { name: "Children's / Picture Book", max: 5000, price: 5 },
   { name: 'Chapter Book', max: 25000, price: 10 },
@@ -26,6 +49,7 @@ function countWords(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+// ===== REVIEW PROMPT =====
 const REVIEW_PROMPT = `You are a veteran writing professor with 30 years of experience and zero patience for lazy prose. You care deeply about the craft of writing — which is exactly why you refuse to be nice when nice isn't helpful.
 
 Your job is to give the author the review they NEED, not the one they want to hear.
@@ -80,9 +104,30 @@ Is it ready? What's the biggest fix? What's the strongest element? Would you kee
 
 ## Tone: Be direct, specific, fair, and occasionally funny. Never cruel for the sake of it.`;
 
-// Review endpoint
-app.post('/api/review', async (req, res) => {
-  const { text, email } = req.body;
+// ===== GET USER INFO =====
+app.get('/api/me', requireAuth, async (req, res) => {
+  const { count, error } = await supabaseAdmin
+    .from('reviews')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', req.user.id);
+  if (error) return res.status(500).json({ error: 'Failed to load user info' });
+  res.json({ email: req.user.email, reviewCount: count, isFirstFree: count === 0 });
+});
+
+// ===== GET PAST REVIEWS =====
+app.get('/api/reviews', requireAuth, async (req, res) => {
+  const { data, error } = await supabaseAdmin
+    .from('reviews')
+    .select('id, word_count, tier, price, review_markdown, created_at')
+    .eq('user_id', req.user.id)
+    .order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ error: 'Failed to load reviews' });
+  res.json({ reviews: data });
+});
+
+// ===== SUBMIT REVIEW =====
+app.post('/api/review', requireAuth, async (req, res) => {
+  const { text } = req.body;
 
   if (!text || !text.trim()) {
     return res.status(400).json({ error: 'No text provided' });
@@ -90,9 +135,16 @@ app.post('/api/review', async (req, res) => {
 
   const wordCount = countWords(text);
   const tier = getTier(wordCount);
-  const totalCost = tier.price;
 
-  console.log(`[REVIEW] ${email || 'anonymous'} | ${wordCount} words | ${tier.name} ($${totalCost})`);
+  // Check if first review (free)
+  const { count } = await supabaseAdmin
+    .from('reviews')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', req.user.id);
+  const isFirstFree = count === 0;
+  const totalCost = isFirstFree ? 0 : tier.price;
+
+  console.log(`[REVIEW] ${req.user.email} | ${wordCount} words | ${tier.name} | $${totalCost}${isFirstFree ? ' (FREE)' : ''}`);
 
   try {
     const message = await client.messages.create({
@@ -117,12 +169,28 @@ Provide your complete review following the structure outlined in your instructio
 
     const review = message.content[0].text;
 
+    // Store review in Supabase
+    const { error: insertError } = await supabaseAdmin.from('reviews').insert({
+      user_id: req.user.id,
+      word_count: wordCount,
+      tier: tier.name,
+      price: totalCost,
+      review_markdown: review,
+      input_tokens: message.usage.input_tokens,
+      output_tokens: message.usage.output_tokens,
+    });
+
+    if (insertError) {
+      console.error('[DB ERROR]', insertError.message);
+    }
+
     res.json({
       review,
       wordCount,
       tier: tier.name,
       price: tier.price,
       totalCost,
+      isFirstFree,
       usage: {
         inputTokens: message.usage.input_tokens,
         outputTokens: message.usage.output_tokens
@@ -135,7 +203,7 @@ Provide your complete review following the structure outlined in your instructio
   }
 });
 
-// Word count + tier endpoint (lightweight)
+// Word count + tier endpoint (no auth needed)
 app.post('/api/tier', (req, res) => {
   const { text } = req.body;
   const wordCount = countWords(text || '');

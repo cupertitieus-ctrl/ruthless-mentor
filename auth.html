@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — ruthlessmentor.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">ruthlessmentor<span>.com</span></a>
+        <div class="nav-links">
+            <a href="/#pricing">Pricing</a>
+            <a href="/review.html" class="nav-cta">Submit work</a>
+        </div>
+    </nav>
+
+    <section class="auth-page">
+        <div class="auth-card">
+            <h1>Welcome back.</h1>
+            <p class="auth-sub">Sign in to access your reviews, or create an account.</p>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="signin">Sign in</button>
+                <button class="auth-tab" data-tab="signup">Create account</button>
+            </div>
+
+            <!-- SIGN IN FORM -->
+            <form id="signin-form" class="auth-form">
+                <div class="form-group">
+                    <label for="si-email">Email</label>
+                    <input type="email" id="si-email" placeholder="you@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="si-password">Password</label>
+                    <input type="password" id="si-password" placeholder="Your password" required>
+                </div>
+                <button type="submit" class="btn btn-glow full">Sign in</button>
+                <div class="auth-divider"><span>or</span></div>
+                <button type="button" class="btn-outline full" id="si-magic">Send me a magic link</button>
+            </form>
+
+            <!-- SIGN UP FORM -->
+            <form id="signup-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="su-email">Email</label>
+                    <input type="email" id="su-email" placeholder="you@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="su-password">Password</label>
+                    <input type="password" id="su-password" placeholder="Create a password (min 6 chars)" minlength="6" required>
+                </div>
+                <button type="submit" class="btn btn-glow full">Create account</button>
+                <div class="auth-divider"><span>or</span></div>
+                <button type="button" class="btn-outline full" id="su-magic">Send me a magic link</button>
+            </form>
+
+            <p class="auth-msg hidden" id="auth-msg"></p>
+            <p class="auth-footer">First review is free. No credit card required.</p>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

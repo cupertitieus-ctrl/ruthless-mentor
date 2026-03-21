@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Reviews — ruthlessmentor.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">ruthlessmentor<span>.com</span></a>
+        <div class="nav-links">
+            <a href="/dashboard.html">Dashboard</a>
+            <a href="/review.html" class="nav-cta">New review</a>
+            <a href="#" class="nav-link-muted" id="signout-btn">Sign out</a>
+        </div>
+    </nav>
+
+    <section class="dash-page">
+        <div class="dash-header">
+            <h1>Your Reviews</h1>
+            <p class="sub" id="dash-sub">Loading...</p>
+        </div>
+
+        <div class="dash-empty hidden" id="dash-empty">
+            <p>No reviews yet.</p>
+            <a href="/review.html" class="btn btn-glow">Submit your first work</a>
+        </div>
+
+        <div class="dash-list" id="dash-list"></div>
+    </section>
+
+    <!-- FULL REVIEW VIEWER (hidden) -->
+    <div id="review-screen" class="review-screen hidden">
+        <div class="review-nav">
+            <a href="/dashboard.html" class="logo">ruthlessmentor<span>.com</span></a>
+            <button class="btn-outline" id="back-btn">Back to dashboard</button>
+        </div>
+        <div class="review-container">
+            <div class="review-header">
+                <h1>Your Review</h1>
+                <div class="review-meta" id="review-meta"></div>
+            </div>
+            <div class="review-body" id="review-body"></div>
+            <div class="review-actions">
+                <button class="btn" id="copy-btn">Copy review</button>
+                <a href="/dashboard.html" class="btn-outline">Back to dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
