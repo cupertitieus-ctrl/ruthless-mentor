@@ -1,28 +1,26 @@
-// ===== AUTH GATE =====
+// ===== AUTH (soft — page works without login) =====
 let _session = null;
-let _isFirstFree = false;
+let _isFirstFree = true;
 
 (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        window.location.href = '/auth.html?redirect=/review.html';
-        return;
-    }
-    _session = session;
-
-    // Check first-free status
     try {
-        const res = await fetch('/api/me', {
-            headers: { 'Authorization': 'Bearer ' + session.access_token }
-        });
-        const data = await res.json();
-        _isFirstFree = data.isFirstFree;
-        if (_isFirstFree) {
-            const note = document.querySelector('.form-note');
-            if (note) note.textContent = 'This is your first review — it\'s free!';
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            _session = session;
+            try {
+                const res = await fetch('/api/me', {
+                    headers: { 'Authorization': 'Bearer ' + session.access_token }
+                });
+                const data = await res.json();
+                _isFirstFree = data.isFirstFree;
+            } catch (e) { _isFirstFree = true; }
         }
-    } catch (e) { /* ignore */ }
+    } catch (e) { /* supabase not loaded or no session — that's fine */ }
 
+    if (_isFirstFree) {
+        const note = document.querySelector('.form-note');
+        if (note) note.textContent = 'First review is free — no account needed.';
+    }
     updateCost();
 })();
 
@@ -63,8 +61,8 @@ function updateCost() {
     const total = _isFirstFree ? 0 : (tier ? tier.price : 0);
 
     if (estTierEl) estTierEl.textContent = words === 0 ? '--' : tier.name;
-    if (estCostEl) estCostEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? 'Free' : '$' + tier.price);
-    if (totalEl) totalEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? 'Free' : '$' + total);
+    if (estCostEl) estCostEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? '--' : '$' + tier.price);
+    if (totalEl) totalEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? '--' : '$' + total);
 
     // Highlight active tier in sidebar
     document.querySelectorAll('.sidebar-tier').forEach(el => el.classList.remove('active'));
@@ -124,7 +122,6 @@ if (form) {
         const text = textarea.value.trim();
 
         if (!text) { alert('Paste your text or upload a file first.'); return; }
-        if (!_session) { window.location.href = '/auth.html?redirect=/review.html'; return; }
 
         const btn = document.getElementById('submit-btn');
         btn.textContent = 'Reviewing... this may take a minute';
@@ -132,12 +129,12 @@ if (form) {
         btn.style.opacity = '.6';
 
         try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
+
             const res = await fetch('/api/review', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + _session.access_token
-                },
+                headers,
                 body: JSON.stringify({ text })
             });
             const data = await res.json();
@@ -163,7 +160,6 @@ function showReviewScreen(data) {
     screen.classList.remove('hidden');
     window.scrollTo(0, 0);
     window._lastReview = data.review;
-    // After submitting, next review won't be free
     _isFirstFree = false;
     updateCost();
 }
