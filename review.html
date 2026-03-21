@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Your Work — ruthlessmentor.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">ruthlessmentor<span>.com</span></a>
+        <div class="nav-links">
+            <a href="/#problem">About</a>
+            <a href="/#pricing">Pricing</a>
+            <a href="/review.html" class="nav-cta">Submit work</a>
+        </div>
+    </nav>
+
+    <section class="review-page">
+        <div class="review-page-header">
+            <h1 class="anim-slide-up">Submit your work.</h1>
+            <p class="sub anim-fade d1">Paste your text or upload a file. We'll auto-detect the tier and review it.</p>
+        </div>
+
+        <div class="review-page-grid">
+            <!-- LEFT: FORM -->
+            <div class="review-form-card anim-scale">
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label for="co-email">Email</label>
+                        <input type="email" id="co-email" placeholder="you@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="co-text">Paste your text</label>
+                        <textarea id="co-text" rows="14" placeholder="Paste your draft here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="drop-zone" id="drop-zone">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <p>Drop a file or <span class="drop-link">browse</span></p>
+                            <p class="drop-sub">PDF, DOCX, TXT</p>
+                            <input type="file" id="file-input" accept=".pdf,.docx,.txt" hidden>
+                        </div>
+                        <p class="file-name" id="file-name"></p>
+                    </div>
+                    <div class="word-count-bar">
+                        <span>Words: <strong id="word-count">0</strong></span>
+                        <span>Tier: <strong class="accent" id="est-tier">--</strong></span>
+                        <span>Cost: <strong class="accent" id="est-cost">Free</strong></span>
+                    </div>
+                    <p class="form-included">Full review + printable PDF included.</p>
+                    <div class="total-row">
+                        <span>Total</span>
+                        <span class="total-num" id="total-amount">Free</span>
+                    </div>
+                    <button type="submit" class="btn btn-glow full submit-btn" id="submit-btn">Submit for review</button>
+                    <p class="form-note">First review is free. No credit card required.</p>
+                </form>
+            </div>
+
+            <!-- RIGHT: PRICING REFERENCE -->
+            <div class="review-sidebar anim-fade d2">
+                <div class="sidebar-card">
+                    <h3>Pricing</h3>
+                    <div class="sidebar-tier"><span>Children's / Picture Book</span><span>$5</span><span class="tier-words">Up to 5,000 words</span></div>
+                    <div class="sidebar-tier"><span>Chapter Book</span><span>$10</span><span class="tier-words">5,000 - 25,000 words</span></div>
+                    <div class="sidebar-tier active"><span>Middle Grade</span><span>$15</span><span class="tier-words">25,000 - 50,000 words</span></div>
+                    <div class="sidebar-tier"><span>Young Adult / Adult</span><span>$15</span><span class="tier-words">50,000+ words</span></div>
+                    <p class="sidebar-note">Auto-detected by word count. PDF included.</p>
+                </div>
+                <div class="sidebar-card">
+                    <h3>What you get</h3>
+                    <ul class="sidebar-list">
+                        <li>First Impressions</li>
+                        <li>Prose Quality Audit</li>
+                        <li>Repeat Word Report</li>
+                        <li>Uncommon Language Check</li>
+                        <li>Depth Check</li>
+                        <li>Character Report Card</li>
+                        <li>Story Mechanics</li>
+                        <li>Line-Level Callouts</li>
+                        <li>Trajectory Analysis</li>
+                        <li>Final Verdict</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REVIEW RESULTS (hidden until submitted) -->
+    <div id="review-screen" class="review-screen hidden">
+        <div class="review-nav">
+            <a href="/" class="logo">ruthlessmentor<span>.com</span></a>
+            <button class="btn-outline" id="back-btn">Submit another</button>
+        </div>
+        <div class="review-container">
+            <div class="review-header">
+                <h1>Your Review</h1>
+                <div class="review-meta" id="review-meta"></div>
+            </div>
+            <div class="review-body" id="review-body"></div>
+            <div class="review-actions">
+                <button class="btn" id="copy-btn">Copy review</button>
+                <button class="btn-outline" id="new-btn">Submit another</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="review.js"></script>
+</body>
+</html>
