@@ -62,11 +62,13 @@ signupForm.addEventListener('submit', async (e) => {
     const password = document.getElementById('su-password').value;
     hideMsg();
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
         showMsg(error.message, true);
+    } else if (data.session) {
+        window.location.href = redirectTo;
     } else {
-        showMsg('Check your email to confirm your account, then sign in.', false);
+        showMsg('Account created! Check your email to confirm, then sign in.', false);
     }
 });
 
