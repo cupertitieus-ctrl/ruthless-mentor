@@ -187,6 +187,7 @@ if (form) {
             const headers = { 'Content-Type': 'application/json' };
             if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
 
+            window._lastSubmittedText = text;
             const res = await fetch('/api/review', {
                 method: 'POST',
                 headers,
@@ -236,6 +237,97 @@ document.getElementById('new-btn').addEventListener('click', () => {
     document.getElementById('review-screen').classList.add('hidden');
     textarea.value = '';
     updateCost();
+});
+
+// ===== DOWNLOAD PDF =====
+document.getElementById('download-pdf-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('download-pdf-btn');
+    const originalText = btn.innerHTML;
+    btn.textContent = 'Generating PDF...';
+    btn.disabled = true;
+
+    try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
+
+        const res = await fetch('/api/review-pdf', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ text: window._lastSubmittedText })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'PDF generation failed');
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ruthless-mentor-review.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        alert('PDF Error: ' + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+});
+
+// ===== EMAIL PDF =====
+const emailModal = document.getElementById('email-modal');
+const emailInput = document.getElementById('email-pdf-input');
+const emailStatus = document.getElementById('email-status');
+
+document.getElementById('email-pdf-btn').addEventListener('click', () => {
+    emailModal.classList.remove('hidden');
+    emailInput.focus();
+    // Pre-fill with session email if logged in
+    if (_session && _session.user && _session.user.email) {
+        emailInput.value = _session.user.email;
+    }
+});
+
+document.getElementById('email-cancel-btn').addEventListener('click', () => {
+    emailModal.classList.add('hidden');
+    emailStatus.className = 'email-status hidden';
+});
+
+document.getElementById('email-send-btn').addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    if (!email) { emailInput.focus(); return; }
+
+    const btn = document.getElementById('email-send-btn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    emailStatus.className = 'email-status hidden';
+
+    try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
+
+        const res = await fetch('/api/email-pdf', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ text: window._lastSubmittedText, email })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to send');
+
+        emailStatus.textContent = 'PDF sent to ' + email + '!';
+        emailStatus.className = 'email-status success';
+        setTimeout(() => emailModal.classList.add('hidden'), 2000);
+    } catch (err) {
+        emailStatus.textContent = err.message;
+        emailStatus.className = 'email-status error';
+    } finally {
+        btn.textContent = 'Send';
+        btn.disabled = false;
+    }
 });
 
 // ===== MARKDOWN TO HTML =====

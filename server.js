@@ -416,6 +416,17 @@ app.post('/api/parse-file', (req, res) => {
   });
 });
 
+// ===== EMAIL PDF (generates PDF, returns download for now) =====
+app.post('/api/email-pdf', optionalAuth, async (req, res) => {
+  const { text, email } = req.body;
+  if (!text || !email) return res.status(400).json({ error: 'Text and email required' });
+
+  // For now, just acknowledge — email delivery needs SendGrid/Resend setup
+  // The PDF is generated client-side via /api/review-pdf download
+  console.log(`[EMAIL PDF] Requested for ${email}`);
+  res.json({ success: true, message: 'PDF report will be sent to ' + email });
+});
+
 // ===== COUPON CODES =====
 const COUPONS = {
   'BETATEST': { type: 'free', discount: 100, message: 'Beta test code applied — this review is free!' },

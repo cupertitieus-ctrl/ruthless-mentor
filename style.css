@@ -130,6 +130,16 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .coupon-msg{font-size:.75rem;margin-bottom:.4rem;padding:0}
 .coupon-msg.success{color:#4caf50}
 .coupon-msg.error{color:#ef4444}
+.email-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:1000}
+.email-modal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:2rem;max-width:400px;width:90%}
+.email-modal-card h3{margin-bottom:.3rem}
+.email-modal-card p{font-size:.85rem;color:var(--text2);margin-bottom:1rem}
+.email-pdf-field{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:.6rem .8rem;color:var(--text);font-size:.9rem;font-family:inherit;margin-bottom:1rem}
+.email-pdf-field::placeholder{color:var(--text3)}
+.email-modal-btns{display:flex;gap:.5rem}
+.email-status{font-size:.8rem;margin-top:.6rem}
+.email-status.success{color:#4caf50}
+.email-status.error{color:#ef4444}
 .form-note{font-size:.72rem;color:var(--text3);text-align:center;margin-top:.6rem}
 
 /* STORY */
