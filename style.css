@@ -205,7 +205,7 @@ details p{padding:0 0 1rem;color:var(--text2);font-size:.85rem;line-height:1.7}
 .light-body .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .light-body .story-wrap{background:#fff;border:1px solid #e5e2de;border-radius:12px;padding:2.5rem}
 .light-body .story-wrap p{color:#444}
-.light-body .sig{color:#555;font-weight:600}
+.light-body .sig{color:#1a1a1a!important;font-weight:700;font-size:1rem}
 .light-body details{border-color:#e5e2de}
 .light-body details summary{color:#1a1a1a}
 .light-body details p{color:#555}
