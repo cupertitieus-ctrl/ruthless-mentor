@@ -512,4 +512,184 @@ async function generatePdf(reviewData) {
   });
 }
 
-module.exports = { generatePdf };
+// ===== INSTANT PDF FROM MARKDOWN (no API call) =====
+async function generatePdfFromMarkdown(markdown, wordCount, tier) {
+  return new Promise((resolve, reject) => {
+    let pageCount = 1;
+
+    const doc = new PDFDocument({
+      size: 'letter',
+      margins: { top: 40, bottom: 50, left: 72, right: 72 },
+      bufferPages: false,
+      info: {
+        Title: 'Ruthless Mentor Review Report',
+        Author: 'ruthlessmentor.com',
+      }
+    });
+
+    const chunks = [];
+    doc.on('data', chunk => chunks.push(chunk));
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', reject);
+
+    drawFooter(doc, 1);
+    doc.y = doc.page.margins.top;
+
+    doc.on('pageAdded', () => {
+      pageCount++;
+      drawFooter(doc, pageCount);
+      doc.y = doc.page.margins.top;
+    });
+
+    // Header
+    if (hasLogo) {
+      doc.image(LOGO_PATH, doc.page.width / 2 - 30, 40, { width: 60 });
+      doc.moveDown(4);
+    }
+
+    const brandY = doc.y + 5;
+    doc.fontSize(9).font('Helvetica-Bold');
+    const brandText = 'RUTHLESS MENTOR';
+    const brandCharSpacing = 3;
+    const textW = doc.widthOfString(brandText, { characterSpacing: brandCharSpacing });
+    const centerX = doc.page.width / 2;
+    const lineGap = 10;
+    const lineLen = 80;
+    doc.strokeColor(...C.gold).lineWidth(1.5);
+    doc.moveTo(centerX - textW / 2 - lineGap - lineLen, brandY).lineTo(centerX - textW / 2 - lineGap, brandY).stroke();
+    doc.moveTo(centerX + textW / 2 + lineGap, brandY).lineTo(centerX + textW / 2 + lineGap + lineLen, brandY).stroke();
+    doc.fillColor(...C.black).text(brandText, 0, brandY - 5, { align: 'center', width: doc.page.width, characterSpacing: brandCharSpacing });
+    doc.moveDown(1.5);
+
+    // Title
+    doc.fontSize(24).font('Helvetica-Bold').fillColor(...C.black);
+    doc.text('Manuscript ', 72, doc.y, { continued: true });
+    doc.fillColor(...C.gold).text('Review ', { continued: true });
+    doc.fillColor(...C.black).text('Report');
+    doc.moveDown(0.5);
+
+    // Meta
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const metaLines = [
+      ['Review Date:', date],
+      ['Word Count:', wordCount ? `~${Number(wordCount).toLocaleString()} words` : 'Unknown'],
+      ['Tier:', tier || 'Unknown'],
+    ];
+    metaLines.forEach(([label, value]) => {
+      const rowY = doc.y;
+      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(label, 72, rowY, { width: 100 });
+      doc.font('Helvetica-Oblique').fillColor(...C.gray).text(value, 180, rowY, { width: 300 });
+      doc.y = Math.max(doc.y, rowY + 14);
+    });
+    doc.moveDown(1);
+
+    // Parse markdown into sections and render
+    const lines = markdown.split('\n');
+    const pageWidth = doc.page.width - 144;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      if (!trimmed) {
+        doc.moveDown(0.3);
+        continue;
+      }
+
+      // Section headers (### 1. Title or ## Title)
+      const h3Match = trimmed.match(/^###\s*(\d+)\.\s*(.+)/);
+      const h2Match = trimmed.match(/^##\s*(.+)/);
+      const h1Match = trimmed.match(/^#\s*(.+)/);
+
+      if (h3Match || h2Match) {
+        const title = h3Match ? `${h3Match[1]}. ${h3Match[2]}` : h2Match[1];
+        // Clean markdown bold/italic from title
+        const cleanTitle = title.replace(/\*\*/g, '').replace(/\*/g, '').replace(/:.*$/, '').trim();
+        sectionHeader(doc, cleanTitle.toUpperCase());
+
+        // Check if title has a score (like "X/10")
+        const scoreMatch = title.match(/(\d+)\/10/);
+        if (scoreMatch) {
+          const score = parseInt(scoreMatch[1]);
+          const afterScore = title.replace(/.*\d+\/10\s*/, '').trim();
+          scoreBar(doc, score, afterScore);
+        }
+        continue;
+      }
+
+      if (h1Match) {
+        ensureSpace(doc, 40);
+        doc.fontSize(18).font('Helvetica-Bold').fillColor(...C.darkRed).text(h1Match[1], 72);
+        resetFill(doc);
+        doc.moveDown(0.5);
+        continue;
+      }
+
+      // Quote blocks (> text)
+      if (trimmed.startsWith('>')) {
+        ensureSpace(doc, 40);
+        const quoteText = trimmed.replace(/^>\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '');
+        const qY = doc.y;
+        const qH = doc.fontSize(9).font('Helvetica-Oblique').heightOfString(quoteText, { width: pageWidth - 24 }) + 16;
+        doc.rect(72, qY, pageWidth, qH).fill(...C.bg);
+        resetFill(doc);
+        doc.rect(72, qY, 3, qH).fill(...C.gold);
+        resetFill(doc);
+        doc.fontSize(9).font('Helvetica-Oblique').fillColor(68, 68, 68).text(quoteText, 84, qY + 8, { width: pageWidth - 24 });
+        doc.y = qY + qH + 6;
+        resetFill(doc);
+        continue;
+      }
+
+      // Bullet points (- text)
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        ensureSpace(doc, 20);
+        const bulletText = trimmed.replace(/^[-*]\s*/, '');
+        // Handle **bold** within bullets
+        const parts = bulletText.split(/\*\*(.+?)\*\*/);
+        const bulletY = doc.y;
+        doc.fontSize(9).font('Helvetica').fillColor(...C.black).text('\u2022  ', 80, bulletY, { continued: true });
+        for (let p = 0; p < parts.length; p++) {
+          if (p % 2 === 1) {
+            doc.font('Helvetica-Bold').text(parts[p], { continued: p < parts.length - 1 });
+          } else {
+            doc.font('Helvetica').text(parts[p], { continued: p < parts.length - 1, width: pageWidth - 20 });
+          }
+        }
+        doc.moveDown(0.2);
+        continue;
+      }
+
+      // Bold line (**text**)
+      if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+        ensureSpace(doc, 20);
+        const boldText = trimmed.replace(/\*\*/g, '');
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(boldText, 72, doc.y, { width: pageWidth });
+        doc.moveDown(0.3);
+        continue;
+      }
+
+      // Regular paragraph — handle inline bold
+      ensureSpace(doc, 20);
+      const parts = trimmed.split(/\*\*(.+?)\*\*/);
+      if (parts.length > 1) {
+        doc.fontSize(10).font('Helvetica').fillColor(...C.black);
+        for (let p = 0; p < parts.length; p++) {
+          const isLast = p === parts.length - 1;
+          if (p % 2 === 1) {
+            doc.font('Helvetica-Bold').text(parts[p], { continued: !isLast, width: pageWidth });
+          } else if (parts[p]) {
+            doc.font('Helvetica').text(parts[p], { continued: !isLast, width: pageWidth });
+          }
+        }
+      } else {
+        doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(trimmed, 72, doc.y, { width: pageWidth });
+      }
+      doc.moveDown(0.3);
+    }
+
+    doc.end();
+  });
+}
+
+module.exports = { generatePdf, generatePdfFromMarkdown };

@@ -416,36 +416,21 @@ app.post('/api/parse-file', (req, res) => {
   });
 });
 
-// ===== GENERATE PDF FROM EXISTING REVIEW (no second API call) =====
+// ===== GENERATE PDF FROM EXISTING REVIEW (zero API calls — instant) =====
 app.post('/api/generate-pdf', async (req, res) => {
   const { reviewMarkdown, wordCount, tier } = req.body;
   if (!reviewMarkdown) return res.status(400).json({ error: 'No review data provided' });
 
   try {
-    // Quick call to format the markdown review into structured JSON for PDF
-    const message = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 8000,
-      messages: [{
-        role: 'user',
-        content: `Convert this existing review into the JSON structure. Do NOT re-review — just restructure this text into the JSON format:\n\n${reviewMarkdown}`
-      }],
-      system: PDF_REVIEW_PROMPT
-    });
-
-    let reviewText = message.content[0].text.trim();
-    reviewText = reviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
-    const reviewData = JSON.parse(reviewText);
-    reviewData.wordCount = wordCount ? `~${Number(wordCount).toLocaleString()} words` : 'Unknown';
-
-    const pdfBuffer = await generatePdf(reviewData);
+    const { generatePdfFromMarkdown } = require('./pdf-generator');
+    const pdfBuffer = await generatePdfFromMarkdown(reviewMarkdown, wordCount, tier);
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="ruthless-mentor-review.pdf"`);
     res.send(pdfBuffer);
   } catch (err) {
     console.error('[PDF GEN ERROR]', err.message);
-    res.status(500).json({ error: 'PDF generation failed' });
+    res.status(500).json({ error: 'PDF generation failed: ' + err.message });
   }
 });
 
