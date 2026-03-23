@@ -530,57 +530,80 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         .trim();
     }
 
-    // --- Score display: large colored text ---
-    function drawScoreBar(score, label) {
-      ensureSpace(30);
-      const sc = scoreColor(score);
-      const scoreY = doc.y;
-
-      // Colored score via low-level content stream
-      doc.addContent(`${(sc[0]/255).toFixed(3)} ${(sc[1]/255).toFixed(3)} ${(sc[2]/255).toFixed(3)} rg`);
-      doc.fontSize(22).font('Helvetica-Bold');
-      doc.text(score + '/10', x, scoreY, { lineBreak: false });
+    // --- Raw PDF rectangle (bypasses PDFKit's broken fill) ---
+    // PDFKit internally applies a transform, so we need to use PDFKit's own
+    // coordinate system. We'll use the undocumented _ctm to convert.
+    function rawRect(rx, ry, rw, rh, color) {
+      const r = color[0] / 255, g = color[1] / 255, b = color[2] / 255;
+      // PDFKit applies a default transform that flips Y and scales by 72dpi
+      // The simplest reliable approach: use PDFKit's path API but set fill via addContent
+      doc.addContent(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg`);
+      // Use PDFKit's rect() which handles coordinate transforms, then 'f' to fill
+      doc.rect(rx, ry, rw, rh);
+      doc.addContent('f');
+      // Reset fill color
       doc.addContent('0.102 0.102 0.102 rg');
+    }
 
+    // --- Raw colored text ---
+    function colorText(text, tx, ty, color, size, font) {
+      const r = color[0] / 255, g = color[1] / 255, b = color[2] / 255;
+      doc.addContent(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg`);
+      doc.fontSize(size || 10).font(font || 'Helvetica-Bold');
+      doc.text(text, tx, ty, { lineBreak: false });
+      doc.addContent('0.102 0.102 0.102 rg');
+    }
+
+    // --- Score bar: colored rectangle with white text inside ---
+    function drawScoreBar(score, label) {
+      ensureSpace(35);
+      const sc = scoreColor(score);
+      const barY = doc.y;
+      const barW = pw * 0.55;
+      const barH = 24;
+      const fillW = Math.max(50, (score / 10) * barW);
+
+      // Gray background bar
+      rawRect(x, barY, barW, barH, [220, 220, 220]);
+      // Colored fill
+      rawRect(x, barY, fillW, barH, sc);
+      // White score text inside
+      colorText(score + '/10', x + 10, barY + 6, [255, 255, 255], 13, 'Helvetica-Bold');
+
+      // Label to the right
       if (label) {
         doc.addContent('0.392 0.392 0.392 rg');
         doc.fontSize(10).font('Helvetica-Oblique');
-        doc.text(label, x + 70, scoreY + 7, { width: pw - 70, lineBreak: false });
+        doc.text(label, x + barW + 14, barY + 6, { width: pw - barW - 20, lineBreak: false });
         doc.addContent('0.102 0.102 0.102 rg');
       }
       doc.fillColor(26, 26, 26);
-      doc.y = scoreY + 30;
+      doc.y = barY + barH + 10;
     }
 
-    // --- Grade badge: name on left, colored grade on right ---
+    // --- Grade badge: name on left, colored badge rectangle on right ---
     function drawGradeBadge(name, grade) {
-      ensureSpace(24);
+      ensureSpace(28);
       const rowY = doc.y;
       const gc = gradeColor(grade);
+      const badgeW = 36;
+      const badgeH = 22;
+      const badgeX = x + pw - badgeW;
+      const badgeY = rowY - 2;
 
       // Render name
       doc.font('Helvetica-Bold').fontSize(11).fillColor(26, 26, 26);
-      doc.text(name, x, rowY, { width: pw - 50, lineBreak: false });
+      doc.text(name, x, rowY + 2, { width: pw - badgeW - 10, lineBreak: false });
 
-      // Force PDFKit to flush by moving cursor, then render grade in color
-      // We write grade as a separate addContent call to bypass batching
-      const gradeText = grade;
-      const gradeW = doc.widthOfString(gradeText);
-      const gradeX = x + pw - gradeW;
+      // Colored badge background via raw PDF
+      rawRect(badgeX, badgeY, badgeW, badgeH, gc);
 
-      // Directly add colored text via low-level PDF content stream
-      const r = gc[0] / 255;
-      const g = gc[1] / 255;
-      const b = gc[2] / 255;
-      doc.addContent(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg`);
-      doc.fontSize(14).font('Helvetica-Bold');
-      doc.text(gradeText, gradeX, rowY - 1, { width: gradeW + 10, lineBreak: false });
-      // Reset fill to black via content stream
-      doc.addContent('0.102 0.102 0.102 rg');
-      doc._fillColor = [26, 26, 26]; // sync internal state
+      // White grade letter on top
+      doc.fontSize(12).font('Helvetica-Bold');
+      colorText(grade, badgeX + (badgeW - doc.widthOfString(grade)) / 2, badgeY + 5, [255, 255, 255], 12, 'Helvetica-Bold');
 
       doc.fillColor(26, 26, 26);
-      doc.y = rowY + 20;
+      doc.y = rowY + badgeH + 4;
 
       // Separator line
       doc.strokeColor(200, 200, 200).lineWidth(0.5);
@@ -589,21 +612,28 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
       doc.y += 6;
     }
 
-    // --- Quote block: gold left border + italic text ---
+    // --- Quote block: gray background + gold left border + italic text ---
     function drawQuoteBlock(text) {
-      ensureSpace(18);
-      const qX = x + 14;
-      const qW = pw - 20;
+      ensureSpace(20);
+      const qX = x + 16;
+      const qW = pw - 22;
+      // Pre-measure height
+      doc.fontSize(9).font('Helvetica-Oblique');
+      const estH = doc.heightOfString(text, { width: qW }) + 14;
       const qY = doc.y;
-      doc.fontSize(9).font('Helvetica-Oblique').fillColor(80, 80, 80);
-      doc.text(text, qX, qY, { width: qW });
-      const qEndY = doc.y;
-      doc.fillColor(...C.black);
-      // Gold left border
-      doc.strokeColor(...C.gold).lineWidth(3);
-      doc.moveTo(x + 6, qY - 2).lineTo(x + 6, qEndY + 2).stroke();
-      doc.strokeColor(...C.black).lineWidth(1);
-      doc.moveDown(0.4);
+
+      // Gray background via raw PDF
+      rawRect(x + 4, qY - 4, pw - 4, estH, [245, 245, 245]);
+      // Gold left border via raw PDF (thin rect)
+      rawRect(x + 4, qY - 4, 4, estH, C.gold);
+
+      // Text
+      doc.addContent('0.314 0.314 0.314 rg');
+      doc.fontSize(9).font('Helvetica-Oblique');
+      doc.text(text, qX, qY + 2, { width: qW });
+      doc.addContent('0.102 0.102 0.102 rg');
+      doc.fillColor(26, 26, 26);
+      doc.y = qY + estH + 4;
     }
 
     // --- Safe text: split long text into chunks to avoid PDFKit page-break recursion ---
