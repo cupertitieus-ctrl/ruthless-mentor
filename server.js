@@ -3,6 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const Anthropic = require('@anthropic-ai/sdk');
 const path = require('path');
+const multer = require('multer');
+const mammoth = require('mammoth');
+const pdfParse = require('pdf-parse');
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 const app = express();
 app.use(cors());
@@ -357,6 +362,35 @@ app.post('/api/review-pdf', optionalAuth, async (req, res) => {
   } catch (err) {
     console.error('[PDF ERROR]', err.message);
     res.status(500).json({ error: 'PDF review failed. Please try again.' });
+  }
+});
+
+// ===== FILE UPLOAD & TEXT EXTRACTION =====
+app.post('/api/parse-file', upload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  let text = '';
+
+  try {
+    if (ext === '.txt') {
+      text = req.file.buffer.toString('utf-8');
+    } else if (ext === '.pdf') {
+      const data = await pdfParse(req.file.buffer);
+      text = data.text;
+    } else if (ext === '.docx') {
+      const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+      text = result.value;
+    } else {
+      return res.status(400).json({ error: 'Unsupported file type. Use PDF, DOCX, or TXT.' });
+    }
+
+    const wordCount = countWords(text);
+    const tier = getTier(wordCount);
+    res.json({ text, wordCount, tier: tier.name, price: tier.price });
+  } catch (err) {
+    console.error('[PARSE ERROR]', err.message);
+    res.status(500).json({ error: 'Failed to parse file. Try pasting text instead.' });
   }
 });
 

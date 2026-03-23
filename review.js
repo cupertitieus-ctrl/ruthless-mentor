@@ -81,7 +81,7 @@ if (dropZone) {
     });
 }
 
-function handleFile(file) {
+async function handleFile(file) {
     const ext = '.' + file.name.split('.').pop().toLowerCase();
     if (!['.pdf', '.docx', '.txt'].includes(ext)) {
         fileNameEl.textContent = 'Unsupported format. Use PDF, DOCX, or TXT.';
@@ -89,15 +89,31 @@ function handleFile(file) {
         return;
     }
     fileNameEl.style.color = '';
-    fileNameEl.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+    fileNameEl.textContent = file.name + ' — extracting text...';
 
     if (ext === '.txt') {
         const reader = new FileReader();
         reader.onload = (e) => {
             textarea.value = e.target.result;
+            fileNameEl.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
             updateCost();
         };
         reader.readAsText(file);
+    } else {
+        // Send PDF/DOCX to server for parsing
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch('/api/parse-file', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Parse failed');
+            textarea.value = data.text;
+            fileNameEl.textContent = file.name + ' (' + data.wordCount.toLocaleString() + ' words extracted)';
+            updateCost();
+        } catch (err) {
+            fileNameEl.textContent = 'Failed to parse file: ' + err.message;
+            fileNameEl.style.color = '#ef4444';
+        }
     }
 }
 
