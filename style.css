@@ -123,6 +123,13 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .total-row{display:flex;justify-content:space-between;align-items:center;padding:.8rem .9rem;background:var(--surface2);border-radius:var(--r-sm);margin-bottom:1rem;font-weight:600}
 .total-num{color:var(--accent);font-size:1.2rem;font-weight:800}
 .form-included{font-size:.78rem;color:var(--accent2);margin-bottom:.8rem;padding:.5rem 0}
+.coupon-row{display:flex;gap:.5rem;margin-bottom:.3rem}
+.coupon-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:.45rem .7rem;color:var(--text);font-size:.8rem;font-family:inherit}
+.coupon-input::placeholder{color:var(--text3)}
+.coupon-btn{padding:.45rem .8rem!important;font-size:.75rem!important}
+.coupon-msg{font-size:.75rem;margin-bottom:.4rem;padding:0}
+.coupon-msg.success{color:#4caf50}
+.coupon-msg.error{color:#ef4444}
 .form-note{font-size:.72rem;color:var(--text3);text-align:center;margin-top:.6rem}
 
 /* STORY */

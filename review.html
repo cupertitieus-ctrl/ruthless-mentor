@@ -49,9 +49,14 @@
                         <span>Cost: <strong class="accent" id="est-cost">Free</strong></span>
                     </div>
                     <p class="form-included">Full review + printable PDF included.</p>
+                    <div class="coupon-row">
+                        <input type="text" id="coupon-input" placeholder="Coupon code" class="coupon-input">
+                        <button type="button" id="apply-coupon" class="btn-outline coupon-btn">Apply</button>
+                    </div>
+                    <p class="coupon-msg hidden" id="coupon-msg"></p>
                     <div class="total-row">
                         <span>Total</span>
-                        <span class="total-num" id="total-amount">Free</span>
+                        <span class="total-num" id="total-amount">--</span>
                     </div>
                     <button type="submit" class="btn btn-glow full submit-btn" id="submit-btn">Submit for review</button>
                     <p class="form-note">Reviews start at just $5.</p>

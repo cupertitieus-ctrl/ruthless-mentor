@@ -1,217 +1,468 @@
-// Lazy-load puppeteer so server doesn't crash if it's not installed
-let puppeteer;
-try { puppeteer = require('puppeteer'); } catch (e) {
-  console.warn('[WARN] Puppeteer not available — PDF generation disabled');
-}
+const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
-const TEMPLATE_PATH = path.join(__dirname, 'report-template.html');
+const LOGO_PATH = path.join(__dirname, 'logo.png');
+const hasLogo = fs.existsSync(LOGO_PATH);
 
-function getScoreColor(score) {
-  if (score <= 3) return 'red';
-  if (score <= 6) return 'yellow';
-  return 'green';
+// Colors
+const C = {
+  darkRed: [139, 0, 0],
+  gold: [184, 134, 11],
+  black: [26, 26, 26],
+  gray: [100, 100, 100],
+  lightGray: [200, 200, 200],
+  white: [255, 255, 255],
+  bg: [245, 245, 245],
+  green: [46, 125, 50],
+  greenLight: [232, 245, 233],
+  red: [198, 40, 40],
+  redLight: [252, 228, 236],
+  yellow: [249, 168, 37],
+  yellowLight: [255, 248, 225],
+  blueLight: [227, 242, 253],
+};
+
+function scoreColor(score) {
+  if (score <= 3) return C.red;
+  if (score <= 6) return C.yellow;
+  return C.green;
 }
 
-function getDepthColor(rating) {
-  const map = { 'Shallow': 'red', 'Surface': 'yellow', 'Adequate': 'yellow', 'Deep': 'green', 'Unflinching': 'green' };
-  return `grade-${rating === 'Shallow' || rating === 'Surface' ? 'f' : rating === 'Adequate' ? 'c' : 'a'}`;
+function gradeColor(grade) {
+  const l = grade.charAt(0).toUpperCase();
+  if (l === 'A') return C.green;
+  if (l === 'B') return [85, 139, 47];
+  if (l === 'C') return C.yellow;
+  if (l === 'D') return [230, 81, 0];
+  return C.red;
 }
 
-function getGradeClass(grade) {
-  const letter = grade.charAt(0).toUpperCase();
-  if (letter === 'A') return 'grade-a';
-  if (letter === 'B') return 'grade-b';
-  if (letter === 'C') return 'grade-c';
-  if (letter === 'D') return 'grade-d';
-  return 'grade-f';
+function depthColor(rating) {
+  const map = { Shallow: C.red, Surface: [230, 81, 0], Adequate: C.yellow, Deep: C.green, Unflinching: C.green };
+  return map[rating] || C.gray;
 }
 
 function pacingIcon(type) {
-  const icons = { 'bad': '\u274C', 'warn': '\u26A0\uFE0F', 'good': '\u2705', 'neutral': '\u27A1\uFE0F' };
-  return icons[type] || icons.neutral;
+  return { bad: 'X', warn: '!', good: '+', neutral: '>' }[type] || '>';
 }
 
-function buildCharacterCards(characters) {
-  if (!characters || !characters.length) return '<p>No significant characters identified.</p>';
-  return characters.map(c => `
-    <div class="char-card">
-      <div class="char-header">
-        <span class="char-name">${esc(c.name)}</span>
-        <span class="char-grade ${getGradeClass(c.grade)}">${esc(c.grade)}</span>
-      </div>
-      <div class="char-body">
-        <p><strong>Strengths:</strong> ${esc(c.strengths)}</p>
-        <p><strong>Weaknesses:</strong> ${esc(c.weaknesses)}</p>
-        <p><strong>Diagnosis:</strong> ${esc(c.diagnosis)}</p>
-      </div>
-    </div>
-  `).join('');
+function pacingColor(type) {
+  return { bad: C.red, warn: C.yellow, good: C.green, neutral: C.gray }[type] || C.gray;
 }
 
-function buildPacingBreakdown(items) {
-  if (!items || !items.length) return '';
-  return items.map(item => `
-    <li>
-      <span class="pacing-icon">${pacingIcon(item.type)}</span>
-      <span><span class="pacing-label">${esc(item.label)}:</span> ${esc(item.text)}</span>
-    </li>
-  `).join('');
+function ensureSpace(doc, needed) {
+  if (doc.y + needed > doc.page.height - 72) {
+    doc.addPage();
+  }
 }
 
-function buildVoiceExamples(examples) {
-  if (!examples || !examples.length) return '';
-  return examples.map(ex => `
-    <tr>
-      <td>
-        <div class="compare-label ${ex.type === 'weak' ? 'red' : 'green'}">${ex.type === 'weak' ? 'TELLING' : 'STRONGER'}:</div>
-        <div class="compare-quote">"${esc(ex.quote)}"</div>
-        <div class="compare-note">${esc(ex.note)}</div>
-      </td>
-    </tr>
-  `).join('');
+function drawHeader(doc, date) {
+  if (hasLogo) {
+    doc.image(LOGO_PATH, doc.page.width / 2 - 30, 40, { width: 60 });
+    doc.moveDown(4);
+  }
+
+  // Brand line
+  const y = doc.y + 5;
+  doc.strokeColor(...C.gold).lineWidth(1.5);
+  doc.moveTo(72, y).lineTo(200, y).stroke();
+  doc.moveTo(doc.page.width - 200, y).lineTo(doc.page.width - 72, y).stroke();
+  doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black);
+  doc.text('RUTHLESS MENTOR', 0, y - 5, { align: 'center', characterSpacing: 3 });
+  doc.moveDown(2);
+
+  // Title
+  doc.fontSize(24).font('Helvetica-Bold').fillColor(...C.black);
+  doc.text('Manuscript ', 72, doc.y, { continued: true });
+  doc.fillColor(...C.gold).text('Review ', { continued: true });
+  doc.fillColor(...C.black).text('Report');
+  doc.moveDown(1);
 }
 
-function buildLineCallouts(callouts) {
-  if (!callouts || !callouts.length) return '<p>No specific callouts.</p>';
-  return callouts.map(c => {
-    if (c.isGood) {
-      return `
-        <div class="callout callout-green">
-          <span class="callout-icon">\u2705</span>
-          <div class="callout-text">
-            <div class="quote-ref">${esc(c.location)}</div>
-            <div class="compare-quote">"${esc(c.quote)}"</div>
-            <p style="margin-top:6px"><strong>Why it works:</strong> ${esc(c.comment)}</p>
-          </div>
-        </div>`;
+function drawMeta(doc, data) {
+  const fields = [
+    ['Manuscript:', data.title || 'Untitled Manuscript'],
+    ['Review Date:', new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })],
+    ['Status:', data.status || 'Complete'],
+    ['Word Count:', data.wordCount || 'Unknown'],
+    ['Target Age:', data.targetAge || 'Not specified'],
+  ];
+
+  fields.forEach(([label, value]) => {
+    doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(label, 72, doc.y, { continued: true, width: 100 });
+    doc.font('Helvetica-Oblique').fillColor(...C.gray).text('  ' + value);
+  });
+  doc.moveDown(1);
+}
+
+function sectionHeader(doc, title) {
+  ensureSpace(doc, 50);
+  doc.moveDown(0.5);
+  doc.fontSize(14).font('Helvetica-Bold').fillColor(...C.darkRed).text(title, 72);
+  const y = doc.y + 2;
+  doc.strokeColor(...C.gold).lineWidth(2).moveTo(72, y).lineTo(280, y).stroke();
+  doc.moveDown(0.8);
+}
+
+function bodyText(doc, text) {
+  if (!text) return;
+  const paragraphs = text.split('\n').filter(l => l.trim());
+  paragraphs.forEach(p => {
+    ensureSpace(doc, 30);
+    doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(p, 72, doc.y, { width: doc.page.width - 144 });
+    doc.moveDown(0.4);
+  });
+}
+
+function calloutBox(doc, text, bgColor, borderColor, icon, label) {
+  ensureSpace(doc, 60);
+  const x = 72;
+  const w = doc.page.width - 144;
+  const startY = doc.y;
+
+  // Measure text height
+  const textH = doc.fontSize(9).font('Helvetica').heightOfString(text, { width: w - 40 });
+  const boxH = Math.max(textH + 30, 40);
+
+  doc.save();
+  doc.roundedRect(x, startY, w, boxH, 4).fill(...bgColor);
+  doc.rect(x, startY, 4, boxH).fill(...borderColor);
+  doc.restore();
+
+  if (icon) {
+    doc.fontSize(12).font('Helvetica-Bold').fillColor(...borderColor).text(icon, x + 12, startY + 8);
+  }
+  if (label) {
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(...borderColor).text(label, x + (icon ? 28 : 12), startY + 8, { continued: true });
+    doc.font('Helvetica').fillColor(...C.black).text(' ' + text, { width: w - 44 });
+  } else {
+    doc.fontSize(9).font('Helvetica').fillColor(...C.black).text(text, x + (icon ? 28 : 12), startY + 10, { width: w - 44 });
+  }
+
+  doc.y = startY + boxH + 10;
+}
+
+function scoreBar(doc, score, label) {
+  ensureSpace(doc, 40);
+  const x = 72;
+  const barW = 120;
+  const barH = 22;
+  const fillW = (score / 10) * barW;
+  const color = scoreColor(score);
+
+  doc.save();
+  // Background
+  doc.roundedRect(x, doc.y, barW, barH, 4).fill(...C.bg);
+  // Fill
+  doc.roundedRect(x, doc.y, fillW, barH, 4).fill(...color);
+  // Score text
+  doc.fontSize(12).font('Helvetica-Bold').fillColor(...C.white).text(score + '/10', x + 6, doc.y + 4);
+  doc.restore();
+
+  // Label
+  if (label) {
+    doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(label, x + barW + 12, doc.y + 4);
+  }
+
+  doc.y = doc.y + barH + 10;
+}
+
+function characterCard(doc, char) {
+  ensureSpace(doc, 80);
+  const x = 72;
+  const w = doc.page.width - 144;
+  const startY = doc.y;
+
+  // Card background
+  doc.save();
+  doc.roundedRect(x, startY, w, 10, 4).fill(...C.bg); // placeholder, we'll extend
+  doc.restore();
+
+  // Name + Grade
+  doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(char.name || 'Unnamed', x + 10, startY + 8, { continued: true, width: w - 80 });
+
+  // Grade badge
+  const gc = gradeColor(char.grade || 'C');
+  const badgeX = x + w - 45;
+  doc.save();
+  doc.roundedRect(badgeX, startY + 5, 35, 20, 3).fill(...gc);
+  doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.white).text(char.grade || '?', badgeX + 4, startY + 9, { width: 27, align: 'center' });
+  doc.restore();
+
+  doc.y = startY + 30;
+
+  if (char.strengths) {
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black).text('Strengths: ', x + 10, doc.y, { continued: true, width: w - 20 });
+    doc.font('Helvetica').text(char.strengths);
+  }
+  if (char.weaknesses) {
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black).text('Weaknesses: ', x + 10, doc.y, { continued: true, width: w - 20 });
+    doc.font('Helvetica').text(char.weaknesses);
+  }
+  if (char.diagnosis) {
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black).text('Diagnosis: ', x + 10, doc.y, { continued: true, width: w - 20 });
+    doc.font('Helvetica').text(char.diagnosis);
+  }
+
+  // Draw card background to actual height
+  const endY = doc.y + 8;
+  const cardH = endY - startY;
+  // Re-draw background behind (we can't un-draw, but the border helps)
+  doc.save();
+  doc.roundedRect(x, startY, w, cardH, 4).lineWidth(0.5).strokeColor(...C.lightGray).stroke();
+  doc.restore();
+
+  doc.y = endY + 6;
+}
+
+function quoteBlock(doc, location, quote, problem, fix, isGood, comment) {
+  ensureSpace(doc, 70);
+  const x = 72;
+  const w = doc.page.width - 144;
+
+  if (location) {
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray).text(location.toUpperCase(), x);
+  }
+
+  // Quote
+  const qBg = isGood ? C.greenLight : C.bg;
+  const qBorder = isGood ? C.green : C.gold;
+  const startY = doc.y;
+  const qText = '"' + (quote || '') + '"';
+  const qH = doc.fontSize(9).font('Helvetica-Oblique').heightOfString(qText, { width: w - 24 });
+  const boxH = qH + 16;
+
+  doc.save();
+  doc.roundedRect(x, startY, w, boxH, 3).fill(...qBg);
+  doc.rect(x, startY, 3, boxH).fill(...qBorder);
+  doc.restore();
+
+  doc.fontSize(9).font('Helvetica-Oblique').fillColor([68, 68, 68]).text(qText, x + 12, startY + 8, { width: w - 24 });
+  doc.y = startY + boxH + 6;
+
+  if (isGood && comment) {
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.green).text('Why it works: ', x, doc.y, { continued: true });
+    doc.font('Helvetica').fillColor(...C.black).text(comment, { width: w });
+  } else {
+    if (problem) {
+      doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black).text('Problem: ', x, doc.y, { continued: true });
+      doc.font('Helvetica').text(problem, { width: w });
     }
-    return `
-      <div class="quote-block">
-        <div class="quote-ref">${esc(c.location)}</div>
-        "${esc(c.quote)}"
-      </div>
-      <p><strong>Problem:</strong> ${esc(c.problem)}</p>
-      ${c.fix ? `<div class="fix-box"><div class="fix-box-header">\u23F0 RUTHLESS FIX:</div><p>${esc(c.fix)}</p></div>` : ''}
-    `;
-  }).join('');
-}
-
-function buildRepeatWords(words) {
-  if (!words || !words.length) return '<p>No significant repeat word issues found.</p>';
-  return `<table style="width:100%;border-collapse:collapse;margin:10px 0">
-    <tr style="background:#f5f5f5;font-weight:700;font-size:9pt;text-transform:uppercase;letter-spacing:1px">
-      <td style="padding:8px 12px;border-bottom:2px solid #ddd">Word</td>
-      <td style="padding:8px 12px;border-bottom:2px solid #ddd;text-align:center">Count</td>
-      <td style="padding:8px 12px;border-bottom:2px solid #ddd">Contexts</td>
-    </tr>
-    ${words.map(w => `
-      <tr>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:700;color:#8b0000">"${esc(w.word)}"</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center;font-weight:700">${w.count}x</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #eee;font-size:10pt;color:#555">${esc(w.contexts)}</td>
-      </tr>
-    `).join('')}
-  </table>`;
-}
-
-function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function paragraphs(text) {
-  if (!text) return '';
-  return text.split('\n').filter(l => l.trim()).map(l => `<p>${esc(l)}</p>`).join('');
-}
-
-function buildHtml(data) {
-  let template = fs.readFileSync(TEMPLATE_PATH, 'utf-8');
-
-  const logoPath = path.join(__dirname, 'logo.png');
-  let logoBase64 = '';
-  if (fs.existsSync(logoPath)) {
-    const logoBuffer = fs.readFileSync(logoPath);
-    logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+    if (fix) {
+      calloutBox(doc, fix, C.yellowLight, C.darkRed, null, 'RUTHLESS FIX:');
+    }
   }
-  template = template.replace('logo.png', logoBase64);
+  doc.moveDown(0.5);
+}
 
-  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-  const replacements = {
-    '{{title}}': esc(data.title || 'Untitled Manuscript'),
-    '{{date}}': date,
-    '{{status}}': esc(data.status || 'Complete'),
-    '{{wordCount}}': esc(data.wordCount || 'Unknown'),
-    '{{targetAge}}': esc(data.targetAge || 'Not specified'),
-    '{{firstImpressions}}': paragraphs(data.firstImpressions),
-    '{{strengths}}': esc(data.strengths || ''),
-    '{{pacingBody}}': paragraphs(data.pacingBody),
-    '{{pacingFix}}': esc(data.pacingFix || ''),
-    '{{pacingBreakdown}}': buildPacingBreakdown(data.pacingBreakdown),
-    '{{voiceScore}}': data.voiceScore || '?',
-    '{{voiceScoreColor}}': getScoreColor(data.voiceScore || 5),
-    '{{voiceLabel}}': esc(data.voiceLabel || ''),
-    '{{voiceBody}}': paragraphs(data.voiceBody),
-    '{{voiceExamples}}': buildVoiceExamples(data.voiceExamples),
-    '{{proseScore}}': data.proseScore || '?',
-    '{{proseScoreColor}}': getScoreColor(data.proseScore || 5),
-    '{{proseLabel}}': esc(data.proseLabel || ''),
-    '{{proseBody}}': paragraphs(data.proseBody),
-    '{{repeatWords}}': buildRepeatWords(data.repeatWords),
-    '{{characters}}': buildCharacterCards(data.characters),
-    '{{depthRating}}': esc(data.depthRating || 'Adequate'),
-    '{{depthColor}}': getDepthColor(data.depthRating || 'Adequate'),
-    '{{depthBody}}': paragraphs(data.depthBody),
-    '{{lineCallouts}}': buildLineCallouts(data.lineCallouts),
-    '{{trajectory}}': paragraphs(data.trajectory),
-    '{{trajectoryFix}}': esc(data.trajectoryFix || ''),
-    '{{verdict}}': paragraphs(data.verdict),
-  };
-
-  // Handle {{#if ...}} blocks
-  const conditionals = ['strengths', 'pacingFix', 'pacingBreakdown', 'voiceExamples', 'trajectoryFix'];
-  for (const key of conditionals) {
-    const val = data[key];
-    const hasValue = Array.isArray(val) ? val.length > 0 : !!val;
-    const ifRegex = new RegExp(`\\{\\{#if ${key}\\}\\}([\\s\\S]*?)\\{\\{/if\\}\\}`, 'g');
-    template = template.replace(ifRegex, hasValue ? '$1' : '');
+function repeatWordTable(doc, words) {
+  if (!words || !words.length) {
+    bodyText(doc, 'No significant repeat word issues found.');
+    return;
   }
 
-  for (const [placeholder, value] of Object.entries(replacements)) {
-    template = template.replace(new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'), value);
-  }
+  ensureSpace(doc, 30 + words.length * 20);
+  const x = 72;
+  const w = doc.page.width - 144;
 
-  return template;
+  // Header row
+  doc.save();
+  doc.rect(x, doc.y, w, 18).fill(...C.bg);
+  doc.restore();
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
+  doc.text('WORD', x + 6, doc.y + 4, { width: 80 });
+  doc.text('COUNT', x + 90, doc.y - 12, { width: 50, align: 'center' });
+  doc.text('CONTEXTS', x + 150, doc.y - 12, { width: w - 156 });
+  doc.y += 8;
+
+  words.forEach(w2 => {
+    ensureSpace(doc, 20);
+    const rowY = doc.y;
+    doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.darkRed).text('"' + w2.word + '"', x + 6, rowY, { width: 80 });
+    doc.font('Helvetica-Bold').fillColor(...C.black).text(w2.count + 'x', x + 90, rowY, { width: 50, align: 'center' });
+    doc.font('Helvetica').fillColor(...C.gray).text(w2.contexts || '', x + 150, rowY, { width: doc.page.width - 144 - 156 });
+    doc.y = Math.max(doc.y, rowY + 14);
+    // Divider
+    doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y).lineTo(x + doc.page.width - 144, doc.y).stroke();
+    doc.y += 4;
+  });
+  doc.moveDown(0.5);
+}
+
+function pacingBreakdown(doc, items) {
+  if (!items || !items.length) return;
+
+  items.forEach(item => {
+    ensureSpace(doc, 20);
+    const icon = pacingIcon(item.type);
+    const color = pacingColor(item.type);
+    doc.fontSize(10).font('Helvetica-Bold').fillColor(...color).text(icon + '  ', 80, doc.y, { continued: true });
+    doc.font('Helvetica-Bold').fillColor(...C.black).text(item.label + ': ', { continued: true });
+    doc.font('Helvetica').text(item.text, { width: doc.page.width - 180 });
+    doc.moveDown(0.2);
+  });
+  doc.moveDown(0.5);
+}
+
+function compareTable(doc, examples) {
+  if (!examples || !examples.length) return;
+
+  examples.forEach(ex => {
+    ensureSpace(doc, 50);
+    const x = 72;
+    const w = doc.page.width - 144;
+    const isWeak = ex.type === 'weak';
+    const bg = isWeak ? C.redLight : C.greenLight;
+    const border = isWeak ? C.red : C.green;
+    const label = isWeak ? 'TELLING:' : 'STRONGER:';
+
+    const textH = doc.fontSize(9).font('Helvetica-Oblique').heightOfString('"' + ex.quote + '"', { width: w - 30 });
+    const noteH = ex.note ? doc.fontSize(8).font('Helvetica').heightOfString(ex.note, { width: w - 30 }) : 0;
+    const boxH = textH + noteH + 30;
+
+    doc.save();
+    doc.roundedRect(x, doc.y, w, boxH, 3).fill(...bg);
+    doc.rect(x, doc.y, 4, boxH).fill(...border);
+    doc.restore();
+
+    const startY = doc.y;
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(...border).text(label, x + 12, startY + 6);
+    doc.fontSize(9).font('Helvetica-Oblique').fillColor([51, 51, 51]).text('"' + ex.quote + '"', x + 12, doc.y + 2, { width: w - 30 });
+    if (ex.note) {
+      doc.fontSize(8).font('Helvetica').fillColor([119, 119, 119]).text(ex.note, x + 12, doc.y + 2, { width: w - 30 });
+    }
+    doc.y = startY + boxH + 6;
+  });
 }
 
 async function generatePdf(reviewData) {
-  if (!puppeteer) throw new Error('PDF generation not available — Puppeteer not installed');
-  const html = buildHtml(reviewData);
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({
+      size: 'letter',
+      margins: { top: 40, bottom: 50, left: 72, right: 72 },
+      bufferPages: true,
+      info: {
+        Title: 'Ruthless Mentor Review Report',
+        Author: 'ruthlessmentor.com',
+      }
+    });
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    const chunks = [];
+    doc.on('data', chunk => chunks.push(chunk));
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', reject);
+
+    const data = reviewData;
+
+    // HEADER
+    drawHeader(doc, data);
+    drawMeta(doc, data);
+
+    // 1. FIRST IMPRESSIONS
+    sectionHeader(doc, '1. FIRST IMPRESSIONS');
+    bodyText(doc, data.firstImpressions);
+    if (data.strengths) {
+      calloutBox(doc, data.strengths, C.greenLight, C.green, '+', "You've Got:");
+    }
+
+    // 2. STRUCTURE & PACING
+    sectionHeader(doc, '2. STRUCTURE & PACING');
+    bodyText(doc, data.pacingBody);
+    if (data.pacingFix) {
+      calloutBox(doc, data.pacingFix, C.yellowLight, C.darkRed, null, 'RUTHLESS FIX:');
+    }
+    if (data.pacingBreakdown) {
+      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text('Pacing Breakdown:', 72);
+      doc.moveDown(0.3);
+      pacingBreakdown(doc, data.pacingBreakdown);
+    }
+
+    // 3. AUTHOR'S VOICE
+    sectionHeader(doc, "3. AUTHOR'S VOICE");
+    scoreBar(doc, data.voiceScore || 5, data.voiceLabel);
+    bodyText(doc, data.voiceBody);
+    if (data.voiceExamples && data.voiceExamples.length) {
+      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text('Examples:', 72);
+      doc.moveDown(0.3);
+      compareTable(doc, data.voiceExamples);
+    }
+
+    // 4. PROSE QUALITY
+    sectionHeader(doc, '4. PROSE QUALITY');
+    scoreBar(doc, data.proseScore || 5, data.proseLabel);
+    bodyText(doc, data.proseBody);
+
+    // 5. REPEAT WORD REPORT
+    sectionHeader(doc, '5. REPEAT WORD REPORT');
+    repeatWordTable(doc, data.repeatWords);
+
+    // 6. CHARACTER REPORT CARD
+    sectionHeader(doc, '6. CHARACTER REPORT CARD');
+    if (data.characters && data.characters.length) {
+      data.characters.forEach(c => characterCard(doc, c));
+    } else {
+      bodyText(doc, 'No significant characters identified.');
+    }
+
+    // 7. DEPTH CHECK
+    sectionHeader(doc, '7. DEPTH CHECK');
+    if (data.depthRating) {
+      ensureSpace(doc, 30);
+      const dc = depthColor(data.depthRating);
+      const x = 72;
+      doc.save();
+      doc.roundedRect(x, doc.y, 100, 22, 4).fill(...dc);
+      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.white).text(data.depthRating, x + 6, doc.y + 5, { width: 88, align: 'center' });
+      doc.restore();
+      doc.y += 30;
+    }
+    bodyText(doc, data.depthBody);
+
+    // 8. LINE-LEVEL CALLOUTS
+    sectionHeader(doc, '8. LINE-LEVEL CALLOUTS');
+    if (data.lineCallouts && data.lineCallouts.length) {
+      data.lineCallouts.forEach(c => {
+        quoteBlock(doc, c.location, c.quote, c.problem, c.fix, c.isGood, c.comment);
+      });
+    }
+
+    // 9. WHERE THIS IS HEADING
+    sectionHeader(doc, '9. WHERE THIS IS HEADING');
+    bodyText(doc, data.trajectory);
+    if (data.trajectoryFix) {
+      calloutBox(doc, data.trajectoryFix, C.yellowLight, C.darkRed, null, 'RUTHLESS FIX:');
+    }
+
+    // 10. FINAL VERDICT
+    sectionHeader(doc, '10. FINAL VERDICT');
+    ensureSpace(doc, 80);
+    // Verdict box with gold border
+    const vx = 72;
+    const vw = doc.page.width - 144;
+    const vText = (data.verdict || '').replace(/\\n/g, '\n');
+    const vH = doc.fontSize(10).font('Helvetica').heightOfString(vText, { width: vw - 30 }) + 30;
+    doc.save();
+    doc.roundedRect(vx, doc.y, vw, vH, 6).lineWidth(1.5).strokeColor(...C.gold).stroke();
+    doc.restore();
+    const vy = doc.y;
+    doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(vText, vx + 15, vy + 15, { width: vw - 30 });
+    doc.y = vy + vH + 10;
+
+    // Footer on every page
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+      doc.switchToPage(i);
+      doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
+      doc.text(
+        `RUTHLESS MENTOR REPORT  |  Page ${i + 1} of ${pages.count}`,
+        0, doc.page.height - 40,
+        { align: 'center', width: doc.page.width }
+      );
+    }
+
+    doc.end();
   });
-
-  const page = await browser.newPage();
-  await page.setContent(html, { waitUntil: 'networkidle0' });
-
-  const pdfBuffer = await page.pdf({
-    format: 'Letter',
-    printBackground: true,
-    margin: { top: '0.3in', bottom: '0.5in', left: '0in', right: '0in' },
-    displayHeaderFooter: true,
-    footerTemplate: `
-      <div style="width:100%;text-align:center;font-size:8pt;color:#888;font-family:Inter,sans-serif;letter-spacing:1px;text-transform:uppercase;font-weight:600">
-        RUTHLESS MENTOR REPORT &nbsp;|&nbsp; Page <span class="pageNumber"></span> of <span class="totalPages"></span>
-      </div>`,
-    headerTemplate: '<div></div>'
-  });
-
-  await browser.close();
-  return pdfBuffer;
 }
 
-module.exports = { generatePdf, buildHtml };
+module.exports = { generatePdf };

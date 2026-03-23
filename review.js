@@ -44,11 +44,22 @@ function updateCost() {
     if (wordCountEl) wordCountEl.textContent = words.toLocaleString();
 
     const tier = words > 0 ? getTier(words) : null;
-    const total = tier ? tier.price : 0;
+    let total = tier ? tier.price : 0;
+
+    // Apply coupon discount
+    if (appliedCoupon && total > 0) {
+        if (appliedCoupon.type === 'percent') {
+            total = Math.max(0, total - (total * appliedCoupon.discount / 100));
+        } else if (appliedCoupon.type === 'fixed') {
+            total = Math.max(0, total - appliedCoupon.discount);
+        } else if (appliedCoupon.type === 'free') {
+            total = 0;
+        }
+    }
 
     if (estTierEl) estTierEl.textContent = words === 0 ? '--' : tier.name;
     if (estCostEl) estCostEl.textContent = words === 0 ? '--' : '$' + tier.price;
-    if (totalEl) totalEl.textContent = words === 0 ? '--' : '$' + total;
+    if (totalEl) totalEl.textContent = words === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
 
     // Highlight active tier in sidebar
     document.querySelectorAll('.sidebar-tier').forEach(el => el.classList.remove('active'));
@@ -61,6 +72,41 @@ function updateCost() {
 }
 
 if (textarea) textarea.addEventListener('input', updateCost);
+
+// ===== COUPON =====
+let appliedCoupon = null;
+
+const couponInput = document.getElementById('coupon-input');
+const couponBtn = document.getElementById('apply-coupon');
+const couponMsg = document.getElementById('coupon-msg');
+
+if (couponBtn) {
+    couponBtn.addEventListener('click', async () => {
+        const code = couponInput.value.trim();
+        if (!code) return;
+        try {
+            const res = await fetch('/api/coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            appliedCoupon = data;
+            couponMsg.textContent = data.message;
+            couponMsg.className = 'coupon-msg success';
+            couponInput.disabled = true;
+            couponBtn.textContent = 'Applied';
+            couponBtn.disabled = true;
+            updateCost();
+        } catch (err) {
+            appliedCoupon = null;
+            couponMsg.textContent = err.message || 'Invalid coupon';
+            couponMsg.className = 'coupon-msg error';
+            updateCost();
+        }
+    });
+}
 
 // ===== FILE DROP =====
 const dropZone = document.getElementById('drop-zone');

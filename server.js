@@ -394,6 +394,23 @@ app.post('/api/parse-file', upload.single('file'), async (req, res) => {
   }
 });
 
+// ===== COUPON CODES =====
+const COUPONS = {
+  'BETATEST': { type: 'free', discount: 100, message: 'Beta test code applied — this review is free!' },
+  'FIRST50': { type: 'percent', discount: 50, message: '50% off applied!' },
+  'LAUNCH': { type: 'fixed', discount: 5, message: '$5 off applied!' },
+};
+
+app.post('/api/coupon', (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ error: 'No code provided' });
+
+  const coupon = COUPONS[code.trim().toUpperCase()];
+  if (!coupon) return res.status(400).json({ error: 'Invalid coupon code' });
+
+  res.json(coupon);
+});
+
 // Word count + tier endpoint (no auth needed)
 app.post('/api/tier', (req, res) => {
   const { text } = req.body;
