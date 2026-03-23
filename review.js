@@ -151,17 +151,20 @@ async function handleFile(file) {
             const formData = new FormData();
             formData.append('file', file);
             const res = await fetch('/api/parse-file', { method: 'POST', body: formData });
-            const contentType = res.headers.get('content-type') || '';
-            if (!contentType.includes('application/json')) {
-                throw new Error('Server returned an unexpected response. Make sure you are on the correct site.');
+            const text = await res.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error('[PARSE] Status:', res.status, 'Response:', text.substring(0, 200));
+                throw new Error('Server error (status ' + res.status + '). Try pasting your text instead.');
             }
-            const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Parse failed');
             textarea.value = data.text;
             fileNameEl.textContent = file.name + ' (' + data.wordCount.toLocaleString() + ' words extracted)';
             updateCost();
         } catch (err) {
-            fileNameEl.textContent = 'Failed to parse file: ' + err.message;
+            fileNameEl.textContent = err.message;
             fileNameEl.style.color = '#ef4444';
         }
     }

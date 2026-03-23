@@ -366,32 +366,38 @@ app.post('/api/review-pdf', optionalAuth, async (req, res) => {
 });
 
 // ===== FILE UPLOAD & TEXT EXTRACTION =====
-app.post('/api/parse-file', upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-
-  const ext = path.extname(req.file.originalname).toLowerCase();
-  let text = '';
-
-  try {
-    if (ext === '.txt') {
-      text = req.file.buffer.toString('utf-8');
-    } else if (ext === '.pdf') {
-      const data = await pdfParse(req.file.buffer);
-      text = data.text;
-    } else if (ext === '.docx') {
-      const result = await mammoth.extractRawText({ buffer: req.file.buffer });
-      text = result.value;
-    } else {
-      return res.status(400).json({ error: 'Unsupported file type. Use PDF, DOCX, or TXT.' });
+app.post('/api/parse-file', (req, res) => {
+  upload.single('file')(req, res, async (multerErr) => {
+    if (multerErr) {
+      console.error('[MULTER ERROR]', multerErr.message);
+      return res.status(400).json({ error: 'File upload failed: ' + multerErr.message });
     }
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    const wordCount = countWords(text);
-    const tier = getTier(wordCount);
-    res.json({ text, wordCount, tier: tier.name, price: tier.price });
-  } catch (err) {
-    console.error('[PARSE ERROR]', err.message);
-    res.status(500).json({ error: 'Failed to parse file. Try pasting text instead.' });
-  }
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let text = '';
+
+    try {
+      if (ext === '.txt') {
+        text = req.file.buffer.toString('utf-8');
+      } else if (ext === '.pdf') {
+        const data = await pdfParse(req.file.buffer);
+        text = data.text;
+      } else if (ext === '.docx') {
+        const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+        text = result.value;
+      } else {
+        return res.status(400).json({ error: 'Unsupported file type. Use PDF, DOCX, or TXT.' });
+      }
+
+      const wordCount = countWords(text);
+      const tier = getTier(wordCount);
+      res.json({ text, wordCount, tier: tier.name, price: tier.price });
+    } catch (err) {
+      console.error('[PARSE ERROR]', err.message, err.stack);
+      res.status(500).json({ error: 'Failed to parse file. Try pasting text instead.' });
+    }
+  });
 });
 
 // ===== COUPON CODES =====
@@ -425,6 +431,16 @@ app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, 'index.html'));
   } else {
     next();
+  }
+});
+
+// Global error handler — always return JSON for API routes
+app.use((err, req, res, next) => {
+  console.error('[UNHANDLED ERROR]', err.message, err.stack);
+  if (req.path.startsWith('/api')) {
+    res.status(500).json({ error: err.message || 'Internal server error' });
+  } else {
+    next(err);
   }
 });
 
