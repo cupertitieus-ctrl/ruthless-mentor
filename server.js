@@ -108,7 +108,19 @@ What to look for (the red flag is density — when multiple markers cluster toge
 
 Quote specific passages that trigger your lack-of-voice detector and explain exactly why each one reads generic.
 
-### 3. Repeat Word Report
+### 3. Prose Quality: X/10
+Rate the writing quality from 1 to 10. Then go through each of these and quote specific examples from the text:
+- Overused words (name each one, count how many times it appears, show the different ways it's used)
+- Vague or meaningless phrases that don't do any work
+- Metaphors or similes that don't make sense
+- Places where the author tells us something instead of showing it through action
+- Sentences that all sound the same rhythm over and over
+- Descriptions that are too generic (like "a beautiful day" instead of something specific)
+- Filler words like "very," "really," "just," "actually" — count them
+
+For every problem you find, quote the exact passage and explain what's wrong with it in plain language.
+
+### 4. Repeat Word Report
 List every word that's used too much. Use this EXACT format for each word (one per line, no tables, no pipes, no dashes):
 
 **"word"** (Xx) — brief description of how it's used
@@ -119,10 +131,10 @@ Example:
 
 Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, count in parentheses, dash, description.
 
-### 4. Depth Check
+### 5. Depth Check
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
 
-### 5. Character Report Card
+### 6. Character Report Card
 For each main character, use this format:
 
 **Character Name** — Grade: X
@@ -143,10 +155,10 @@ For each main character, give them a letter grade (A through F) and evaluate:
 - Relationships: Do the relationships between characters feel authentic or manufactured?
 - Diagnosis: Is this a real person or a cardboard cutout? Why?
 
-### 6. Story Mechanics
+### 7. Story Mechanics
 Cover: pacing (where it drags, where it rushes), plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
 
-### 7. Line-Level Callouts
+### 8. Line-Level Callouts
 Pull at least 5-10 specific passages from the text. For each one:
 - Quote it exactly
 - Explain the problem
@@ -154,11 +166,11 @@ Pull at least 5-10 specific passages from the text. For each one:
 
 Also call out passages that are genuinely good and explain why they work.
 
-### 8. Where This Is Heading
+### 9. Where This Is Heading
 If the manuscript is unfinished: what problems will get worse? What should the author fix before writing more?
 If it's complete: say "This appears to be a complete manuscript."
 
-### 9. Final Verdict
+### 10. Final Verdict
 2-4 paragraphs. Is it ready for readers? What's the single biggest thing to fix? What's the strongest thing to protect? Would you keep reading if you found this in a bookstore?
 
 Rules:
