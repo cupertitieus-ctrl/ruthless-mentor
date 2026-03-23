@@ -88,18 +88,25 @@ Produce your review using these exact section headers. Every section is mandator
 ### 1. First Impressions
 2-3 sentences. Your gut reaction after reading. What grabbed you? What made you wince?
 
-### 2. Prose Quality: X/10
-Rate the writing quality from 1 to 10. Then go through each of these and quote specific examples from the text:
-- Overused words (name each one, count how many times it appears, show the different ways it's used)
-- Vague or meaningless phrases that don't do any work
-- Metaphors or similes that don't make sense
-- Moments where the writing is way too dramatic for what's happening
-- Places where the author tells us something instead of showing it through action
-- Sentences that all sound the same rhythm over and over
-- Descriptions that are too generic (like "a beautiful day" instead of something specific)
-- Filler words like "very," "really," "just," "actually" — count them
+### 2. Author's Voice: X/10
+Rate the voice and tone from 1 to 10. At a 10, there's a talented writer behind these words. At a 1, the writing feels generic — just words on a page.
 
-For every problem you find, quote the exact passage and explain what's wrong with it in plain language.
+What to look for (the red flag is density — when multiple markers cluster together):
+- Dead-giveaway words and phrases: "delve", "tapestry", "resonate", "embark on a journey", "a testament to", "in the realm of", "it's worth noting", "crucial", "Moreover", "Furthermore", "multifaceted", "nuanced", "landscape" (used metaphorically), "robust", "leverage", "foster", "I cannot help but", "one cannot deny"
+- Dramatic Inflation: Every sunset is "a canvas of molten gold." Every emotion is "a tempest raging within." Overwrought language on ordinary moments — when a character pours cereal and the prose erupts into metaphor. Small scenes don't need cathedral ceilings.
+- The three-beat list addiction: "courage, determination, and resilience." "wisdom, empathy, and strength."
+- Hollow emotional beats: Characters "feel a wave of emotion wash over them" without earning it through specific, grounded detail.
+- Overly neat resolutions: Every conflict wraps up with a bow. Real stories have loose threads.
+- Telling, not showing: "She was brave" instead of showing bravery through action. "He felt sad" instead of showing sadness through behavior.
+- Generic metaphors: "Like a river flowing to the sea." "Like a phoenix rising from the ashes." If you've heard it a thousand times, it's not doing work.
+- Descriptions that describe nothing: "a beautiful flower," "the warm sun," "a deep sadness." What kind of flower? How warm? Vague language is a placeholder, not writing.
+- Repetitive sentence structures: Subject-verb-object on repeat. Generic text falls into a metronomic rhythm.
+- Lack of specificity: Generic text writes "a beautiful flower" where a real writer writes "a half-dead marigold in a cracked terracotta pot."
+- Suspiciously even-handed tone: Real authors have opinions and biases that bleed through. Generic text reads like it's trying not to offend anyone.
+- Dialogue that sounds like a TED talk: Characters who speak in perfectly formed paragraphs with thesis statements.
+- Dialogue that no one would say: Characters who speak in complete, composed paragraphs. Real speech is interrupted, sloppy, unfinished.
+
+Quote specific passages that trigger your lack-of-voice detector and explain exactly why each one reads generic.
 
 ### 3. Repeat Word Report
 List every word that's used too much. Use this EXACT format for each word (one per line, no tables, no pipes, no dashes):
@@ -123,10 +130,18 @@ For each main character, use this format:
 Then explain strengths, weaknesses, and diagnosis as regular paragraphs.
 
 Do NOT use markdown tables for characters either.
-For each main character, give them a letter grade (A through F) and explain:
+For each main character, give them a letter grade (A through F) and evaluate:
 - What's working (with examples from the text)
 - What's not working (with examples)
-- Are they a real person or a cardboard cutout?
+- Motivation: Does the character want something specific and believable? Or do they just float through the plot?
+- Consistency: Do they act in character, or suddenly become brave/smart/dumb because the plot demands it?
+- Voice: Could you tell who's speaking without dialogue tags? If every character sounds the same, that's a problem.
+- Arc: Do they change? Is the change earned? Or do they have a magical epiphany in the final chapter?
+- Backstory: Do you know who this person is before the story started? What shaped them? A real character has a life outside the plot. A weak one only exists when the author needs them.
+- Flaws: Perfect characters are boring. Do they have real, meaningful flaws — not just "she's too caring" or "he works too hard"?
+- Mary Sue / Gary Stu check: Is the character suspiciously good at everything? Does the world revolve around them?
+- Relationships: Do the relationships between characters feel authentic or manufactured?
+- Diagnosis: Is this a real person or a cardboard cutout? Why?
 
 ### 6. Story Mechanics
 Cover: pacing (where it drags, where it rushes), plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
