@@ -563,9 +563,7 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
 
     // Title
     doc.fontSize(24).font('Helvetica-Bold').fillColor(...C.black);
-    doc.text('Manuscript ', 72, doc.y, { continued: true });
-    doc.fillColor(...C.gold).text('Review ', { continued: true });
-    doc.fillColor(...C.black).text('Report');
+    doc.text('Manuscript Review Report', 72, doc.y, { width: pw });
     doc.moveDown(0.5);
 
     // Meta
@@ -583,108 +581,77 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
     });
     doc.moveDown(1);
 
+    // Strip markdown formatting helper
+    function clean(str) {
+      return (str || '').replace(/\*\*/g, '').replace(/\*/g, '').replace(/`/g, '').trim();
+    }
+
     // Parse markdown into sections and render
     const lines = markdown.split('\n');
-    const pageWidth = doc.page.width - 144;
+    const pw = doc.page.width - 144;
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const trimmed = line.trim();
+      const trimmed = lines[i].trim();
 
       if (!trimmed) {
         doc.moveDown(0.3);
         continue;
       }
 
-      // Section headers (### 1. Title or ## Title)
+      // Section headers
       const h3Match = trimmed.match(/^###\s*(\d+)\.\s*(.+)/);
-      const h2Match = trimmed.match(/^##\s*(.+)/);
-      const h1Match = trimmed.match(/^#\s*(.+)/);
+      const h2Match = !h3Match && trimmed.match(/^##\s*(.+)/);
+      const h1Match = !h3Match && !h2Match && trimmed.match(/^#\s*(.+)/);
 
-      if (h3Match || h2Match) {
-        const title = h3Match ? `${h3Match[1]}. ${h3Match[2]}` : h2Match[1];
-        // Clean markdown bold/italic from title
-        const cleanTitle = title.replace(/\*\*/g, '').replace(/\*/g, '').replace(/:.*$/, '').trim();
-        sectionHeader(doc, cleanTitle.toUpperCase());
-
-        // Check if title has a score (like "X/10")
-        const scoreMatch = title.match(/(\d+)\/10/);
-        if (scoreMatch) {
-          const score = parseInt(scoreMatch[1]);
-          const afterScore = title.replace(/.*\d+\/10\s*/, '').trim();
-          scoreBar(doc, score, afterScore);
-        }
+      if (h3Match) {
+        const num = h3Match[1];
+        const rest = clean(h3Match[2]);
+        sectionHeader(doc, `${num}. ${rest}`.toUpperCase());
+        // Score in header
+        const sm = rest.match(/(\d+)\/10/);
+        if (sm) scoreBar(doc, parseInt(sm[1]), rest.replace(/.*\d+\/10\s*/, '').trim());
         continue;
       }
-
+      if (h2Match) { sectionHeader(doc, clean(h2Match[1]).toUpperCase()); continue; }
       if (h1Match) {
         ensureSpace(doc, 40);
-        doc.fontSize(18).font('Helvetica-Bold').fillColor(...C.darkRed).text(h1Match[1], 72);
-        resetFill(doc);
-        doc.moveDown(0.5);
-        continue;
+        doc.fontSize(18).font('Helvetica-Bold').fillColor(...C.darkRed).text(clean(h1Match[1]), 72, doc.y, { width: pw });
+        resetFill(doc); doc.moveDown(0.5); continue;
       }
 
-      // Quote blocks (> text)
+      // Quote blocks
       if (trimmed.startsWith('>')) {
         ensureSpace(doc, 40);
-        const quoteText = trimmed.replace(/^>\s*/, '').replace(/\*\*/g, '').replace(/\*/g, '');
+        const qt = clean(trimmed.replace(/^>\s*/, ''));
         const qY = doc.y;
-        const qH = doc.fontSize(9).font('Helvetica-Oblique').heightOfString(quoteText, { width: pageWidth - 24 }) + 16;
-        doc.rect(72, qY, pageWidth, qH).fill(...C.bg);
-        resetFill(doc);
-        doc.rect(72, qY, 3, qH).fill(...C.gold);
-        resetFill(doc);
-        doc.fontSize(9).font('Helvetica-Oblique').fillColor(68, 68, 68).text(quoteText, 84, qY + 8, { width: pageWidth - 24 });
-        doc.y = qY + qH + 6;
-        resetFill(doc);
+        const qH = doc.fontSize(9).font('Helvetica-Oblique').heightOfString(qt, { width: pw - 24 }) + 16;
+        doc.rect(72, qY, pw, qH).fill(...C.bg); resetFill(doc);
+        doc.rect(72, qY, 3, qH).fill(...C.gold); resetFill(doc);
+        doc.fontSize(9).font('Helvetica-Oblique').fillColor(68, 68, 68).text(qt, 84, qY + 8, { width: pw - 24 });
+        doc.y = qY + qH + 6; resetFill(doc);
         continue;
       }
 
-      // Bullet points (- text)
+      // Bullet points — render as plain text with bullet character, NO continued
       if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
         ensureSpace(doc, 20);
-        const bulletText = trimmed.replace(/^[-*]\s*/, '');
-        // Handle **bold** within bullets
-        const parts = bulletText.split(/\*\*(.+?)\*\*/);
-        const bulletY = doc.y;
-        doc.fontSize(9).font('Helvetica').fillColor(...C.black).text('\u2022  ', 80, bulletY, { continued: true });
-        for (let p = 0; p < parts.length; p++) {
-          if (p % 2 === 1) {
-            doc.font('Helvetica-Bold').text(parts[p], { continued: p < parts.length - 1 });
-          } else {
-            doc.font('Helvetica').text(parts[p], { continued: p < parts.length - 1, width: pageWidth - 20 });
-          }
-        }
-        doc.moveDown(0.2);
+        const bt = clean(trimmed.replace(/^[-*]\s*/, ''));
+        doc.fontSize(9).font('Helvetica').fillColor(...C.black).text('\u2022  ' + bt, 80, doc.y, { width: pw - 20 });
+        doc.moveDown(0.15);
         continue;
       }
 
-      // Bold line (**text**)
+      // Bold-only line
       if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
         ensureSpace(doc, 20);
-        const boldText = trimmed.replace(/\*\*/g, '');
-        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(boldText, 72, doc.y, { width: pageWidth });
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(clean(trimmed), 72, doc.y, { width: pw });
         doc.moveDown(0.3);
         continue;
       }
 
-      // Regular paragraph — handle inline bold
+      // Regular text — strip markdown, render as single text call, NO continued
       ensureSpace(doc, 20);
-      const parts = trimmed.split(/\*\*(.+?)\*\*/);
-      if (parts.length > 1) {
-        doc.fontSize(10).font('Helvetica').fillColor(...C.black);
-        for (let p = 0; p < parts.length; p++) {
-          const isLast = p === parts.length - 1;
-          if (p % 2 === 1) {
-            doc.font('Helvetica-Bold').text(parts[p], { continued: !isLast, width: pageWidth });
-          } else if (parts[p]) {
-            doc.font('Helvetica').text(parts[p], { continued: !isLast, width: pageWidth });
-          }
-        }
-      } else {
-        doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(trimmed, 72, doc.y, { width: pageWidth });
-      }
+      doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(clean(trimmed), 72, doc.y, { width: pw });
       doc.moveDown(0.3);
     }
 
