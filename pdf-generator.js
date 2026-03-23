@@ -1,4 +1,8 @@
-const puppeteer = require('puppeteer');
+// Lazy-load puppeteer so server doesn't crash if it's not installed
+let puppeteer;
+try { puppeteer = require('puppeteer'); } catch (e) {
+  console.warn('[WARN] Puppeteer not available — PDF generation disabled');
+}
 const fs = require('fs');
 const path = require('path');
 
@@ -183,6 +187,7 @@ function buildHtml(data) {
 }
 
 async function generatePdf(reviewData) {
+  if (!puppeteer) throw new Error('PDF generation not available — Puppeteer not installed');
   const html = buildHtml(reviewData);
 
   const browser = await puppeteer.launch({
