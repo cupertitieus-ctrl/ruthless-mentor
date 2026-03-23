@@ -23,12 +23,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:56px;background:rgba(13,11,9,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
 .logo{text-decoration:none;display:flex;align-items:center}
-.logo-img{height:48px;filter:invert(1)}
+.logo-img{height:56px;filter:invert(1)}
 .footer-logo-img{height:24px}
 .logo span{color:var(--text3);font-weight:400}
 .nav-links{display:flex;align-items:center;gap:1.8rem}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:.82rem;font-weight:450;transition:color .2s}
-.nav-links a:hover{color:var(--text)}
+.nav-links a{color:#fff;text-decoration:none;font-size:.82rem;font-weight:450;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
 .nav-cta{color:var(--accent)!important;font-weight:600!important}
 .mobile-menu{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px}
 .mobile-menu span{display:block;width:20px;height:1.5px;background:var(--text2);transition:all .3s}
