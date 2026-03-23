@@ -96,35 +96,43 @@
         </div>
     </section>
 
-    <!-- REVIEW RESULTS (hidden until submitted) -->
-    <div id="review-screen" class="review-screen hidden">
+    <!-- AUTH GATE (shown if not logged in) -->
+    <div id="auth-gate" class="auth-gate hidden">
+        <div class="auth-gate-card">
+            <h2>Create an account to get started.</h2>
+            <p>You need an account to submit reviews and access your PDF reports.</p>
+            <a href="/auth.html" class="btn btn-glow full">Sign up or sign in</a>
+        </div>
+    </div>
+
+    <!-- DONE SCREEN (shown after review completes) -->
+    <div id="done-screen" class="review-screen hidden">
         <div class="review-nav">
             <a href="/" class="logo"><img src="logo.png" alt="ruthlessmentor.com" class="logo-img"></a>
-            <button class="btn-outline" id="back-btn">Submit another</button>
         </div>
-        <div class="review-container">
-            <div class="review-header">
-                <h1>Your Review</h1>
-                <div class="review-meta" id="review-meta"></div>
+        <div class="done-container">
+            <div class="done-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             </div>
-            <div class="review-body" id="review-body"></div>
-            <div class="review-actions">
-                <button class="btn" id="download-pdf-btn">
+            <h1>Your review is ready.</h1>
+            <p class="done-meta" id="done-meta"></p>
+            <p class="done-sub">Your PDF report has been downloaded. Check your downloads folder.</p>
+            <div class="done-actions">
+                <button class="btn" id="download-again-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download PDF Report
+                    Download PDF again
                 </button>
                 <button class="btn-outline" id="email-pdf-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 .9-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                     Email PDF to me
                 </button>
-                <button class="btn-outline" id="copy-btn">Copy text</button>
                 <button class="btn-outline" id="new-btn">Submit another</button>
             </div>
             <!-- Email modal -->
             <div class="email-modal hidden" id="email-modal">
                 <div class="email-modal-card">
                     <h3>Send PDF to your email</h3>
-                    <p>We'll generate the full branded report and send it to you.</p>
+                    <p>We'll generate the full report and email it to you.</p>
                     <input type="email" id="email-pdf-input" placeholder="you@email.com" class="email-pdf-field">
                     <div class="email-modal-btns">
                         <button class="btn btn-glow" id="email-send-btn">Send</button>

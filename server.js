@@ -250,7 +250,7 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
 });
 
 // ===== SUBMIT REVIEW =====
-app.post('/api/review', optionalAuth, async (req, res) => {
+app.post('/api/review', requireAuth, async (req, res) => {
   const { text } = req.body;
 
   if (!text || !text.trim()) {

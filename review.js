@@ -1,23 +1,29 @@
-// ===== AUTH (soft — page works without login) =====
+// ===== AUTH CHECK =====
 let _session = null;
+const authGate = document.getElementById('auth-gate');
+const reviewPage = document.querySelector('.review-page');
+
 (async () => {
     try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
             _session = session;
+            authGate.classList.add('hidden');
+        } else {
+            authGate.classList.remove('hidden');
         }
-    } catch (e) { /* supabase not loaded or no session — that's fine */ }
+    } catch (e) {
+        authGate.classList.remove('hidden');
+    }
     updateCost();
 })();
 
 // ===== ANIMATIONS =====
-const animEls = document.querySelectorAll('.anim-fade,.anim-slide-up,.anim-scale');
-const animObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); animObs.unobserve(e.target); }
-    });
-}, { threshold: 0.1 });
-animEls.forEach(el => animObs.observe(el));
+document.querySelectorAll('.anim-fade,.anim-slide-up,.anim-scale').forEach(el => {
+    new IntersectionObserver((entries, obs) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 }).observe(el);
+});
 
 // ===== PRICING =====
 function getTier(words) {
@@ -31,13 +37,15 @@ function countWords(text) {
     return text.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
-// ===== FORM ELEMENTS =====
+// ===== FORM =====
 const textarea = document.getElementById('co-text');
 const wordCountEl = document.getElementById('word-count');
 const estTierEl = document.getElementById('est-tier');
 const estCostEl = document.getElementById('est-cost');
 const totalEl = document.getElementById('total-amount');
 const form = document.getElementById('checkout-form');
+
+let appliedCoupon = null;
 
 function updateCost() {
     const words = countWords(textarea ? textarea.value : '');
@@ -46,27 +54,20 @@ function updateCost() {
     const tier = words > 0 ? getTier(words) : null;
     let total = tier ? tier.price : 0;
 
-    // Apply coupon discount
     if (appliedCoupon && total > 0) {
-        if (appliedCoupon.type === 'percent') {
-            total = Math.max(0, total - (total * appliedCoupon.discount / 100));
-        } else if (appliedCoupon.type === 'fixed') {
-            total = Math.max(0, total - appliedCoupon.discount);
-        } else if (appliedCoupon.type === 'free') {
-            total = 0;
-        }
+        if (appliedCoupon.type === 'percent') total = Math.max(0, total - (total * appliedCoupon.discount / 100));
+        else if (appliedCoupon.type === 'fixed') total = Math.max(0, total - appliedCoupon.discount);
+        else if (appliedCoupon.type === 'free') total = 0;
     }
 
     if (estTierEl) estTierEl.textContent = words === 0 ? '--' : tier.name;
     if (estCostEl) estCostEl.textContent = words === 0 ? '--' : '$' + tier.price;
     if (totalEl) totalEl.textContent = words === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
 
-    // Highlight active tier in sidebar
     document.querySelectorAll('.sidebar-tier').forEach(el => el.classList.remove('active'));
     if (tier) {
         const tiers = document.querySelectorAll('.sidebar-tier');
-        const tierMap = { "Children's / Picture Book": 0, 'Chapter Book': 1, 'Middle Grade': 2, "Young Adult / Adult": 3 };
-        const idx = tierMap[tier.name];
+        const idx = { "Children's / Picture Book": 0, 'Chapter Book': 1, 'Middle Grade': 2, "Young Adult / Adult": 3 }[tier.name];
         if (tiers[idx]) tiers[idx].classList.add('active');
     }
 }
@@ -74,10 +75,8 @@ function updateCost() {
 if (textarea) textarea.addEventListener('input', updateCost);
 
 // ===== COUPON =====
-let appliedCoupon = null;
-
-const couponInput = document.getElementById('coupon-input');
 const couponBtn = document.getElementById('apply-coupon');
+const couponInput = document.getElementById('coupon-input');
 const couponMsg = document.getElementById('coupon-msg');
 
 if (couponBtn) {
@@ -103,7 +102,6 @@ if (couponBtn) {
             appliedCoupon = null;
             couponMsg.textContent = err.message || 'Invalid coupon';
             couponMsg.className = 'coupon-msg error';
-            updateCost();
         }
     });
 }
@@ -146,18 +144,14 @@ async function handleFile(file) {
         };
         reader.readAsText(file);
     } else {
-        // Send PDF/DOCX to server for parsing
         try {
             const formData = new FormData();
             formData.append('file', file);
             const res = await fetch('/api/parse-file', { method: 'POST', body: formData });
             const text = await res.text();
             let data;
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                console.error('[PARSE] Status:', res.status, 'Response:', text.substring(0, 200));
-                throw new Error('Server error (status ' + res.status + '). Try pasting your text instead.');
+            try { data = JSON.parse(text); } catch (e) {
+                throw new Error('Server error. Try pasting your text instead.');
             }
             if (!res.ok) throw new Error(data.error || 'Parse failed');
             textarea.value = data.text;
@@ -170,12 +164,20 @@ async function handleFile(file) {
     }
 }
 
-// ===== SUBMIT =====
+// ===== SUBMIT — generates review + auto-downloads PDF =====
+let _lastPdfBlob = null;
+
 if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const text = textarea.value.trim();
 
+        // Require auth
+        if (!_session) {
+            authGate.classList.remove('hidden');
+            return;
+        }
+
+        const text = textarea.value.trim();
         if (!text) { alert('Paste your text or upload a file first.'); return; }
 
         const btn = document.getElementById('submit-btn');
@@ -190,13 +192,13 @@ if (form) {
         progressFill.style.width = '0%';
 
         const steps = [
-            { pct: 10, text: 'Uploading your manuscript...' },
-            { pct: 25, text: 'Reading your work...' },
-            { pct: 40, text: 'Analyzing prose quality...' },
-            { pct: 55, text: 'Checking for repeat words...' },
+            { pct: 10, text: 'Uploading your work...' },
+            { pct: 25, text: 'Reading through it...' },
+            { pct: 40, text: 'Checking prose quality...' },
+            { pct: 55, text: 'Counting repeat words...' },
             { pct: 65, text: 'Grading characters...' },
             { pct: 75, text: 'Evaluating story mechanics...' },
-            { pct: 85, text: 'Writing line-level callouts...' },
+            { pct: 85, text: 'Writing line-level notes...' },
             { pct: 92, text: 'Preparing your verdict...' },
         ];
 
@@ -211,114 +213,92 @@ if (form) {
         }, 3000);
 
         try {
-            const headers = { 'Content-Type': 'application/json' };
-            if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
+            const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session.access_token };
 
-            window._lastSubmittedText = text;
-            const res = await fetch('/api/review', {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ text })
+            // Step 1: Get the text review
+            const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text }) });
+            const reviewData = await reviewRes.json();
+            if (!reviewRes.ok) throw new Error(reviewData.error || 'Review failed');
+
+            progressFill.style.width = '95%';
+            progressText.textContent = 'Generating your PDF...';
+
+            // Step 2: Generate PDF from the review
+            const pdfRes = await fetch('/api/generate-pdf', {
+                method: 'POST', headers,
+                body: JSON.stringify({
+                    reviewMarkdown: reviewData.review,
+                    wordCount: reviewData.wordCount,
+                    tier: reviewData.tier
+                })
             });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || 'Review failed');
+
+            if (!pdfRes.ok) {
+                const err = await pdfRes.json().catch(() => ({ error: 'PDF failed' }));
+                throw new Error(err.error || 'PDF generation failed');
+            }
+
+            // Auto-download PDF
+            _lastPdfBlob = await pdfRes.blob();
+            downloadBlob(_lastPdfBlob, 'ruthless-mentor-review.pdf');
 
             clearInterval(stepInterval);
             progressFill.style.width = '100%';
             progressText.textContent = 'Done!';
             progressText.className = 'progress-text';
-            setTimeout(() => showReviewScreen(data), 500);
+
+            // Show done screen
+            const wordCount = reviewData.wordCount;
+            const tier = reviewData.tier;
+            document.getElementById('done-meta').textContent = `${tier} \u00B7 ${wordCount.toLocaleString()} words`;
+            document.getElementById('done-screen').classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            // Save for re-download and email
+            window._lastSubmittedText = text;
+            window._lastReview = reviewData.review;
+            window._lastWordCount = wordCount;
+            window._lastTier = tier;
+
         } catch (err) {
             clearInterval(stepInterval);
             progressText.textContent = 'Error: ' + err.message;
             progressText.className = 'progress-text';
-            progressFill.style.width = '0%';
             alert('Error: ' + err.message);
         } finally {
             btn.textContent = 'Submit for review';
             btn.disabled = false;
             btn.style.opacity = '1';
-            setTimeout(() => progressWrap.classList.add('hidden'), 2000);
+            setTimeout(() => progressWrap.classList.add('hidden'), 3000);
         }
     });
 }
 
-// ===== REVIEW SCREEN =====
-function showReviewScreen(data) {
-    const screen = document.getElementById('review-screen');
-    const costLabel = '$' + data.totalCost;
-    document.getElementById('review-meta').textContent =
-        `${data.tier} \u00B7 ${data.wordCount.toLocaleString()} words \u00B7 ${costLabel}`;
-    document.getElementById('review-body').innerHTML = markdownToHtml(data.review);
-    screen.classList.remove('hidden');
-    window.scrollTo(0, 0);
-    window._lastReview = data.review;
-    window._lastWordCount = data.wordCount;
-    window._lastTier = data.tier;
-    updateCost();
+function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
-document.getElementById('back-btn').addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('review-screen').classList.add('hidden');
-});
-
-document.getElementById('copy-btn').addEventListener('click', () => {
-    if (window._lastReview) {
-        navigator.clipboard.writeText(window._lastReview);
-        const btn = document.getElementById('copy-btn');
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Copy review', 1500);
+// ===== DONE SCREEN BUTTONS =====
+document.getElementById('download-again-btn').addEventListener('click', () => {
+    if (_lastPdfBlob) {
+        downloadBlob(_lastPdfBlob, 'ruthless-mentor-review.pdf');
+    } else {
+        alert('No PDF available. Submit a review first.');
     }
 });
 
 document.getElementById('new-btn').addEventListener('click', () => {
-    document.getElementById('review-screen').classList.add('hidden');
+    document.getElementById('done-screen').classList.add('hidden');
     textarea.value = '';
+    _lastPdfBlob = null;
     updateCost();
-});
-
-// ===== DOWNLOAD PDF =====
-document.getElementById('download-pdf-btn').addEventListener('click', async () => {
-    const btn = document.getElementById('download-pdf-btn');
-    const originalText = btn.innerHTML;
-    btn.textContent = 'Generating PDF...';
-    btn.disabled = true;
-
-    try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
-
-        const res = await fetch('/api/generate-pdf', {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-                reviewMarkdown: window._lastReview,
-                wordCount: window._lastWordCount,
-                tier: window._lastTier
-            })
-        });
-
-        if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.error || 'PDF generation failed');
-        }
-
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'ruthless-mentor-review.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    } catch (err) {
-        alert('PDF Error: ' + err.message);
-    } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    }
 });
 
 // ===== EMAIL PDF =====
@@ -329,7 +309,6 @@ const emailStatus = document.getElementById('email-status');
 document.getElementById('email-pdf-btn').addEventListener('click', () => {
     emailModal.classList.remove('hidden');
     emailInput.focus();
-    // Pre-fill with session email if logged in
     if (_session && _session.user && _session.user.email) {
         emailInput.value = _session.user.email;
     }
@@ -354,8 +333,7 @@ document.getElementById('email-send-btn').addEventListener('click', async () => 
         if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
 
         const res = await fetch('/api/email-pdf', {
-            method: 'POST',
-            headers,
+            method: 'POST', headers,
             body: JSON.stringify({ text: window._lastSubmittedText, email })
         });
         const data = await res.json();
@@ -372,25 +350,3 @@ document.getElementById('email-send-btn').addEventListener('click', async () => 
         btn.disabled = false;
     }
 });
-
-// ===== MARKDOWN TO HTML =====
-function markdownToHtml(md) {
-    return md
-        .replace(/### (\d+)\. (.+)/g, '<h3><span class="review-num">$1.</span> $2</h3>')
-        .replace(/### (.+)/g, '<h3>$1</h3>')
-        .replace(/## (.+)/g, '<h2>$1</h2>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        .replace(/^- (.+)$/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-        .replace(/> (.+)/g, '<blockquote>$1</blockquote>')
-        .replace(/`(.+?)`/g, '<code>$1</code>')
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/^(?!<)(.*\S.*)$/gm, '<p>$1</p>')
-        .replace(/<p><h/g, '<h')
-        .replace(/<\/h[23]><\/p>/g, (m) => m.replace('<\/p>', ''))
-        .replace(/<p><ul>/g, '<ul>')
-        .replace(/<\/ul><\/p>/g, '</ul>')
-        .replace(/<p><blockquote>/g, '<blockquote>')
-        .replace(/<\/blockquote><\/p>/g, '</blockquote>');
-}
