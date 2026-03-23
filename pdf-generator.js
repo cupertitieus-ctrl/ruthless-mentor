@@ -61,15 +61,7 @@ function ensureSpace(doc, needed) {
   }
 }
 
-function drawFooter(doc, pageNum) {
-  doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
-  doc.text(
-    `RUTHLESS MENTOR REPORT  |  Page ${pageNum}`,
-    0, doc.page.height - 40,
-    { align: 'center', width: doc.page.width, lineBreak: false }
-  );
-  resetFill(doc);
-}
+// Footer removed — was causing infinite recursion with pageAdded + ensureSpace
 
 function drawHeader(doc, data) {
   if (hasLogo) {
@@ -384,8 +376,6 @@ function compareTable(doc, examples) {
 
 async function generatePdf(reviewData) {
   return new Promise((resolve, reject) => {
-    let pageCount = 1;
-
     const doc = new PDFDocument({
       size: 'letter',
       margins: { top: 40, bottom: 50, left: 72, right: 72 },
@@ -400,18 +390,6 @@ async function generatePdf(reviewData) {
     doc.on('data', chunk => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
-
-    // Footer on first page
-    drawFooter(doc, 1);
-    doc.y = doc.page.margins.top;
-
-    // Add footer to every new page
-    doc.on('pageAdded', () => {
-      pageCount++;
-      drawFooter(doc, pageCount);
-      // Reset y to top margin for content
-      doc.y = doc.page.margins.top;
-    });
 
     const data = reviewData;
 
@@ -515,8 +493,6 @@ async function generatePdf(reviewData) {
 // ===== INSTANT PDF FROM MARKDOWN (no API call) =====
 async function generatePdfFromMarkdown(markdown, wordCount, tier) {
   return new Promise((resolve, reject) => {
-    let pageCount = 1;
-
     const doc = new PDFDocument({
       size: 'letter',
       margins: { top: 40, bottom: 50, left: 72, right: 72 },
@@ -531,15 +507,6 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
     doc.on('data', chunk => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
-
-    drawFooter(doc, 1);
-    doc.y = doc.page.margins.top;
-
-    doc.on('pageAdded', () => {
-      pageCount++;
-      drawFooter(doc, pageCount);
-      doc.y = doc.page.margins.top;
-    });
 
     // Header
     if (hasLogo) {
