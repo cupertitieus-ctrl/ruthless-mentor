@@ -530,6 +530,82 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         .trim();
     }
 
+    // --- Score display: large colored text ---
+    function drawScoreBar(score, label) {
+      ensureSpace(30);
+      const sc = scoreColor(score);
+      const scoreY = doc.y;
+
+      // Colored score via low-level content stream
+      doc.addContent(`${(sc[0]/255).toFixed(3)} ${(sc[1]/255).toFixed(3)} ${(sc[2]/255).toFixed(3)} rg`);
+      doc.fontSize(22).font('Helvetica-Bold');
+      doc.text(score + '/10', x, scoreY, { lineBreak: false });
+      doc.addContent('0.102 0.102 0.102 rg');
+
+      if (label) {
+        doc.addContent('0.392 0.392 0.392 rg');
+        doc.fontSize(10).font('Helvetica-Oblique');
+        doc.text(label, x + 70, scoreY + 7, { width: pw - 70, lineBreak: false });
+        doc.addContent('0.102 0.102 0.102 rg');
+      }
+      doc.fillColor(26, 26, 26);
+      doc.y = scoreY + 30;
+    }
+
+    // --- Grade badge: name on left, colored grade on right ---
+    function drawGradeBadge(name, grade) {
+      ensureSpace(24);
+      const rowY = doc.y;
+      const gc = gradeColor(grade);
+
+      // Render name
+      doc.font('Helvetica-Bold').fontSize(11).fillColor(26, 26, 26);
+      doc.text(name, x, rowY, { width: pw - 50, lineBreak: false });
+
+      // Force PDFKit to flush by moving cursor, then render grade in color
+      // We write grade as a separate addContent call to bypass batching
+      const gradeText = grade;
+      const gradeW = doc.widthOfString(gradeText);
+      const gradeX = x + pw - gradeW;
+
+      // Directly add colored text via low-level PDF content stream
+      const r = gc[0] / 255;
+      const g = gc[1] / 255;
+      const b = gc[2] / 255;
+      doc.addContent(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg`);
+      doc.fontSize(14).font('Helvetica-Bold');
+      doc.text(gradeText, gradeX, rowY - 1, { width: gradeW + 10, lineBreak: false });
+      // Reset fill to black via content stream
+      doc.addContent('0.102 0.102 0.102 rg');
+      doc._fillColor = [26, 26, 26]; // sync internal state
+
+      doc.fillColor(26, 26, 26);
+      doc.y = rowY + 20;
+
+      // Separator line
+      doc.strokeColor(200, 200, 200).lineWidth(0.5);
+      doc.moveTo(x, doc.y).lineTo(x + pw, doc.y).stroke();
+      doc.strokeColor(26, 26, 26).lineWidth(1);
+      doc.y += 6;
+    }
+
+    // --- Quote block: gold left border + italic text ---
+    function drawQuoteBlock(text) {
+      ensureSpace(18);
+      const qX = x + 14;
+      const qW = pw - 20;
+      const qY = doc.y;
+      doc.fontSize(9).font('Helvetica-Oblique').fillColor(80, 80, 80);
+      doc.text(text, qX, qY, { width: qW });
+      const qEndY = doc.y;
+      doc.fillColor(...C.black);
+      // Gold left border
+      doc.strokeColor(...C.gold).lineWidth(3);
+      doc.moveTo(x + 6, qY - 2).lineTo(x + 6, qEndY + 2).stroke();
+      doc.strokeColor(...C.black).lineWidth(1);
+      doc.moveDown(0.4);
+    }
+
     // --- Safe text: split long text into chunks to avoid PDFKit page-break recursion ---
     function safeText(text, opts) {
       const fontSize = opts.fontSize || 10;
@@ -705,20 +781,11 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         doc.moveTo(x, lineY).lineTo(x + 200, lineY).stroke();
         doc.moveDown(0.6);
 
-        // Render score display if header contains X/10
+        // Render score bar if header contains X/10
         if (scoreMatch) {
           const scoreVal = parseInt(scoreMatch[1], 10);
-          const sc = scoreColor(scoreVal);
           const labelPart = rawTitle.replace(/\s*[-—:]*\s*\d{1,2}\/10/, '').replace(/^\d+\.\s*/, '').trim();
-
-          ensureSpace(30);
-          const scoreY = doc.y;
-          doc.fontSize(22).font('Helvetica-Bold').fillColor(...sc).text(scoreVal + '/10', x, scoreY, { width: 80 });
-          doc.fillColor(...C.black);
-          doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(labelPart, x + 80, scoreY + 6, { width: pw - 80 });
-          doc.fillColor(...C.black);
-          doc.y = Math.max(doc.y, scoreY + 28);
-          doc.moveDown(0.3);
+          drawScoreBar(scoreVal, labelPart);
         }
         continue;
       }
@@ -738,17 +805,8 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
 
         if (scoreMatch) {
           const scoreVal = parseInt(scoreMatch[1], 10);
-          const sc = scoreColor(scoreVal);
           const labelPart = rawH2.replace(/\s*[-—:]*\s*\d{1,2}\/10/, '').trim();
-
-          ensureSpace(30);
-          const scoreY = doc.y;
-          doc.fontSize(22).font('Helvetica-Bold').fillColor(...sc).text(scoreVal + '/10', x, scoreY, { width: 80 });
-          doc.fillColor(...C.black);
-          doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(labelPart, x + 80, scoreY + 6, { width: pw - 80 });
-          doc.fillColor(...C.black);
-          doc.y = Math.max(doc.y, scoreY + 28);
-          doc.moveDown(0.3);
+          drawScoreBar(scoreVal, labelPart);
         }
         continue;
       }
@@ -761,62 +819,31 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         continue;
       }
 
-      // --- Character grade detection (e.g., "James — Grade: B+") ---
-      const gradeMatch = trimmed.match(/(?:Grade:\s*|[\(\[])([A-F][+-]?)(?:[\)\]]|$)/i);
-      const charNameMatch = trimmed.match(/^(?:\*\*)?([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s*(?:\*\*)?\s*[-—]\s*Grade/i);
-
-      if (gradeMatch && charNameMatch) {
-        ensureSpace(24);
-        doc.moveDown(0.3);
-        const charName = clean(charNameMatch[1]);
-        const grade = gradeMatch[1].toUpperCase();
-        const gc = gradeColor(grade);
-
-        const nameY = doc.y;
-        doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(charName, x, nameY, { width: pw - 60 });
-        doc.fillColor(...C.black);
-
-        doc.fontSize(11).font('Helvetica-Bold').fillColor(...gc).text(grade, x + pw - 40, nameY, { width: 40, align: 'right' });
-        doc.fillColor(...C.black);
-
-        doc.y = Math.max(doc.y, nameY + 16);
-        doc.strokeColor(...C.lightGray).lineWidth(0.5);
-        doc.moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
-        doc.moveDown(0.4);
-        continue;
+      // --- Character grade detection (e.g., "**James** — Grade: B+" or "James -- Grade: A-") ---
+      const gradeMatch = trimmed.match(/Grade:\s*([A-F][+-]?)/i);
+      if (gradeMatch) {
+        // Extract name: everything before the -- or — or Grade:
+        let charName = trimmed.replace(/\*\*/g, '').replace(/\s*[-—]+\s*Grade.*$/i, '').trim();
+        if (charName) {
+          const grade = gradeMatch[1].toUpperCase();
+          drawGradeBadge(charName, grade);
+          continue;
+        }
       }
 
       // --- Standalone score line (e.g., "Score: 7/10" or "7/10 — Prose Quality") ---
       const standaloneScore = trimmed.match(/^(?:(?:Score|Rating)\s*:\s*)?(\d{1,2})\/10(?:\s*[-—:]\s*(.+))?$/i);
       if (standaloneScore) {
         const scoreVal = parseInt(standaloneScore[1], 10);
-        const sc = scoreColor(scoreVal);
         const labelPart = standaloneScore[2] ? clean(standaloneScore[2]) : '';
-
-        ensureSpace(30);
-        const scoreY = doc.y;
-        doc.fontSize(22).font('Helvetica-Bold').fillColor(...sc).text(scoreVal + '/10', x, scoreY, { width: 80 });
-        doc.fillColor(...C.black);
-        if (labelPart) {
-          doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(labelPart, x + 80, scoreY + 6, { width: pw - 80 });
-          doc.fillColor(...C.black);
-        }
-        doc.y = Math.max(doc.y, scoreY + 28);
-        doc.moveDown(0.3);
+        drawScoreBar(scoreVal, labelPart);
         continue;
       }
 
       // --- Quote blocks (lines starting with >) ---
       if (trimmed.startsWith('>')) {
         const qt = clean(trimmed.replace(/^>\s*/, ''));
-        ensureSpace(16);
-        const qStartY = doc.y;
-        doc.fontSize(9).font('Helvetica-Oblique').fillColor(80, 80, 80).text(qt, x + 14, doc.y, { width: pw - 20 });
-        doc.fillColor(...C.black);
-        const qEndY = doc.y;
-        doc.strokeColor(...C.gold).lineWidth(2);
-        doc.moveTo(x + 4, qStartY).lineTo(x + 4, qEndY).stroke();
-        doc.moveDown(0.3);
+        drawQuoteBlock(qt);
         continue;
       }
 
