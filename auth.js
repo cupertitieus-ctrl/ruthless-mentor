@@ -36,7 +36,7 @@ const redirectTo = params.get('redirect') || '/dashboard.html';
 
 // ===== CHECK IF ALREADY LOGGED IN =====
 (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sb.auth.getSession();
     if (session) window.location.href = redirectTo;
 })();
 
@@ -47,7 +47,7 @@ signinForm.addEventListener('submit', async (e) => {
     const password = document.getElementById('si-password').value;
     hideMsg();
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error) {
         showMsg(error.message, true);
     } else {
@@ -66,7 +66,7 @@ signupForm.addEventListener('submit', async (e) => {
     if (password.length < 6) { showMsg('Password must be at least 6 characters.', true); return; }
 
     try {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await sb.auth.signUp({ email, password });
         console.log('[SIGNUP]', { data, error });
 
         if (error) {
@@ -82,7 +82,7 @@ signupForm.addEventListener('submit', async (e) => {
 
         // If user exists but no session, try signing in immediately
         if (data.user) {
-            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+            const { data: signInData, error: signInError } = await sb.auth.signInWithPassword({ email, password });
             if (signInError) {
                 showMsg('Account created! Now sign in with your credentials.', false);
             } else {
@@ -104,7 +104,7 @@ async function sendMagicLink(emailInputId) {
     if (!email) { showMsg('Enter your email first.', true); return; }
     hideMsg();
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await sb.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: window.location.origin + redirectTo }
     });
@@ -119,7 +119,7 @@ document.getElementById('si-magic').addEventListener('click', () => sendMagicLin
 document.getElementById('su-magic').addEventListener('click', () => sendMagicLink('su-email'));
 
 // ===== LISTEN FOR AUTH STATE (magic link callback) =====
-supabase.auth.onAuthStateChange((event, session) => {
+sb.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) {
         window.location.href = redirectTo;
     }

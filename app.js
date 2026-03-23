@@ -1,6 +1,6 @@
 // ===== AUTH-AWARE NAV =====
 (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sb.auth.getSession();
     const signinEl = document.getElementById('nav-signin');
     const ctaOutEl = document.getElementById('nav-cta-out');
     const dashEl = document.getElementById('nav-dash');
@@ -19,7 +19,7 @@
     if (signoutEl) {
         signoutEl.addEventListener('click', async (e) => {
             e.preventDefault();
-            await supabase.auth.signOut();
+            await sb.auth.signOut();
             window.location.reload();
         });
     }

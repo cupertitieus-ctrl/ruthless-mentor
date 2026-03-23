@@ -2,7 +2,7 @@
 let _session = null;
 
 (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sb.auth.getSession();
     if (!session) {
         window.location.href = '/auth.html?redirect=/dashboard.html';
         return;
@@ -14,7 +14,7 @@ let _session = null;
 // ===== SIGN OUT =====
 document.getElementById('signout-btn').addEventListener('click', async (e) => {
     e.preventDefault();
-    await supabase.auth.signOut();
+    await sb.auth.signOut();
     window.location.href = '/';
 });
 

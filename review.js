@@ -5,7 +5,7 @@ const reviewPage = document.querySelector('.review-page');
 
 (async () => {
     try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await sb.auth.getSession();
         if (session) {
             _session = session;
             authGate.classList.add('hidden');
