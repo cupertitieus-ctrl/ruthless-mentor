@@ -562,6 +562,57 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
 
       if (!trimmed) { doc.moveDown(0.3); continue; }
 
+      // Skip markdown table separator rows (|---|---|)
+      if (/^\|[\s\-:]+\|/.test(trimmed) && !trimmed.replace(/[\s\-:|]/g, '')) { continue; }
+
+      // Markdown table rows (| col | col | col |)
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        const cells = trimmed.split('|').filter(c => c.trim()).map(c => clean(c));
+        if (cells.length === 0) continue;
+
+        // Check if this is a header row (next line is separator)
+        const nextLine = (lines[i + 1] || '').trim();
+        const isHeader = /^\|[\s\-:]+\|/.test(nextLine);
+
+        const rowY = doc.y;
+        const col1W = 90;
+        const col2W = 40;
+        const col3W = pw - col1W - col2W - 10;
+
+        if (isHeader) {
+          // Table header
+          doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
+          if (cells[0]) doc.text(cells[0].toUpperCase(), x, rowY, { width: col1W });
+          if (cells[1]) doc.text(cells[1].toUpperCase(), x + col1W, rowY, { width: col2W, align: 'center' });
+          if (cells[2]) doc.text(cells[2].toUpperCase(), x + col1W + col2W + 10, rowY, { width: col3W });
+          doc.y = rowY + 16;
+          // Underline
+          doc.strokeColor(...C.gold).lineWidth(1).moveTo(x, doc.y).lineTo(x + pw, doc.y).stroke();
+          doc.y += 4;
+        } else {
+          // Table data row
+          doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.darkRed);
+          if (cells[0]) doc.text(cells[0], x, rowY, { width: col1W });
+          doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black);
+          if (cells[1]) doc.text(cells[1], x + col1W, rowY, { width: col2W, align: 'center' });
+          doc.fontSize(8).font('Helvetica').fillColor(...C.gray);
+          if (cells[2]) doc.text(cells[2], x + col1W + col2W + 10, rowY, { width: col3W });
+          doc.y = Math.max(doc.y, rowY + 14);
+          // Light divider
+          doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
+          doc.y += 6;
+        }
+        doc.fillColor(...C.black);
+        continue;
+      }
+
+      // Horizontal rule (--- or ___)
+      if (/^[-_]{3,}$/.test(trimmed)) {
+        doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y + 4).lineTo(x + pw, doc.y + 4).stroke();
+        doc.moveDown(0.5);
+        continue;
+      }
+
       // Section headers (### 1. Title)
       const h3Match = trimmed.match(/^###\s*(\d+)\.\s*(.+)/);
       const h2Match = !h3Match && trimmed.match(/^##\s*(.+)/);
@@ -571,7 +622,6 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         doc.moveDown(0.8);
         const title = `${h3Match[1]}. ${clean(h3Match[2])}`.toUpperCase();
         doc.fontSize(13).font('Helvetica-Bold').fillColor(...C.darkRed).text(title, x, doc.y, { width: pw });
-        // Gold underline — just a line, no rect
         const lineY = doc.y + 2;
         doc.strokeColor(...C.gold).lineWidth(2).moveTo(x, lineY).lineTo(x + 200, lineY).stroke();
         doc.moveDown(0.6);
@@ -594,10 +644,32 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         continue;
       }
 
-      // Quote blocks — italic with a gold line on the left, NO filled rects
+      // Character grade detection (e.g., "James — Grade: B+" or "**James** (B+)")
+      const gradeMatch = trimmed.match(/(?:Grade:\s*|[\(\[])([A-F][+-]?)(?:[\)\]]|$)/i);
+      const charNameMatch = trimmed.match(/^(?:\*\*)?([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s*(?:\*\*)?\s*[-—]\s*Grade/i);
+
+      if (gradeMatch && charNameMatch) {
+        doc.moveDown(0.3);
+        const charName = clean(charNameMatch[1]);
+        const grade = gradeMatch[1].toUpperCase();
+        const gc = gradeColor(grade);
+
+        // Character name in bold
+        doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(charName, x, doc.y, { width: pw - 60 });
+
+        // Grade as colored text (no rect)
+        doc.fontSize(11).font('Helvetica-Bold').fillColor(...gc).text(grade, x + pw - 40, doc.y - 14, { width: 40, align: 'right' });
+        doc.fillColor(...C.black);
+
+        // Separator line
+        doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
+        doc.moveDown(0.4);
+        continue;
+      }
+
+      // Quote blocks — italic with a gold line on the left
       if (trimmed.startsWith('>')) {
         const qt = clean(trimmed.replace(/^>\s*/, ''));
-        // Draw gold left border line
         const qStartY = doc.y;
         doc.fontSize(9).font('Helvetica-Oblique').fillColor(80, 80, 80).text(qt, x + 14, doc.y, { width: pw - 20 });
         const qEndY = doc.y;

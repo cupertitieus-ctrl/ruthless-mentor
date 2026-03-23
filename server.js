@@ -102,15 +102,27 @@ Rate the writing quality from 1 to 10. Then go through each of these and quote s
 For every problem you find, quote the exact passage and explain what's wrong with it in plain language.
 
 ### 3. Repeat Word Report
-List every word that's used too much. For each one:
-- The word
-- How many times it appears
-- The different ways it's used (quote short phrases)
+List every word that's used too much. Use this EXACT format for each word (one per line, no tables, no pipes, no dashes):
+
+**"word"** (Xx) — brief description of how it's used
+
+Example:
+**"just"** (19x) — filler throughout: "I just put them down," "just for a split second," weakens prose
+**"staring"** (13x) — used repeatedly for the hamster: "staring straight at me," "just staring"
+
+Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, count in parentheses, dash, description.
 
 ### 4. Depth Check
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
 
 ### 5. Character Report Card
+For each main character, use this format:
+
+**Character Name** — Grade: X
+
+Then explain strengths, weaknesses, and diagnosis as regular paragraphs.
+
+Do NOT use markdown tables for characters either.
 For each main character, give them a letter grade (A through F) and explain:
 - What's working (with examples from the text)
 - What's not working (with examples)
