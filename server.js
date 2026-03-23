@@ -298,8 +298,8 @@ const STAGE_LABELS = {
 };
 const GENRE_LABELS = {
   'picture-book': 'Picture book (Ages 3–8) — focus on story arc, emotional connection, read-aloud rhythm, and illustration pacing',
-  'early-reader': 'Early reader (Ages 5–8) — focus on simple sentence structure, repetition, vocabulary level, and decodable text',
-  'chapter-book': 'Chapter book (Ages 6–10) — focus on chapter hooks, age-appropriate humor, relatable situations, and pacing',
+  'early-reader': 'Early reader (1,000–4,000 words, Ages 5–7) — focus on simple sentence structure, repetition, vocabulary level, and decodable text',
+  'chapter-book': 'Chapter book (5,000–10,000 words, Ages 6–10) — focus on chapter hooks, age-appropriate humor, relatable situations, and pacing',
   'middle-grade': 'Middle grade (Ages 8–12) — focus on character voice, emotional authenticity, theme depth, and coming-of-age resonance',
   'young-adult': 'Young adult (Ages 12–18) — focus on authentic teen voice, stakes, identity, and emotional complexity',
   'literary-fiction': 'Literary fiction (Ages 18+) — focus on prose style, thematic depth, character interiority, and structural ambition',
