@@ -908,6 +908,137 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
         continue;
       }
 
+      // --- [STRENGTHS] green callout box ---
+      const strengthsMatch = trimmed.match(/^\[STRENGTHS\]\s*(.+)/i);
+      if (strengthsMatch) {
+        const items = strengthsMatch[1];
+        ensureSpace(30);
+        const sY = doc.y;
+        const sH = 28;
+        rawRect(x, sY, pw, sH, [232, 245, 233]); // light green bg
+        rawRect(x, sY, 4, sH, C.green); // green left border
+        // Checkmark + text
+        doc.addContent(`${(46/255).toFixed(3)} ${(125/255).toFixed(3)} ${(50/255).toFixed(3)} rg`);
+        doc.fontSize(9).font('Helvetica-Bold');
+        doc.text('You\'ve Got:  ' + clean(items), x + 14, sY + 9, { width: pw - 20, lineBreak: false });
+        doc.addContent('0.102 0.102 0.102 rg');
+        doc.fillColor(26, 26, 26);
+        doc.y = sY + sH + 8;
+        continue;
+      }
+
+      // --- [FIX] red RUTHLESS FIX box ---
+      const fixMatch = trimmed.match(/^\[FIX\]\s*(.+)/i);
+      if (fixMatch) {
+        const fixText = clean(fixMatch[1]);
+        ensureSpace(40);
+        doc.fontSize(9).font('Helvetica');
+        const fixH = doc.heightOfString(fixText, { width: pw - 24 }) + 28;
+        const fY = doc.y;
+        rawRect(x, fY, pw, fixH, [255, 248, 225]); // light yellow bg
+        rawRect(x, fY, 4, fixH, C.darkRed); // dark red left border
+        // Header
+        doc.addContent(`${(139/255).toFixed(3)} 0.000 0.000 rg`);
+        doc.fontSize(8).font('Helvetica-Bold');
+        doc.text('RUTHLESS FIX:', x + 14, fY + 8, { width: pw - 20, lineBreak: false });
+        doc.addContent('0.102 0.102 0.102 rg');
+        // Body
+        doc.fontSize(9).font('Helvetica').fillColor(26, 26, 26);
+        doc.text(fixText, x + 14, fY + 22, { width: pw - 24 });
+        doc.fillColor(26, 26, 26);
+        doc.y = fY + fixH + 6;
+        continue;
+      }
+
+      // --- [BAD] [WARN] [GOOD] [NOTE] pacing breakdown ---
+      const pacingMatch = trimmed.match(/^\[(BAD|WARN|GOOD|NOTE)\]\s*(.+)/i);
+      if (pacingMatch) {
+        const pType = pacingMatch[1].toUpperCase();
+        const pText = clean(pacingMatch[2]);
+        const icons = { 'BAD': 'X', 'WARN': '!', 'GOOD': '\u2713', 'NOTE': '\u2192' };
+        const colors = { 'BAD': C.red, 'WARN': C.yellow, 'GOOD': C.green, 'NOTE': C.gray };
+        const icon = icons[pType];
+        const iconColor = colors[pType];
+        ensureSpace(18);
+        const pY = doc.y;
+        // Icon circle
+        rawRect(x + 4, pY + 1, 14, 14, iconColor);
+        // Icon letter (white)
+        doc.addContent('1.000 1.000 1.000 rg');
+        doc.fontSize(9).font('Helvetica-Bold');
+        doc.text(icon, x + 6, pY + 3, { width: 10, align: 'center', lineBreak: false });
+        doc.addContent('0.102 0.102 0.102 rg');
+        // Text
+        doc.fontSize(9).font('Helvetica').fillColor(26, 26, 26);
+        doc.text(pText, x + 24, pY + 2, { width: pw - 28 });
+        doc.fillColor(26, 26, 26);
+        doc.y = Math.max(doc.y, pY + 16);
+        doc.moveDown(0.15);
+        continue;
+      }
+
+      // --- [TELLING] / [STRONGER] comparison rows ---
+      const tellingMatch = trimmed.match(/^\[TELLING\]\s*(.+)/i);
+      if (tellingMatch) {
+        const tText = clean(tellingMatch[1]);
+        ensureSpace(24);
+        const tY = doc.y;
+        const tH = 22;
+        rawRect(x, tY, pw, tH, C.redLight); // light red bg
+        rawRect(x, tY, 4, tH, C.red); // red left border
+        doc.addContent(`${(198/255).toFixed(3)} ${(40/255).toFixed(3)} ${(40/255).toFixed(3)} rg`);
+        doc.fontSize(7).font('Helvetica-Bold');
+        doc.text('TELLING:', x + 10, tY + 3, { width: 50, lineBreak: false });
+        doc.addContent('0.200 0.200 0.200 rg');
+        doc.fontSize(8).font('Helvetica-Oblique');
+        doc.text(tText, x + 62, tY + 3, { width: pw - 68 });
+        doc.addContent('0.102 0.102 0.102 rg');
+        doc.fillColor(26, 26, 26);
+        doc.y = Math.max(doc.y, tY + tH + 2);
+        continue;
+      }
+
+      const strongerMatch = trimmed.match(/^\[STRONGER\]\s*(.+)/i);
+      if (strongerMatch) {
+        const sText = clean(strongerMatch[1]);
+        ensureSpace(24);
+        const sY = doc.y;
+        const sH = 22;
+        rawRect(x, sY, pw, sH, C.greenLight); // light green bg
+        rawRect(x, sY, 4, sH, C.green); // green left border
+        doc.addContent(`${(46/255).toFixed(3)} ${(125/255).toFixed(3)} ${(50/255).toFixed(3)} rg`);
+        doc.fontSize(7).font('Helvetica-Bold');
+        doc.text('STRONGER:', x + 10, sY + 3, { width: 55, lineBreak: false });
+        doc.addContent('0.200 0.200 0.200 rg');
+        doc.fontSize(8).font('Helvetica-Oblique');
+        doc.text(sText, x + 68, sY + 3, { width: pw - 74 });
+        doc.addContent('0.102 0.102 0.102 rg');
+        doc.fillColor(26, 26, 26);
+        doc.y = Math.max(doc.y, sY + sH + 2);
+        continue;
+      }
+
+      // --- [GOOD PASSAGE] green callout ---
+      const goodPassageMatch = trimmed.match(/^\[GOOD PASSAGE\]\s*(.+)/i);
+      if (goodPassageMatch) {
+        const gpText = clean(goodPassageMatch[1]);
+        ensureSpace(24);
+        const gpY = doc.y;
+        const gpH = 22;
+        rawRect(x, gpY, pw, gpH, C.greenLight);
+        rawRect(x, gpY, 4, gpH, C.green);
+        doc.addContent(`${(46/255).toFixed(3)} ${(125/255).toFixed(3)} ${(50/255).toFixed(3)} rg`);
+        doc.fontSize(8).font('Helvetica-Bold');
+        doc.text('\u2713 ', x + 10, gpY + 6, { width: 12, lineBreak: false });
+        doc.addContent('0.200 0.200 0.200 rg');
+        doc.fontSize(8).font('Helvetica-Oblique');
+        doc.text(gpText, x + 22, gpY + 6, { width: pw - 28 });
+        doc.addContent('0.102 0.102 0.102 rg');
+        doc.fillColor(26, 26, 26);
+        doc.y = Math.max(doc.y, gpY + gpH + 4);
+        continue;
+      }
+
       // --- Bold-only subheader lines (**text**) ---
       if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
         ensureSpace(16);

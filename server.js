@@ -88,6 +88,11 @@ Produce your review using these exact section headers. Every section is mandator
 ### 1. First Impressions
 2-3 sentences. Your gut reaction after reading. What grabbed you? What made you wince?
 
+After your impression, include a strengths callout using this EXACT format:
+[STRENGTHS] A vivid setting | A strong main character | Sharp dialogue
+
+Use pipe-separated items. This will render as a green callout box.
+
 ### 2. Author's Voice: X/10
 Rate the voice and tone from 1 to 10. At a 10, there's a talented writer behind these words. At a 1, the writing feels generic — just words on a page.
 
@@ -156,7 +161,20 @@ For each main character, give them a letter grade (A through F) and evaluate:
 - Diagnosis: Is this a real person or a cardboard cutout? Why?
 
 ### 7. Story Mechanics
-Cover: pacing (where it drags, where it rushes), plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
+Cover these areas: pacing, plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
+
+For pacing, include a chapter-by-chapter breakdown using this EXACT format (one per line):
+[BAD] Ch. 1-2: description of what's wrong
+[WARN] Ch. 3-6: description of concern
+[GOOD] Ch. 7-12: description of what works
+[NOTE] Overall: summary
+
+For the single biggest structural fix, use this EXACT format:
+[FIX] Your specific actionable fix here.
+
+For showing vs telling comparisons, use this EXACT format:
+[TELLING] "exact quote from the text" — why it's weak
+[STRONGER] "suggested rewrite" — why it works better
 
 ### 8. Line-Level Callouts
 Pull at least 5-10 specific passages from the text. For each one:
@@ -164,7 +182,8 @@ Pull at least 5-10 specific passages from the text. For each one:
 - Explain the problem
 - Suggest a specific fix or rewrite
 
-Also call out passages that are genuinely good and explain why they work.
+Also call out passages that are genuinely good and explain why they work. For good passages use:
+[GOOD PASSAGE] "exact quote" — why this works
 
 ### 9. Where This Is Heading
 If the manuscript is unfinished: what problems will get worse? What should the author fix before writing more?
