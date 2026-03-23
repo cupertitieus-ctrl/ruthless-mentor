@@ -151,6 +151,10 @@ async function handleFile(file) {
             const formData = new FormData();
             formData.append('file', file);
             const res = await fetch('/api/parse-file', { method: 'POST', body: formData });
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('Server returned an unexpected response. Make sure you are on the correct site.');
+            }
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Parse failed');
             textarea.value = data.text;
