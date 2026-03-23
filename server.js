@@ -7,7 +7,7 @@ const multer = require('multer');
 const mammoth = require('mammoth');
 const pdfParse = require('pdf-parse');
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 const app = express();
 app.use(cors());
@@ -381,11 +381,27 @@ app.post('/api/parse-file', (req, res) => {
       if (ext === '.txt') {
         text = req.file.buffer.toString('utf-8');
       } else if (ext === '.pdf') {
-        const data = await pdfParse(req.file.buffer);
-        text = data.text;
+        try {
+          const data = await pdfParse(req.file.buffer);
+          text = data.text;
+          if (!text || !text.trim()) {
+            return res.status(400).json({ error: 'Could not extract text from this PDF. It may be image-based or scanned. Try copying the text and pasting it instead.' });
+          }
+        } catch (pdfErr) {
+          console.error('[PDF PARSE ERROR]', pdfErr.message);
+          return res.status(400).json({ error: 'Could not read this PDF. Try saving it as a DOCX or pasting the text directly.' });
+        }
       } else if (ext === '.docx') {
-        const result = await mammoth.extractRawText({ buffer: req.file.buffer });
-        text = result.value;
+        try {
+          const result = await mammoth.extractRawText({ buffer: req.file.buffer });
+          text = result.value;
+          if (!text || !text.trim()) {
+            return res.status(400).json({ error: 'Could not extract text from this DOCX. The file may be empty or corrupted.' });
+          }
+        } catch (docxErr) {
+          console.error('[DOCX PARSE ERROR]', docxErr.message);
+          return res.status(400).json({ error: 'Could not read this DOCX file. Try pasting the text directly.' });
+        }
       } else {
         return res.status(400).json({ error: 'Unsupported file type. Use PDF, DOCX, or TXT.' });
       }
