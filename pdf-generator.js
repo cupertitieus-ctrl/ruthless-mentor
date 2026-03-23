@@ -563,7 +563,7 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
 
     // Title
     doc.fontSize(24).font('Helvetica-Bold').fillColor(...C.black);
-    doc.text('Manuscript Review Report', 72, doc.y, { width: pw });
+    doc.text('Manuscript Review Report', 72, doc.y, { width: doc.page.width - 144 });
     doc.moveDown(0.5);
 
     // Meta
