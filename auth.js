@@ -62,13 +62,39 @@ signupForm.addEventListener('submit', async (e) => {
     const password = document.getElementById('su-password').value;
     hideMsg();
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-        showMsg(error.message, true);
-    } else if (data.session) {
-        window.location.href = redirectTo;
-    } else {
-        showMsg('Account created! Check your email to confirm, then sign in.', false);
+    if (!email || !password) { showMsg('Enter email and password.', true); return; }
+    if (password.length < 6) { showMsg('Password must be at least 6 characters.', true); return; }
+
+    try {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        console.log('[SIGNUP]', { data, error });
+
+        if (error) {
+            showMsg(error.message, true);
+            return;
+        }
+
+        // If session exists, redirect immediately
+        if (data.session) {
+            window.location.href = redirectTo;
+            return;
+        }
+
+        // If user exists but no session, try signing in immediately
+        if (data.user) {
+            const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+            if (signInError) {
+                showMsg('Account created! Now sign in with your credentials.', false);
+            } else {
+                window.location.href = redirectTo;
+            }
+            return;
+        }
+
+        showMsg('Account created! Switch to Sign In and log in.', false);
+    } catch (err) {
+        console.error('[SIGNUP ERROR]', err);
+        showMsg('Something went wrong. Try again.', true);
     }
 });
 
