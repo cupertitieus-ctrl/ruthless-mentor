@@ -1,26 +1,12 @@
 // ===== AUTH (soft — page works without login) =====
 let _session = null;
-let _isFirstFree = true;
-
 (async () => {
     try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
             _session = session;
-            try {
-                const res = await fetch('/api/me', {
-                    headers: { 'Authorization': 'Bearer ' + session.access_token }
-                });
-                const data = await res.json();
-                _isFirstFree = data.isFirstFree;
-            } catch (e) { _isFirstFree = true; }
         }
     } catch (e) { /* supabase not loaded or no session — that's fine */ }
-
-    if (_isFirstFree) {
-        const note = document.querySelector('.form-note');
-        if (note) note.textContent = 'First review is free — no account needed.';
-    }
     updateCost();
 })();
 
@@ -58,11 +44,11 @@ function updateCost() {
     if (wordCountEl) wordCountEl.textContent = words.toLocaleString();
 
     const tier = words > 0 ? getTier(words) : null;
-    const total = _isFirstFree ? 0 : (tier ? tier.price : 0);
+    const total = tier ? tier.price : 0;
 
     if (estTierEl) estTierEl.textContent = words === 0 ? '--' : tier.name;
-    if (estCostEl) estCostEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? '--' : '$' + tier.price);
-    if (totalEl) totalEl.textContent = _isFirstFree ? 'Free' : (words === 0 ? '--' : '$' + total);
+    if (estCostEl) estCostEl.textContent = words === 0 ? '--' : '$' + tier.price;
+    if (totalEl) totalEl.textContent = words === 0 ? '--' : '$' + total;
 
     // Highlight active tier in sidebar
     document.querySelectorAll('.sidebar-tier').forEach(el => el.classList.remove('active'));
@@ -153,14 +139,13 @@ if (form) {
 // ===== REVIEW SCREEN =====
 function showReviewScreen(data) {
     const screen = document.getElementById('review-screen');
-    const costLabel = data.isFirstFree ? 'Free' : '$' + data.totalCost;
+    const costLabel = '$' + data.totalCost;
     document.getElementById('review-meta').textContent =
         `${data.tier} \u00B7 ${data.wordCount.toLocaleString()} words \u00B7 ${costLabel}`;
     document.getElementById('review-body').innerHTML = markdownToHtml(data.review);
     screen.classList.remove('hidden');
     window.scrollTo(0, 0);
     window._lastReview = data.review;
-    _isFirstFree = false;
     updateCost();
 }
 
