@@ -508,12 +508,71 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    // Header
+    const pw = doc.page.width - 144;
+    const x = 72;
+
+    const pageBottom = doc.page.height - 50;
+
+    // --- Helper: ensure enough space on current page ---
+    function ensureSpace(needed) {
+      if (doc.y + needed > pageBottom) {
+        doc.addPage();
+        doc.y = 40;
+      }
+    }
+
+    // --- Strip markdown inline formatting ---
+    function clean(str) {
+      return (str || '')
+        .replace(/\*\*/g, '').replace(/\*/g, '').replace(/`/g, '')
+        .replace(/[\u201c\u201d]/g, '"').replace(/[\u2018\u2019]/g, "'")
+        .replace(/\u2014/g, '--').replace(/\u2013/g, '-')
+        .trim();
+    }
+
+    // --- Safe text: split long text into chunks to avoid PDFKit page-break recursion ---
+    function safeText(text, opts) {
+      const fontSize = opts.fontSize || 10;
+      const font = opts.font || 'Helvetica';
+      const color = opts.color || C.black;
+      const indent = opts.indent || 0;
+      const lineH = fontSize * 1.4;
+      const maxW = pw - indent;
+
+      doc.fontSize(fontSize).font(font).fillColor(...color);
+
+      // Split into paragraphs, render each separately
+      const paras = text.split('\n').filter(p => p.trim());
+      for (const para of paras) {
+        // Estimate height
+        const estLines = Math.ceil(doc.widthOfString(para, { width: maxW }) / maxW) + 1;
+        const estH = estLines * lineH;
+
+        if (estH > pageBottom - 60) {
+          // Very long paragraph — split into sentences
+          const sentences = para.match(/[^.!?]+[.!?]+\s*/g) || [para];
+          for (const sent of sentences) {
+            ensureSpace(lineH * 2);
+            doc.fontSize(fontSize).font(font).fillColor(...color);
+            doc.text(sent.trim(), x + indent, doc.y, { width: maxW, lineGap: 2 });
+          }
+        } else {
+          ensureSpace(Math.min(estH + 10, pageBottom - 60));
+          doc.fontSize(fontSize).font(font).fillColor(...color);
+          doc.text(para, x + indent, doc.y, { width: maxW, lineGap: 2 });
+        }
+        doc.moveDown(0.15);
+      }
+      doc.fillColor(...C.black);
+    }
+
+    // ========== HEADER ==========
     if (hasLogo) {
       doc.image(LOGO_PATH, doc.page.width / 2 - 30, 40, { width: 60 });
       doc.moveDown(4);
     }
 
+    // Brand line: gold lines flanking "RUTHLESS MENTOR"
     const brandY = doc.y + 5;
     doc.fontSize(9).font('Helvetica-Bold');
     const brandText = 'RUTHLESS MENTOR';
@@ -525,15 +584,17 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
     doc.strokeColor(...C.gold).lineWidth(1.5);
     doc.moveTo(centerX - textW / 2 - lineGap - lineLen, brandY).lineTo(centerX - textW / 2 - lineGap, brandY).stroke();
     doc.moveTo(centerX + textW / 2 + lineGap, brandY).lineTo(centerX + textW / 2 + lineGap + lineLen, brandY).stroke();
-    doc.fillColor(...C.black).text(brandText, 0, brandY - 5, { align: 'center', width: doc.page.width, characterSpacing: brandCharSpacing });
+    doc.fillColor(...C.gold).text(brandText, 0, brandY - 5, { align: 'center', width: doc.page.width, characterSpacing: brandCharSpacing });
+    doc.fillColor(...C.black);
     doc.moveDown(1.5);
 
     // Title
     doc.fontSize(24).font('Helvetica-Bold').fillColor(...C.black);
-    doc.text('Manuscript Review Report', 72, doc.y, { width: doc.page.width - 144 });
+    doc.text('Manuscript Review Report', x, doc.y, { width: pw });
+    doc.fillColor(...C.black);
     doc.moveDown(0.5);
 
-    // Meta
+    // Metadata
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const metaLines = [
       ['Review Date:', date],
@@ -542,161 +603,265 @@ async function generatePdfFromMarkdown(markdown, wordCount, tier) {
     ];
     metaLines.forEach(([label, value]) => {
       const rowY = doc.y;
-      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(label, 72, rowY, { width: 100 });
+      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(label, x, rowY, { width: 100 });
+      doc.fillColor(...C.black);
       doc.font('Helvetica-Oblique').fillColor(...C.gray).text(value, 180, rowY, { width: 300 });
+      doc.fillColor(...C.black);
       doc.y = Math.max(doc.y, rowY + 14);
     });
     doc.moveDown(1);
 
-    // Strip markdown
-    function clean(str) {
-      return (str || '').replace(/\*\*/g, '').replace(/\*/g, '').replace(/`/g, '').trim();
-    }
+    // Thin separator after header
+    doc.strokeColor(...C.lightGray).lineWidth(0.5);
+    doc.moveTo(x, doc.y).lineTo(x + pw, doc.y).stroke();
+    doc.moveDown(0.8);
 
+    // ========== BODY ==========
     const lines = markdown.split('\n');
-    const pw = doc.page.width - 144;
-    const x = 72;
 
     for (let i = 0; i < lines.length; i++) {
       const trimmed = lines[i].trim();
 
-      if (!trimmed) { doc.moveDown(0.3); continue; }
+      // Empty line
+      if (!trimmed) {
+        doc.moveDown(0.3);
+        continue;
+      }
 
-      // Skip markdown table separator rows (|---|---|)
-      if (/^\|[\s\-:]+\|/.test(trimmed) && !trimmed.replace(/[\s\-:|]/g, '')) { continue; }
+      // --- Skip markdown table separator rows (|---|---|) ---
+      if (/^\|[\s\-:]+\|/.test(trimmed) && !trimmed.replace(/[\s\-:|]/g, '')) {
+        continue;
+      }
 
-      // Markdown table rows (| col | col | col |)
+      // --- Markdown table rows (| col | col | col |) ---
       if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
         const cells = trimmed.split('|').filter(c => c.trim()).map(c => clean(c));
         if (cells.length === 0) continue;
 
-        // Check if this is a header row (next line is separator)
         const nextLine = (lines[i + 1] || '').trim();
         const isHeader = /^\|[\s\-:]+\|/.test(nextLine);
 
+        ensureSpace(20);
         const rowY = doc.y;
         const col1W = 90;
-        const col2W = 40;
+        const col2W = 45;
         const col3W = pw - col1W - col2W - 10;
 
         if (isHeader) {
-          // Table header
           doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
           if (cells[0]) doc.text(cells[0].toUpperCase(), x, rowY, { width: col1W });
           if (cells[1]) doc.text(cells[1].toUpperCase(), x + col1W, rowY, { width: col2W, align: 'center' });
           if (cells[2]) doc.text(cells[2].toUpperCase(), x + col1W + col2W + 10, rowY, { width: col3W });
+          doc.fillColor(...C.black);
           doc.y = rowY + 16;
-          // Underline
-          doc.strokeColor(...C.gold).lineWidth(1).moveTo(x, doc.y).lineTo(x + pw, doc.y).stroke();
+          doc.strokeColor(...C.gold).lineWidth(1);
+          doc.moveTo(x, doc.y).lineTo(x + pw, doc.y).stroke();
           doc.y += 4;
         } else {
-          // Table data row
           doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.darkRed);
           if (cells[0]) doc.text(cells[0], x, rowY, { width: col1W });
+          doc.fillColor(...C.black);
           doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black);
           if (cells[1]) doc.text(cells[1], x + col1W, rowY, { width: col2W, align: 'center' });
+          doc.fillColor(...C.black);
           doc.fontSize(8).font('Helvetica').fillColor(...C.gray);
           if (cells[2]) doc.text(cells[2], x + col1W + col2W + 10, rowY, { width: col3W });
+          doc.fillColor(...C.black);
           doc.y = Math.max(doc.y, rowY + 14);
-          // Light divider
-          doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
+          doc.strokeColor(...C.lightGray).lineWidth(0.5);
+          doc.moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
           doc.y += 6;
         }
-        doc.fillColor(...C.black);
         continue;
       }
 
-      // Horizontal rule (--- or ___)
+      // --- Horizontal rule (--- or ___) ---
       if (/^[-_]{3,}$/.test(trimmed)) {
-        doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y + 4).lineTo(x + pw, doc.y + 4).stroke();
+        ensureSpace(12);
+        doc.strokeColor(...C.lightGray).lineWidth(0.5);
+        doc.moveTo(x, doc.y + 4).lineTo(x + pw, doc.y + 4).stroke();
         doc.moveDown(0.5);
         continue;
       }
 
-      // Section headers (### 1. Title)
+      // --- Section headers: ### N. Title ---
       const h3Match = trimmed.match(/^###\s*(\d+)\.\s*(.+)/);
       const h2Match = !h3Match && trimmed.match(/^##\s*(.+)/);
       const h1Match = !h3Match && !h2Match && trimmed.match(/^#\s*(.+)/);
 
       if (h3Match) {
+        ensureSpace(40);
         doc.moveDown(0.8);
-        const title = `${h3Match[1]}. ${clean(h3Match[2])}`.toUpperCase();
-        doc.fontSize(13).font('Helvetica-Bold').fillColor(...C.darkRed).text(title, x, doc.y, { width: pw });
-        const lineY = doc.y + 2;
-        doc.strokeColor(...C.gold).lineWidth(2).moveTo(x, lineY).lineTo(x + 200, lineY).stroke();
-        doc.moveDown(0.6);
+        const rawTitle = `${h3Match[1]}. ${clean(h3Match[2])}`;
+        const titleText = rawTitle.toUpperCase();
+
+        // Check for score pattern like "X/10" in the header text
+        const scoreMatch = rawTitle.match(/(\d{1,2})\/10/);
+
+        doc.fontSize(13).font('Helvetica-Bold').fillColor(...C.darkRed).text(titleText, x, doc.y, { width: pw });
         doc.fillColor(...C.black);
+        const lineY = doc.y + 2;
+        doc.strokeColor(...C.gold).lineWidth(2);
+        doc.moveTo(x, lineY).lineTo(x + 200, lineY).stroke();
+        doc.moveDown(0.6);
+
+        // Render score display if header contains X/10
+        if (scoreMatch) {
+          const scoreVal = parseInt(scoreMatch[1], 10);
+          const sc = scoreColor(scoreVal);
+          const labelPart = rawTitle.replace(/\s*[-—:]*\s*\d{1,2}\/10/, '').replace(/^\d+\.\s*/, '').trim();
+
+          ensureSpace(30);
+          const scoreY = doc.y;
+          doc.fontSize(22).font('Helvetica-Bold').fillColor(...sc).text(scoreVal + '/10', x, scoreY, { width: 80 });
+          doc.fillColor(...C.black);
+          doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(labelPart, x + 80, scoreY + 6, { width: pw - 80 });
+          doc.fillColor(...C.black);
+          doc.y = Math.max(doc.y, scoreY + 28);
+          doc.moveDown(0.3);
+        }
         continue;
       }
+
       if (h2Match) {
+        ensureSpace(40);
         doc.moveDown(0.8);
-        doc.fontSize(13).font('Helvetica-Bold').fillColor(...C.darkRed).text(clean(h2Match[1]).toUpperCase(), x, doc.y, { width: pw });
-        const lineY = doc.y + 2;
-        doc.strokeColor(...C.gold).lineWidth(2).moveTo(x, lineY).lineTo(x + 200, lineY).stroke();
-        doc.moveDown(0.6);
+        const rawH2 = clean(h2Match[1]);
+        const scoreMatch = rawH2.match(/(\d{1,2})\/10/);
+
+        doc.fontSize(13).font('Helvetica-Bold').fillColor(...C.darkRed).text(rawH2.toUpperCase(), x, doc.y, { width: pw });
         doc.fillColor(...C.black);
+        const lineY = doc.y + 2;
+        doc.strokeColor(...C.gold).lineWidth(2);
+        doc.moveTo(x, lineY).lineTo(x + 200, lineY).stroke();
+        doc.moveDown(0.6);
+
+        if (scoreMatch) {
+          const scoreVal = parseInt(scoreMatch[1], 10);
+          const sc = scoreColor(scoreVal);
+          const labelPart = rawH2.replace(/\s*[-—:]*\s*\d{1,2}\/10/, '').trim();
+
+          ensureSpace(30);
+          const scoreY = doc.y;
+          doc.fontSize(22).font('Helvetica-Bold').fillColor(...sc).text(scoreVal + '/10', x, scoreY, { width: 80 });
+          doc.fillColor(...C.black);
+          doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(labelPart, x + 80, scoreY + 6, { width: pw - 80 });
+          doc.fillColor(...C.black);
+          doc.y = Math.max(doc.y, scoreY + 28);
+          doc.moveDown(0.3);
+        }
         continue;
       }
+
       if (h1Match) {
+        ensureSpace(30);
         doc.fontSize(16).font('Helvetica-Bold').fillColor(...C.darkRed).text(clean(h1Match[1]), x, doc.y, { width: pw });
         doc.fillColor(...C.black);
         doc.moveDown(0.5);
         continue;
       }
 
-      // Character grade detection (e.g., "James — Grade: B+" or "**James** (B+)")
+      // --- Character grade detection (e.g., "James — Grade: B+") ---
       const gradeMatch = trimmed.match(/(?:Grade:\s*|[\(\[])([A-F][+-]?)(?:[\)\]]|$)/i);
       const charNameMatch = trimmed.match(/^(?:\*\*)?([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s*(?:\*\*)?\s*[-—]\s*Grade/i);
 
       if (gradeMatch && charNameMatch) {
+        ensureSpace(24);
         doc.moveDown(0.3);
         const charName = clean(charNameMatch[1]);
         const grade = gradeMatch[1].toUpperCase();
         const gc = gradeColor(grade);
 
-        // Character name in bold
-        doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(charName, x, doc.y, { width: pw - 60 });
-
-        // Grade as colored text (no rect)
-        doc.fontSize(11).font('Helvetica-Bold').fillColor(...gc).text(grade, x + pw - 40, doc.y - 14, { width: 40, align: 'right' });
+        const nameY = doc.y;
+        doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(charName, x, nameY, { width: pw - 60 });
         doc.fillColor(...C.black);
 
-        // Separator line
-        doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
+        doc.fontSize(11).font('Helvetica-Bold').fillColor(...gc).text(grade, x + pw - 40, nameY, { width: 40, align: 'right' });
+        doc.fillColor(...C.black);
+
+        doc.y = Math.max(doc.y, nameY + 16);
+        doc.strokeColor(...C.lightGray).lineWidth(0.5);
+        doc.moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
         doc.moveDown(0.4);
         continue;
       }
 
-      // Quote blocks — italic with a gold line on the left
+      // --- Standalone score line (e.g., "Score: 7/10" or "7/10 — Prose Quality") ---
+      const standaloneScore = trimmed.match(/^(?:(?:Score|Rating)\s*:\s*)?(\d{1,2})\/10(?:\s*[-—:]\s*(.+))?$/i);
+      if (standaloneScore) {
+        const scoreVal = parseInt(standaloneScore[1], 10);
+        const sc = scoreColor(scoreVal);
+        const labelPart = standaloneScore[2] ? clean(standaloneScore[2]) : '';
+
+        ensureSpace(30);
+        const scoreY = doc.y;
+        doc.fontSize(22).font('Helvetica-Bold').fillColor(...sc).text(scoreVal + '/10', x, scoreY, { width: 80 });
+        doc.fillColor(...C.black);
+        if (labelPart) {
+          doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(labelPart, x + 80, scoreY + 6, { width: pw - 80 });
+          doc.fillColor(...C.black);
+        }
+        doc.y = Math.max(doc.y, scoreY + 28);
+        doc.moveDown(0.3);
+        continue;
+      }
+
+      // --- Quote blocks (lines starting with >) ---
       if (trimmed.startsWith('>')) {
         const qt = clean(trimmed.replace(/^>\s*/, ''));
+        ensureSpace(16);
         const qStartY = doc.y;
         doc.fontSize(9).font('Helvetica-Oblique').fillColor(80, 80, 80).text(qt, x + 14, doc.y, { width: pw - 20 });
+        doc.fillColor(...C.black);
         const qEndY = doc.y;
-        doc.strokeColor(...C.gold).lineWidth(2).moveTo(x + 4, qStartY).lineTo(x + 4, qEndY).stroke();
+        doc.strokeColor(...C.gold).lineWidth(2);
+        doc.moveTo(x + 4, qStartY).lineTo(x + 4, qEndY).stroke();
+        doc.moveDown(0.3);
+        continue;
+      }
+
+      // --- Bullet points (lines starting with - or *) ---
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        const bt = clean(trimmed.replace(/^[-*]\s*/, ''));
+        ensureSpace(14);
+        doc.fontSize(9).font('Helvetica').fillColor(...C.black).text('\u2022  ' + bt, x + 10, doc.y, { width: pw - 20 });
+        doc.fillColor(...C.black);
+        doc.moveDown(0.15);
+        continue;
+      }
+
+      // --- Repeat word line: **"word"** (Xx) — description ---
+      const repeatMatch = trimmed.match(/^\*\*"?([^"*]+)"?\*\*\s*\((\d+)x?\)\s*[-—]\s*(.+)/i);
+      if (repeatMatch) {
+        ensureSpace(18);
+        const rWord = repeatMatch[1];
+        const rCount = repeatMatch[2];
+        const rDesc = clean(repeatMatch[3]);
+        const rowY = doc.y;
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.darkRed).text('"' + rWord + '"', x, rowY, { width: 90 });
+        doc.fillColor(...C.black);
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(rCount + 'x', x + 95, rowY, { width: 35, align: 'center' });
+        doc.fillColor(...C.black);
+        doc.fontSize(9).font('Helvetica').fillColor(...C.gray).text(rDesc, x + 140, rowY, { width: pw - 140 });
+        doc.fillColor(...C.black);
+        doc.y = Math.max(doc.y, rowY + 14);
+        doc.strokeColor(...C.lightGray).lineWidth(0.5);
+        doc.moveTo(x, doc.y + 2).lineTo(x + pw, doc.y + 2).stroke();
+        doc.y += 6;
+        continue;
+      }
+
+      // --- Bold-only subheader lines (**text**) ---
+      if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+        ensureSpace(16);
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(clean(trimmed), x, doc.y, { width: pw });
         doc.fillColor(...C.black);
         doc.moveDown(0.3);
         continue;
       }
 
-      // Bullet points
-      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-        const bt = clean(trimmed.replace(/^[-*]\s*/, ''));
-        doc.fontSize(9).font('Helvetica').fillColor(...C.black).text('\u2022  ' + bt, x + 10, doc.y, { width: pw - 20 });
-        doc.moveDown(0.15);
-        continue;
-      }
-
-      // Bold-only line
-      if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-        doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(clean(trimmed), x, doc.y, { width: pw });
-        doc.moveDown(0.3);
-        continue;
-      }
-
-      // Regular text
-      doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(clean(trimmed), x, doc.y, { width: pw });
-      doc.moveDown(0.2);
+      // --- Regular text ---
+      safeText(clean(trimmed), { fontSize: 10, font: 'Helvetica', color: C.black });
     }
 
     doc.end();
