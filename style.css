@@ -236,6 +236,9 @@ footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:w
 .tier-words{grid-column:1/-1;font-size:.7rem;color:var(--text3)}
 .sidebar-tier.active{background:var(--accent-bg);border-color:var(--accent-border)}
 .sidebar-tier.active span:first-child{color:var(--accent2)}
+.sidebar-price-display{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0;margin:.5rem 0}
+.sidebar-genre-name{font-size:.85rem;color:var(--text2);font-weight:500}
+.sidebar-price-amount{font-size:1.8rem;font-weight:800;color:var(--accent2)}
 .sidebar-note{font-size:.72rem;color:var(--text3);margin-top:.5rem}
 .sidebar-list{list-style:none;font-size:.8rem}
 .sidebar-list li{color:var(--text2);padding:.3rem 0;border-bottom:1px solid var(--border)}

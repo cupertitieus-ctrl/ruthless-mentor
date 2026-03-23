@@ -74,6 +74,36 @@ function updateCost() {
 
 if (textarea) textarea.addEventListener('input', updateCost);
 
+// ===== GENRE → SIDEBAR PRICE =====
+const GENRE_PRICES = {
+    'picture-book': { name: 'Picture Book', price: 5 },
+    'early-reader': { name: 'Early Reader', price: 5 },
+    'chapter-book': { name: 'Chapter Book', price: 10 },
+    'middle-grade': { name: 'Middle Grade', price: 15 },
+    'young-adult': { name: 'Young Adult', price: 15 },
+    'literary-fiction': { name: 'Literary Fiction', price: 15 },
+    'genre-fiction': { name: 'Genre Fiction', price: 15 },
+    'memoir': { name: 'Memoir', price: 15 },
+};
+
+const genreSelect = document.getElementById('q-genre');
+const sidebarGenreName = document.getElementById('sidebar-genre-name');
+const sidebarPriceAmount = document.getElementById('sidebar-price-amount');
+
+function updateSidebarPrice() {
+    const val = genreSelect ? genreSelect.value : '';
+    const info = GENRE_PRICES[val];
+    if (info && sidebarGenreName && sidebarPriceAmount) {
+        sidebarGenreName.textContent = info.name;
+        sidebarPriceAmount.textContent = '$' + info.price;
+    } else if (sidebarGenreName && sidebarPriceAmount) {
+        sidebarGenreName.textContent = 'Select a genre';
+        sidebarPriceAmount.textContent = '--';
+    }
+}
+
+if (genreSelect) genreSelect.addEventListener('change', updateSidebarPrice);
+
 // ===== COUPON =====
 const couponBtn = document.getElementById('apply-coupon');
 const couponInput = document.getElementById('coupon-input');
