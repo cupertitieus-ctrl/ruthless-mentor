@@ -51,26 +51,51 @@ function pacingColor(type) {
   return { bad: C.red, warn: C.yellow, good: C.green, neutral: C.gray }[type] || C.gray;
 }
 
+function resetFill(doc) {
+  doc.fillColor(...C.black);
+}
+
 function ensureSpace(doc, needed) {
   if (doc.y + needed > doc.page.height - 72) {
     doc.addPage();
   }
 }
 
-function drawHeader(doc, date) {
+function drawFooter(doc, pageNum) {
+  doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
+  doc.text(
+    `RUTHLESS MENTOR REPORT  |  Page ${pageNum}`,
+    0, doc.page.height - 40,
+    { align: 'center', width: doc.page.width, lineBreak: false }
+  );
+  resetFill(doc);
+}
+
+function drawHeader(doc, data) {
   if (hasLogo) {
     doc.image(LOGO_PATH, doc.page.width / 2 - 30, 40, { width: 60 });
     doc.moveDown(4);
   }
 
-  // Brand line
-  const y = doc.y + 5;
+  // Brand line — centered text with gold lines on each side
+  const brandY = doc.y + 5;
+  const brandText = 'RUTHLESS MENTOR';
+  const brandFontSize = 9;
+  const brandCharSpacing = 3;
+  doc.fontSize(brandFontSize).font('Helvetica-Bold');
+  const textW = doc.widthOfString(brandText, { characterSpacing: brandCharSpacing });
+  const centerX = doc.page.width / 2;
+  const lineGap = 10;
+  const lineLen = 80;
+
+  // Left line
   doc.strokeColor(...C.gold).lineWidth(1.5);
-  doc.moveTo(72, y).lineTo(200, y).stroke();
-  doc.moveTo(doc.page.width - 200, y).lineTo(doc.page.width - 72, y).stroke();
-  doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.black);
-  doc.text('RUTHLESS MENTOR', 0, y - 5, { align: 'center', characterSpacing: 3 });
-  doc.moveDown(2);
+  doc.moveTo(centerX - textW / 2 - lineGap - lineLen, brandY).lineTo(centerX - textW / 2 - lineGap, brandY).stroke();
+  // Right line
+  doc.moveTo(centerX + textW / 2 + lineGap, brandY).lineTo(centerX + textW / 2 + lineGap + lineLen, brandY).stroke();
+  // Text
+  doc.fillColor(...C.black).text(brandText, 0, brandY - 5, { align: 'center', width: doc.page.width, characterSpacing: brandCharSpacing });
+  doc.moveDown(1.5);
 
   // Title
   doc.fontSize(24).font('Helvetica-Bold').fillColor(...C.black);
@@ -89,9 +114,15 @@ function drawMeta(doc, data) {
     ['Target Age:', data.targetAge || 'Not specified'],
   ];
 
+  const labelColWidth = 100;
+  const valueColX = 72 + labelColWidth + 8;
+  const valueColWidth = doc.page.width - 144 - labelColWidth - 8;
+
   fields.forEach(([label, value]) => {
-    doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(label, 72, doc.y, { continued: true, width: 100 });
-    doc.font('Helvetica-Oblique').fillColor(...C.gray).text('  ' + value);
+    const rowY = doc.y;
+    doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.black).text(label, 72, rowY, { width: labelColWidth });
+    doc.font('Helvetica-Oblique').fillColor(...C.gray).text(value, valueColX, rowY, { width: valueColWidth });
+    doc.y = Math.max(doc.y, rowY + 14);
   });
   doc.moveDown(1);
 }
@@ -103,6 +134,7 @@ function sectionHeader(doc, title) {
   const y = doc.y + 2;
   doc.strokeColor(...C.gold).lineWidth(2).moveTo(72, y).lineTo(280, y).stroke();
   doc.moveDown(0.8);
+  resetFill(doc);
 }
 
 function bodyText(doc, text) {
@@ -125,10 +157,13 @@ function calloutBox(doc, text, bgColor, borderColor, icon, label) {
   const textH = doc.fontSize(9).font('Helvetica').heightOfString(text, { width: w - 40 });
   const boxH = Math.max(textH + 30, 40);
 
-  doc.save();
-  doc.roundedRect(x, startY, w, boxH, 4).fill(...bgColor);
+  // Draw background rect
+  doc.rect(x, startY, w, boxH).fill(...bgColor);
+  resetFill(doc);
+
+  // Draw left border
   doc.rect(x, startY, 4, boxH).fill(...borderColor);
-  doc.restore();
+  resetFill(doc);
 
   if (icon) {
     doc.fontSize(12).font('Helvetica-Bold').fillColor(...borderColor).text(icon, x + 12, startY + 8);
@@ -141,6 +176,7 @@ function calloutBox(doc, text, bgColor, borderColor, icon, label) {
   }
 
   doc.y = startY + boxH + 10;
+  resetFill(doc);
 }
 
 function scoreBar(doc, score, label) {
@@ -150,22 +186,26 @@ function scoreBar(doc, score, label) {
   const barH = 22;
   const fillW = (score / 10) * barW;
   const color = scoreColor(score);
+  const barY = doc.y;
 
-  doc.save();
-  // Background
-  doc.roundedRect(x, doc.y, barW, barH, 4).fill(...C.bg);
-  // Fill
-  doc.roundedRect(x, doc.y, fillW, barH, 4).fill(...color);
-  // Score text
-  doc.fontSize(12).font('Helvetica-Bold').fillColor(...C.white).text(score + '/10', x + 6, doc.y + 4);
-  doc.restore();
+  // Background bar
+  doc.rect(x, barY, barW, barH).fill(...C.bg);
+  resetFill(doc);
 
-  // Label
+  // Colored fill bar
+  doc.rect(x, barY, fillW, barH).fill(...color);
+  resetFill(doc);
+
+  // Score text on bar
+  doc.fontSize(12).font('Helvetica-Bold').fillColor(...C.white).text(score + '/10', x + 6, barY + 4);
+
+  // Label next to bar
   if (label) {
-    doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(label, x + barW + 12, doc.y + 4);
+    doc.fontSize(10).font('Helvetica-Oblique').fillColor(...C.gray).text(label, x + barW + 12, barY + 4);
   }
 
-  doc.y = doc.y + barH + 10;
+  doc.y = barY + barH + 10;
+  resetFill(doc);
 }
 
 function characterCard(doc, char) {
@@ -174,21 +214,22 @@ function characterCard(doc, char) {
   const w = doc.page.width - 144;
   const startY = doc.y;
 
-  // Card background
-  doc.save();
-  doc.roundedRect(x, startY, w, 10, 4).fill(...C.bg); // placeholder, we'll extend
-  doc.restore();
+  // Separator line above card
+  doc.strokeColor(...C.lightGray).lineWidth(0.5);
+  doc.moveTo(x, startY).lineTo(x + w, startY).stroke();
+  doc.y = startY + 8;
 
-  // Name + Grade
-  doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(char.name || 'Unnamed', x + 10, startY + 8, { continued: true, width: w - 80 });
+  // Name
+  doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.black).text(char.name || 'Unnamed', x + 4, doc.y, { width: w - 60 });
 
   // Grade badge
   const gc = gradeColor(char.grade || 'C');
   const badgeX = x + w - 45;
-  doc.save();
-  doc.roundedRect(badgeX, startY + 5, 35, 20, 3).fill(...gc);
-  doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.white).text(char.grade || '?', badgeX + 4, startY + 9, { width: 27, align: 'center' });
-  doc.restore();
+  const badgeY = startY + 6;
+  doc.rect(badgeX, badgeY, 35, 20).fill(...gc);
+  resetFill(doc);
+  doc.fontSize(11).font('Helvetica-Bold').fillColor(...C.white).text(char.grade || '?', badgeX + 4, badgeY + 4, { width: 27, align: 'center' });
+  resetFill(doc);
 
   doc.y = startY + 30;
 
@@ -205,15 +246,8 @@ function characterCard(doc, char) {
     doc.font('Helvetica').text(char.diagnosis);
   }
 
-  // Draw card background to actual height
-  const endY = doc.y + 8;
-  const cardH = endY - startY;
-  // Re-draw background behind (we can't un-draw, but the border helps)
-  doc.save();
-  doc.roundedRect(x, startY, w, cardH, 4).lineWidth(0.5).strokeColor(...C.lightGray).stroke();
-  doc.restore();
-
-  doc.y = endY + 6;
+  doc.y = doc.y + 10;
+  resetFill(doc);
 }
 
 function quoteBlock(doc, location, quote, problem, fix, isGood, comment) {
@@ -233,12 +267,15 @@ function quoteBlock(doc, location, quote, problem, fix, isGood, comment) {
   const qH = doc.fontSize(9).font('Helvetica-Oblique').heightOfString(qText, { width: w - 24 });
   const boxH = qH + 16;
 
-  doc.save();
-  doc.roundedRect(x, startY, w, boxH, 3).fill(...qBg);
-  doc.rect(x, startY, 3, boxH).fill(...qBorder);
-  doc.restore();
+  // Draw background
+  doc.rect(x, startY, w, boxH).fill(...qBg);
+  resetFill(doc);
 
-  doc.fontSize(9).font('Helvetica-Oblique').fillColor([68, 68, 68]).text(qText, x + 12, startY + 8, { width: w - 24 });
+  // Draw left border
+  doc.rect(x, startY, 3, boxH).fill(...qBorder);
+  resetFill(doc);
+
+  doc.fontSize(9).font('Helvetica-Oblique').fillColor(68, 68, 68).text(qText, x + 12, startY + 8, { width: w - 24 });
   doc.y = startY + boxH + 6;
 
   if (isGood && comment) {
@@ -254,6 +291,7 @@ function quoteBlock(doc, location, quote, problem, fix, isGood, comment) {
     }
   }
   doc.moveDown(0.5);
+  resetFill(doc);
 }
 
 function repeatWordTable(doc, words) {
@@ -266,28 +304,30 @@ function repeatWordTable(doc, words) {
   const x = 72;
   const w = doc.page.width - 144;
 
-  // Header row
-  doc.save();
-  doc.rect(x, doc.y, w, 18).fill(...C.bg);
-  doc.restore();
+  // Header row background
+  const headerY = doc.y;
+  doc.rect(x, headerY, w, 18).fill(...C.bg);
+  resetFill(doc);
+
   doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
-  doc.text('WORD', x + 6, doc.y + 4, { width: 80 });
-  doc.text('COUNT', x + 90, doc.y - 12, { width: 50, align: 'center' });
-  doc.text('CONTEXTS', x + 150, doc.y - 12, { width: w - 156 });
-  doc.y += 8;
+  doc.text('WORD', x + 6, headerY + 4, { width: 80 });
+  doc.text('COUNT', x + 90, headerY + 4, { width: 50, align: 'center' });
+  doc.text('CONTEXTS', x + 150, headerY + 4, { width: w - 156 });
+  doc.y = headerY + 22;
 
   words.forEach(w2 => {
     ensureSpace(doc, 20);
     const rowY = doc.y;
     doc.fontSize(9).font('Helvetica-Bold').fillColor(...C.darkRed).text('"' + w2.word + '"', x + 6, rowY, { width: 80 });
     doc.font('Helvetica-Bold').fillColor(...C.black).text(w2.count + 'x', x + 90, rowY, { width: 50, align: 'center' });
-    doc.font('Helvetica').fillColor(...C.gray).text(w2.contexts || '', x + 150, rowY, { width: doc.page.width - 144 - 156 });
+    doc.font('Helvetica').fillColor(...C.gray).text(w2.contexts || '', x + 150, rowY, { width: w - 156 });
     doc.y = Math.max(doc.y, rowY + 14);
     // Divider
-    doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y).lineTo(x + doc.page.width - 144, doc.y).stroke();
+    doc.strokeColor(...C.lightGray).lineWidth(0.5).moveTo(x, doc.y).lineTo(x + w, doc.y).stroke();
     doc.y += 4;
   });
   doc.moveDown(0.5);
+  resetFill(doc);
 }
 
 function pacingBreakdown(doc, items) {
@@ -303,6 +343,7 @@ function pacingBreakdown(doc, items) {
     doc.moveDown(0.2);
   });
   doc.moveDown(0.5);
+  resetFill(doc);
 }
 
 function compareTable(doc, examples) {
@@ -321,27 +362,34 @@ function compareTable(doc, examples) {
     const noteH = ex.note ? doc.fontSize(8).font('Helvetica').heightOfString(ex.note, { width: w - 30 }) : 0;
     const boxH = textH + noteH + 30;
 
-    doc.save();
-    doc.roundedRect(x, doc.y, w, boxH, 3).fill(...bg);
-    doc.rect(x, doc.y, 4, boxH).fill(...border);
-    doc.restore();
+    const boxY = doc.y;
 
-    const startY = doc.y;
-    doc.fontSize(8).font('Helvetica-Bold').fillColor(...border).text(label, x + 12, startY + 6);
-    doc.fontSize(9).font('Helvetica-Oblique').fillColor([51, 51, 51]).text('"' + ex.quote + '"', x + 12, doc.y + 2, { width: w - 30 });
+    // Draw background
+    doc.rect(x, boxY, w, boxH).fill(...bg);
+    resetFill(doc);
+
+    // Draw left border
+    doc.rect(x, boxY, 4, boxH).fill(...border);
+    resetFill(doc);
+
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(...border).text(label, x + 12, boxY + 6);
+    doc.fontSize(9).font('Helvetica-Oblique').fillColor(51, 51, 51).text('"' + ex.quote + '"', x + 12, doc.y + 2, { width: w - 30 });
     if (ex.note) {
-      doc.fontSize(8).font('Helvetica').fillColor([119, 119, 119]).text(ex.note, x + 12, doc.y + 2, { width: w - 30 });
+      doc.fontSize(8).font('Helvetica').fillColor(119, 119, 119).text(ex.note, x + 12, doc.y + 2, { width: w - 30 });
     }
-    doc.y = startY + boxH + 6;
+    doc.y = boxY + boxH + 6;
   });
+  resetFill(doc);
 }
 
 async function generatePdf(reviewData) {
   return new Promise((resolve, reject) => {
+    let pageCount = 1;
+
     const doc = new PDFDocument({
       size: 'letter',
       margins: { top: 40, bottom: 50, left: 72, right: 72 },
-      bufferPages: true,
+      bufferPages: false,
       info: {
         Title: 'Ruthless Mentor Review Report',
         Author: 'ruthlessmentor.com',
@@ -352,6 +400,18 @@ async function generatePdf(reviewData) {
     doc.on('data', chunk => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
+
+    // Footer on first page
+    drawFooter(doc, 1);
+    doc.y = doc.page.margins.top;
+
+    // Add footer to every new page
+    doc.on('pageAdded', () => {
+      pageCount++;
+      drawFooter(doc, pageCount);
+      // Reset y to top margin for content
+      doc.y = doc.page.margins.top;
+    });
 
     const data = reviewData;
 
@@ -411,11 +471,12 @@ async function generatePdf(reviewData) {
       ensureSpace(doc, 30);
       const dc = depthColor(data.depthRating);
       const x = 72;
-      doc.save();
-      doc.roundedRect(x, doc.y, 100, 22, 4).fill(...dc);
-      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.white).text(data.depthRating, x + 6, doc.y + 5, { width: 88, align: 'center' });
-      doc.restore();
-      doc.y += 30;
+      const badgeY = doc.y;
+      doc.rect(x, badgeY, 100, 22).fill(...dc);
+      resetFill(doc);
+      doc.fontSize(10).font('Helvetica-Bold').fillColor(...C.white).text(data.depthRating, x + 6, badgeY + 5, { width: 88, align: 'center' });
+      resetFill(doc);
+      doc.y = badgeY + 30;
     }
     bodyText(doc, data.depthBody);
 
@@ -442,24 +503,10 @@ async function generatePdf(reviewData) {
     const vw = doc.page.width - 144;
     const vText = (data.verdict || '').replace(/\\n/g, '\n');
     const vH = doc.fontSize(10).font('Helvetica').heightOfString(vText, { width: vw - 30 }) + 30;
-    doc.save();
     doc.roundedRect(vx, doc.y, vw, vH, 6).lineWidth(1.5).strokeColor(...C.gold).stroke();
-    doc.restore();
     const vy = doc.y;
     doc.fontSize(10).font('Helvetica').fillColor(...C.black).text(vText, vx + 15, vy + 15, { width: vw - 30 });
     doc.y = vy + vH + 10;
-
-    // Footer on every page
-    const pages = doc.bufferedPageRange();
-    for (let i = 0; i < pages.count; i++) {
-      doc.switchToPage(i);
-      doc.fontSize(8).font('Helvetica-Bold').fillColor(...C.gray);
-      doc.text(
-        `RUTHLESS MENTOR REPORT  |  Page ${i + 1} of ${pages.count}`,
-        0, doc.page.height - 40,
-        { align: 'center', width: doc.page.width }
-      );
-    }
 
     doc.end();
   });

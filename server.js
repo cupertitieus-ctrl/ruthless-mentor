@@ -416,15 +416,100 @@ app.post('/api/parse-file', (req, res) => {
   });
 });
 
-// ===== EMAIL PDF (generates PDF, returns download for now) =====
+// ===== GENERATE PDF FROM EXISTING REVIEW (no second API call) =====
+app.post('/api/generate-pdf', async (req, res) => {
+  const { reviewMarkdown, wordCount, tier } = req.body;
+  if (!reviewMarkdown) return res.status(400).json({ error: 'No review data provided' });
+
+  try {
+    // Quick call to format the markdown review into structured JSON for PDF
+    const message = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 8000,
+      messages: [{
+        role: 'user',
+        content: `Convert this existing review into the JSON structure. Do NOT re-review — just restructure this text into the JSON format:\n\n${reviewMarkdown}`
+      }],
+      system: PDF_REVIEW_PROMPT
+    });
+
+    let reviewText = message.content[0].text.trim();
+    reviewText = reviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+    const reviewData = JSON.parse(reviewText);
+    reviewData.wordCount = wordCount ? `~${Number(wordCount).toLocaleString()} words` : 'Unknown';
+
+    const pdfBuffer = await generatePdf(reviewData);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="ruthless-mentor-review.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('[PDF GEN ERROR]', err.message);
+    res.status(500).json({ error: 'PDF generation failed' });
+  }
+});
+
+// ===== EMAIL PDF =====
+const { Resend } = require('resend');
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
 app.post('/api/email-pdf', optionalAuth, async (req, res) => {
   const { text, email } = req.body;
   if (!text || !email) return res.status(400).json({ error: 'Text and email required' });
+  if (!resend) return res.status(503).json({ error: 'Email service not configured' });
 
-  // For now, just acknowledge — email delivery needs SendGrid/Resend setup
-  // The PDF is generated client-side via /api/review-pdf download
-  console.log(`[EMAIL PDF] Requested for ${email}`);
-  res.json({ success: true, message: 'PDF report will be sent to ' + email });
+  const wordCount = countWords(text);
+  const tier = getTier(wordCount);
+
+  console.log(`[EMAIL PDF] Generating for ${email} | ${wordCount} words`);
+
+  try {
+    // Generate structured review
+    const message = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 8000,
+      messages: [{
+        role: 'user',
+        content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${text}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
+      }],
+      system: PDF_REVIEW_PROMPT
+    });
+
+    let reviewText = message.content[0].text.trim();
+    reviewText = reviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+    const reviewData = JSON.parse(reviewText);
+    reviewData.wordCount = `~${wordCount.toLocaleString()} words`;
+
+    // Generate PDF
+    const pdfBuffer = await generatePdf(reviewData);
+
+    // Send email
+    const { error } = await resend.emails.send({
+      from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
+      to: email,
+      subject: 'Your Ruthless Mentor Review — ' + (reviewData.title || 'Manuscript'),
+      html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+        <h2 style="color:#8b0000">Your review is attached.</h2>
+        <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+        <p>Open the PDF for the full branded report with scores, character grades, line-level fixes, and your final verdict.</p>
+        <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+      </div>`,
+      attachments: [{
+        filename: 'ruthless-mentor-review.pdf',
+        content: pdfBuffer.toString('base64'),
+      }]
+    });
+
+    if (error) {
+      console.error('[RESEND ERROR]', error);
+      return res.status(500).json({ error: 'Failed to send email. Try downloading the PDF instead.' });
+    }
+
+    res.json({ success: true, message: 'PDF sent to ' + email });
+  } catch (err) {
+    console.error('[EMAIL PDF ERROR]', err.message);
+    res.status(500).json({ error: 'Failed to generate and send PDF. Try downloading instead.' });
+  }
 });
 
 // ===== COUPON CODES =====

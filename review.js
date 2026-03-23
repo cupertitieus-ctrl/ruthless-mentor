@@ -179,9 +179,36 @@ if (form) {
         if (!text) { alert('Paste your text or upload a file first.'); return; }
 
         const btn = document.getElementById('submit-btn');
-        btn.textContent = 'Reviewing... this may take a minute';
+        const progressWrap = document.getElementById('progress-wrap');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+
         btn.disabled = true;
         btn.style.opacity = '.6';
+        btn.textContent = 'Reviewing...';
+        progressWrap.classList.remove('hidden');
+        progressFill.style.width = '0%';
+
+        const steps = [
+            { pct: 10, text: 'Uploading your manuscript...' },
+            { pct: 25, text: 'Reading your work...' },
+            { pct: 40, text: 'Analyzing prose quality...' },
+            { pct: 55, text: 'Checking for repeat words...' },
+            { pct: 65, text: 'Grading characters...' },
+            { pct: 75, text: 'Evaluating story mechanics...' },
+            { pct: 85, text: 'Writing line-level callouts...' },
+            { pct: 92, text: 'Preparing your verdict...' },
+        ];
+
+        let stepIdx = 0;
+        const stepInterval = setInterval(() => {
+            if (stepIdx < steps.length) {
+                progressFill.style.width = steps[stepIdx].pct + '%';
+                progressText.textContent = steps[stepIdx].text;
+                progressText.className = 'progress-text pulsing';
+                stepIdx++;
+            }
+        }, 3000);
 
         try {
             const headers = { 'Content-Type': 'application/json' };
@@ -195,13 +222,23 @@ if (form) {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Review failed');
-            showReviewScreen(data);
+
+            clearInterval(stepInterval);
+            progressFill.style.width = '100%';
+            progressText.textContent = 'Done!';
+            progressText.className = 'progress-text';
+            setTimeout(() => showReviewScreen(data), 500);
         } catch (err) {
+            clearInterval(stepInterval);
+            progressText.textContent = 'Error: ' + err.message;
+            progressText.className = 'progress-text';
+            progressFill.style.width = '0%';
             alert('Error: ' + err.message);
         } finally {
             btn.textContent = 'Submit for review';
             btn.disabled = false;
             btn.style.opacity = '1';
+            setTimeout(() => progressWrap.classList.add('hidden'), 2000);
         }
     });
 }
@@ -216,6 +253,8 @@ function showReviewScreen(data) {
     screen.classList.remove('hidden');
     window.scrollTo(0, 0);
     window._lastReview = data.review;
+    window._lastWordCount = data.wordCount;
+    window._lastTier = data.tier;
     updateCost();
 }
 
@@ -250,10 +289,14 @@ document.getElementById('download-pdf-btn').addEventListener('click', async () =
         const headers = { 'Content-Type': 'application/json' };
         if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
 
-        const res = await fetch('/api/review-pdf', {
+        const res = await fetch('/api/generate-pdf', {
             method: 'POST',
             headers,
-            body: JSON.stringify({ text: window._lastSubmittedText })
+            body: JSON.stringify({
+                reviewMarkdown: window._lastReview,
+                wordCount: window._lastWordCount,
+                tier: window._lastTier
+            })
         });
 
         if (!res.ok) {
