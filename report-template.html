@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital@0;1&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    font-size: 11pt;
+    line-height: 1.55;
+    padding: 0;
+    margin: 0;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.6in 0.75in;
+    margin: 0 auto;
+    page-break-after: always;
+  }
+
+  /* HEADER */
+  .report-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+  }
+  .report-header img {
+    height: 70px;
+    margin-bottom: 4px;
+  }
+  .report-header .brand-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 2px;
+  }
+  .brand-line hr {
+    flex: 1;
+    max-width: 120px;
+    border: none;
+    border-top: 2px solid #b8860b;
+  }
+  .brand-line span {
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+  }
+
+  .report-title {
+    font-size: 26pt;
+    font-weight: 900;
+    margin: 20px 0 18px;
+    line-height: 1.1;
+  }
+  .report-title .accent { color: #b8860b; }
+
+  /* METADATA TABLE */
+  .meta-table {
+    margin-bottom: 28px;
+  }
+  .meta-table table {
+    border-collapse: collapse;
+  }
+  .meta-table td {
+    padding: 3px 0;
+    vertical-align: top;
+  }
+  .meta-table td:first-child {
+    font-weight: 700;
+    width: 130px;
+    color: #1a1a1a;
+  }
+  .meta-table td:last-child {
+    font-style: italic;
+    color: #333;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    color: #8b0000;
+    font-size: 16pt;
+    font-weight: 800;
+    margin: 30px 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 3px solid #b8860b;
+  }
+  .section-header:first-of-type {
+    margin-top: 0;
+  }
+
+  .section-body {
+    margin-top: 10px;
+  }
+  .section-body p {
+    margin-bottom: 10px;
+  }
+
+  /* CALLOUT BOXES */
+  .callout {
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .callout-icon {
+    font-size: 18pt;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 1px;
+  }
+  .callout-text { flex: 1; }
+  .callout-label {
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .callout-green {
+    background: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+  }
+  .callout-red {
+    background: #fce4ec;
+    border-left: 4px solid #8b0000;
+  }
+  .callout-yellow {
+    background: #fff8e1;
+    border-left: 4px solid #f9a825;
+  }
+  .callout-blue {
+    background: #e3f2fd;
+    border-left: 4px solid #1565c0;
+  }
+
+  /* RUTHLESS FIX BOX */
+  .fix-box {
+    background: #fff8e1;
+    border-left: 4px solid #8b0000;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 14px 0;
+  }
+  .fix-box-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    color: #8b0000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 10pt;
+    margin-bottom: 6px;
+  }
+
+  /* PACING BREAKDOWN */
+  .pacing-list {
+    list-style: none;
+    margin: 10px 0;
+  }
+  .pacing-list li {
+    padding: 5px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .pacing-icon {
+    font-size: 14pt;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+  }
+  .pacing-label {
+    font-weight: 700;
+  }
+
+  /* SCORE BAR */
+  .score-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 12px 0 8px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    padding: 10px 16px;
+    font-weight: 800;
+    font-size: 14pt;
+    color: #fff;
+    min-width: 70px;
+    text-align: center;
+  }
+  .score-bar-fill.red { background: #c62828; }
+  .score-bar-fill.yellow { background: #f9a825; color: #1a1a1a; }
+  .score-bar-fill.green { background: #2e7d32; }
+  .score-bar-label {
+    font-style: italic;
+    color: #555;
+    font-size: 11pt;
+  }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    margin: 12px 0;
+    border-collapse: collapse;
+  }
+  .compare-table td {
+    padding: 10px 14px;
+    vertical-align: top;
+    border-left: 4px solid transparent;
+  }
+  .compare-table tr:first-child td {
+    border-left-color: #c62828;
+    background: #fce4ec;
+  }
+  .compare-table tr:last-child td {
+    border-left-color: #2e7d32;
+    background: #e8f5e9;
+  }
+  .compare-label {
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 9pt;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .compare-label.red { color: #c62828; }
+  .compare-label.green { color: #2e7d32; }
+  .compare-quote {
+    font-style: italic;
+    color: #333;
+  }
+  .compare-note {
+    font-size: 9pt;
+    color: #777;
+    margin-top: 3px;
+  }
+
+  /* CHARACTER GRADES */
+  .char-card {
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    border: 1px solid #e0e0e0;
+  }
+  .char-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .char-name {
+    font-weight: 700;
+    font-size: 12pt;
+  }
+  .char-grade {
+    font-weight: 800;
+    font-size: 13pt;
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 4px;
+  }
+  .grade-a { background: #2e7d32; }
+  .grade-b { background: #558b2f; }
+  .grade-c { background: #f9a825; color: #1a1a1a; }
+  .grade-d { background: #e65100; }
+  .grade-f { background: #c62828; }
+  .char-body p { margin-bottom: 6px; font-size: 10pt; }
+  .char-body strong { color: #1a1a1a; }
+
+  /* QUOTE BLOCKS */
+  .quote-block {
+    background: #f5f5f5;
+    border-left: 3px solid #b8860b;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-style: italic;
+    color: #444;
+    border-radius: 0 4px 4px 0;
+  }
+  .quote-ref {
+    font-weight: 700;
+    font-style: normal;
+    color: #1a1a1a;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  /* DEPTH BADGE */
+  .depth-badge {
+    display: inline-block;
+    padding: 5px 18px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: #fff;
+    font-size: 11pt;
+    margin: 8px 0;
+  }
+
+  /* VERDICT */
+  .verdict-box {
+    background: #f9f6f0;
+    border: 2px solid #b8860b;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .verdict-box h3 {
+    color: #8b0000;
+    margin-bottom: 10px;
+  }
+
+  /* FOOTER */
+  .report-footer {
+    text-align: center;
+    font-size: 9pt;
+    color: #888;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+    margin-top: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* BOLD LABEL */
+  .label { font-weight: 700; }
+
+  /* SECTION SUBHEADER */
+  .sub-header {
+    font-weight: 700;
+    font-size: 11pt;
+    margin: 14px 0 6px;
+    color: #1a1a1a;
+  }
+
+  @media print {
+    body { padding: 0; }
+    .page { padding: 0.5in 0.65in; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <!-- HEADER -->
+    <div class="report-header">
+      <img src="logo.png" alt="RM">
+      <div class="brand-line">
+        <hr>
+        <span>Ruthless Mentor</span>
+        <hr>
+      </div>
+    </div>
+
+    <h1 class="report-title">Manuscript <span class="accent">Review</span> Report</h1>
+
+    <!-- METADATA -->
+    <div class="meta-table">
+      <table>
+        <tr><td>Manuscript:</td><td>{{title}}</td></tr>
+        <tr><td>Review Date:</td><td>{{date}}</td></tr>
+        <tr><td>Status:</td><td>{{status}}</td></tr>
+        <tr><td>Word Count:</td><td>{{wordCount}}</td></tr>
+        <tr><td>Target Age:</td><td>{{targetAge}}</td></tr>
+      </table>
+    </div>
+
+    <!-- 1. FIRST IMPRESSIONS -->
+    <h2 class="section-header">1. FIRST IMPRESSIONS</h2>
+    <div class="section-body">
+      {{firstImpressions}}
+    </div>
+
+    {{#if strengths}}
+    <div class="callout callout-green">
+      <span class="callout-icon">&#10004;</span>
+      <div class="callout-text">
+        <span class="callout-label">You've Got:</span> {{strengths}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- 2. STRUCTURE & PACING -->
+    <h2 class="section-header">2. STRUCTURE & PACING</h2>
+    <div class="section-body">
+      {{pacingBody}}
+    </div>
+
+    {{#if pacingFix}}
+    <div class="fix-box">
+      <div class="fix-box-header">&#9200; RUTHLESS FIX:</div>
+      <p>{{pacingFix}}</p>
+    </div>
+    {{/if}}
+
+    {{#if pacingBreakdown}}
+    <p class="sub-header">Pacing Breakdown:</p>
+    <ul class="pacing-list">
+      {{pacingBreakdown}}
+    </ul>
+    {{/if}}
+
+    <!-- 3. AUTHOR'S VOICE -->
+    <h2 class="section-header">3. AUTHOR'S VOICE</h2>
+    <div class="score-bar-wrap">
+      <div class="score-bar-fill {{voiceScoreColor}}">{{voiceScore}}/10</div>
+      <span class="score-bar-label">{{voiceLabel}}</span>
+    </div>
+    <div class="section-body">
+      {{voiceBody}}
+    </div>
+
+    {{#if voiceExamples}}
+    <p class="sub-header">Examples:</p>
+    <table class="compare-table">
+      {{voiceExamples}}
+    </table>
+    {{/if}}
+
+    <!-- 4. PROSE QUALITY -->
+    <h2 class="section-header">4. PROSE QUALITY</h2>
+    <div class="score-bar-wrap">
+      <div class="score-bar-fill {{proseScoreColor}}">{{proseScore}}/10</div>
+      <span class="score-bar-label">{{proseLabel}}</span>
+    </div>
+    <div class="section-body">
+      {{proseBody}}
+    </div>
+
+    <!-- 5. REPEAT WORD REPORT -->
+    <h2 class="section-header">5. REPEAT WORD REPORT</h2>
+    <div class="section-body">
+      {{repeatWords}}
+    </div>
+
+    <!-- 6. CHARACTER REPORT CARD -->
+    <h2 class="section-header">6. CHARACTER REPORT CARD</h2>
+    {{characters}}
+
+    <!-- 7. DEPTH CHECK -->
+    <h2 class="section-header">7. DEPTH CHECK</h2>
+    <div class="section-body">
+      <span class="depth-badge {{depthColor}}">{{depthRating}}</span>
+      {{depthBody}}
+    </div>
+
+    <!-- 8. LINE-LEVEL CALLOUTS -->
+    <h2 class="section-header">8. LINE-LEVEL CALLOUTS</h2>
+    {{lineCallouts}}
+
+    <!-- 9. WHERE THIS IS HEADING -->
+    <h2 class="section-header">9. WHERE THIS IS HEADING</h2>
+    <div class="section-body">
+      {{trajectory}}
+    </div>
+
+    {{#if trajectoryFix}}
+    <div class="fix-box">
+      <div class="fix-box-header">&#9200; RUTHLESS FIX:</div>
+      <p>{{trajectoryFix}}</p>
+    </div>
+    {{/if}}
+
+    <!-- 10. FINAL VERDICT -->
+    <h2 class="section-header">10. FINAL VERDICT</h2>
+    <div class="verdict-box">
+      {{verdict}}
+    </div>
+
+    <div class="report-footer">
+      RUTHLESS MENTOR REPORT &nbsp;|&nbsp; {{date}}
+    </div>
+  </div>
+</body>
+</html>

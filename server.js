@@ -73,8 +73,8 @@ function countWords(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
-// ===== REVIEW PROMPT =====
-const REVIEW_PROMPT = `You are Ruthless Mentor — a veteran writing professor with 30 years of experience and zero patience for lazy prose. You care deeply about the craft of writing — which is exactly why you refuse to be nice when nice isn't helpful.
+// ===== REVIEW PROMPTS =====
+const REVIEW_PROMPT = `You are Ruthless Mentor — a veteran writing professor with 30 years of experience and zero patience for lazy prose.
 
 Your job is to give the author the review they NEED, not the one they want to hear.
 
@@ -84,55 +84,109 @@ Produce your review in this exact structure. Every section is mandatory.
 2-3 sentences. Your gut reaction. What hit you? What made you wince?
 
 ### 2. Prose Quality Audit: X/10
-Rate the overall prose quality. Scan for:
-- **Repetitive Word Abuse**: Flag any non-function word that appears with abnormal frequency. COUNT every instance. List every crutch word with its count and contexts.
-- **Placeholder Phrases**: Vague, meaningless language that does zero work. "Something shifted." "It was what it was." Quote them all.
-- **Broken Metaphors**: Comparisons that collapse under scrutiny. Quote every broken one.
-- **Purple Prose**: Language that overshoots the emotional reality of the scene.
-- **Telling Not Showing**: "She was brave" instead of showing bravery through action.
-- **Repetitive Sentence Structures**: Same rhythm paragraph after paragraph.
-- **Lack of Specificity**: "A beautiful flower" vs "a half-dead marigold in a cracked pot."
-- **Dead-Weight Modifiers**: Count every "very," "really," "just," "actually."
-
-For EVERY problem, quote the specific passage and explain why it fails.
+Rate overall prose quality. Scan for: Repetitive Word Abuse (COUNT instances), Placeholder Phrases, Broken Metaphors, Purple Prose, Telling Not Showing, Repetitive Sentence Structures, Lack of Specificity, Dead-Weight Modifiers. Quote specific passages for every problem.
 
 ### 3. Repeat Word Report
-Dedicated section listing every overused word with exact count and every context it appears in. Be thorough.
+List every overused word with exact count and every context.
 
-### 4. Uncommon Language Check
-Flag overly dramatic, cliched "literary" phrasing: "the darkness crept in," "silence was deafening," "time stood still," overuse of personification. Quote every instance. If none found, note: "No uncommon language issues detected."
-
-### 5. Shallow Content Check
-Does the writing engage with its subject matter or skate on the surface?
-- Themes handled with oven mitts?
-- Convenient psychology?
-- Emotional flinching?
+### 4. Shallow Content Check
+Themes handled with oven mitts? Convenient psychology? Emotional flinching?
 Rate: Shallow / Surface / Adequate / Deep / Unflinching
 
-### 6. Character Report Card
-For each character: Name, Grade (A-F), What's working (with quotes), What's broken (with quotes), Diagnosis.
+### 5. Character Report Card
+For each character: Name, Grade (A-F), Strengths (with quotes), Weaknesses (with quotes), Diagnosis.
 
-### 7. Story Mechanics
-Pacing, plot holes, world-building, stakes, show vs tell, dialogue quality, theme, prose style.
+### 6. Story Mechanics
+Pacing, plot holes, world-building, stakes, show vs tell, dialogue, theme, prose style.
 
-### 8. Line-Level Callouts
-Pull at least 5-10 specific passages. Quote them. Explain the problem. Suggest a specific fix. Also call out genuinely GOOD passages.
+### 7. Line-Level Callouts
+At least 5-10 passages. Quote, explain problem, suggest fix. Also call out GOOD passages.
 
-### 9. Where This Is Heading
-If unfinished: trajectory warnings, structural concerns, what to fix before continuing.
-If complete: "This appears complete. No trajectory analysis needed."
+### 8. Where This Is Heading
+If unfinished: trajectory warnings, structural concerns, what to fix now. If complete: note it.
 
-### 10. Final Verdict
-2-4 paragraphs. Is it ready? What's the single biggest fix? Strongest element? Would you keep reading?
-End with one sentence of genuine encouragement — but only if earned.
+### 9. Final Verdict
+2-4 paragraphs. Ready for readers? Biggest fix? Strongest element? Would you keep reading?
 
-## Tone Rules
-- Be direct. "This doesn't work because..." not "You might consider perhaps..."
-- Be specific. Never say "the writing could be stronger" without saying exactly where and how.
-- Be fair. The goal is to make the author better, not make them quit.
-- Be funny when appropriate. Dry wit lands better than cruelty.
-- Adjust expectations to the genre. A cozy middle-grade mystery has different standards than literary adult fiction.
-- NEVER fabricate quotes. Only quote passages that actually appear in the text.`;
+Be direct, specific, fair. Dry wit over cruelty. NEVER fabricate quotes.`;
+
+// Structured JSON prompt for PDF generation
+const PDF_REVIEW_PROMPT = `You are Ruthless Mentor — a veteran writing professor with 30 years of experience.
+
+Analyze the manuscript and return a JSON object with this EXACT structure. Return ONLY valid JSON, no markdown, no code fences.
+
+{
+  "title": "best guess at manuscript title or 'Untitled Manuscript'",
+  "status": "Complete or Partial (X of Y chapters submitted)",
+  "targetAge": "age range and genre, e.g. '9-12 (Middle Grade Fantasy)'",
+  "firstImpressions": "2-3 paragraphs of gut reaction. Separate paragraphs with \\n",
+  "strengths": "pipe-separated list of top strengths, e.g. 'A vivid setting | A strong main character | Sharp dialogue'",
+  "pacingBody": "1-2 paragraphs on the core pacing issue. Use \\n between paragraphs",
+  "pacingFix": "one clear, actionable fix for the biggest pacing problem",
+  "pacingBreakdown": [
+    {"type": "bad", "label": "Ch. 1-2", "text": "description of pacing issue"},
+    {"type": "warn", "label": "Ch. 3-6", "text": "description"},
+    {"type": "good", "label": "Ch. 7-12", "text": "description"},
+    {"type": "neutral", "label": "Overall", "text": "summary"}
+  ],
+  "voiceScore": 7,
+  "voiceLabel": "Short label like 'Strong Voice, Inconsistent POV'",
+  "voiceBody": "1-2 paragraphs analyzing the author's voice. Use \\n between paragraphs",
+  "voiceExamples": [
+    {"type": "weak", "quote": "exact quote from text showing telling", "note": "why it's weak"},
+    {"type": "strong", "quote": "rewritten version or existing strong example", "note": "why it works"}
+  ],
+  "proseScore": 6,
+  "proseLabel": "Short label like 'Needs Polish' or 'Clean and Confident'",
+  "proseBody": "1-2 paragraphs on prose quality issues. Use \\n between paragraphs",
+  "repeatWords": [
+    {"word": "sharp", "count": 14, "contexts": "used for voices, glances, pain, ideas, weather"},
+    {"word": "just", "count": 23, "contexts": "filler word throughout dialogue and narration"}
+  ],
+  "characters": [
+    {
+      "name": "Character Name",
+      "grade": "B+",
+      "strengths": "what works, with brief quote references",
+      "weaknesses": "what's broken, with brief quote references",
+      "diagnosis": "real person or cardboard cutout? why?"
+    }
+  ],
+  "depthRating": "one of: Shallow, Surface, Adequate, Deep, Unflinching",
+  "depthBody": "1-2 paragraphs on content depth. Use \\n between paragraphs",
+  "lineCallouts": [
+    {
+      "location": "Chapter 1, Paragraph 3",
+      "quote": "exact quote from the text",
+      "problem": "what's wrong with it",
+      "fix": "specific rewrite suggestion",
+      "isGood": false
+    },
+    {
+      "location": "Chapter 2, Paragraph 8",
+      "quote": "exact quote that works well",
+      "comment": "why this passage is effective",
+      "isGood": true
+    }
+  ],
+  "trajectory": "1-2 paragraphs on where the story is headed if unfinished, or 'Complete manuscript.' if finished. Use \\n between paragraphs",
+  "trajectoryFix": "most important thing to fix before continuing, or empty string if complete",
+  "verdict": "2-4 paragraphs. Final verdict. Is it ready? Biggest fix? Strongest element? Would you keep reading? End with genuine encouragement if earned. Use \\n between paragraphs"
+}
+
+CRITICAL RULES:
+- Return ONLY the JSON object. No markdown. No code fences. No explanation before or after.
+- NEVER fabricate quotes. Only use text that actually appears in the manuscript.
+- All string values must be valid JSON (escape quotes with \\", use \\n for newlines).
+- Be brutally honest. Direct. Specific. Fair.
+- Adjust expectations to genre — don't critique a kids book for not being literary fiction.
+- For unfinished work, don't penalize missing resolution. Focus on what's on the page.
+- voiceExamples should have at least one weak and one strong example.
+- lineCallouts should have at least 5 entries, mix of good (isGood:true) and bad (isGood:false).
+- repeatWords should list every word used more than 5 times abnormally.
+- pacingBreakdown types: "bad" (red X), "warn" (yellow warning), "good" (green check), "neutral" (arrow).`;
+
+const { generatePdf } = require('./pdf-generator');
 
 // ===== GET USER INFO =====
 app.get('/api/me', requireAuth, async (req, res) => {
@@ -174,24 +228,9 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   const wordCount = countWords(text);
   const tier = getTier(wordCount);
 
-  // Check if first review (free)
-  let isFirstFree = false;
-  if (req.user && supabaseAdmin) {
-    try {
-      const { count } = await supabaseAdmin
-        .from('reviews')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', req.user.id);
-      isFirstFree = count === 0;
-    } catch (e) { isFirstFree = true; }
-  } else {
-    isFirstFree = true; // No auth = treat as free (first anonymous review)
-  }
+  const totalCost = tier.price;
 
-  const totalCost = isFirstFree ? 0 : tier.price;
-
-  console.log(`[REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name} | $${totalCost}${isFirstFree ? ' (FREE)' : ''}`);
-
+  console.log(`[REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name} | $${totalCost}`);
   try {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -238,7 +277,6 @@ Provide your complete review following the structure outlined in your instructio
       tier: tier.name,
       price: tier.price,
       totalCost,
-      isFirstFree,
       usage: {
         inputTokens: message.usage.input_tokens,
         outputTokens: message.usage.output_tokens
@@ -248,6 +286,77 @@ Provide your complete review following the structure outlined in your instructio
   } catch (err) {
     console.error('[ERROR]', err.message);
     res.status(500).json({ error: 'Review failed. Please try again.' });
+  }
+});
+
+// ===== PDF REVIEW =====
+app.post('/api/review-pdf', optionalAuth, async (req, res) => {
+  const { text } = req.body;
+
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'No text provided' });
+  }
+
+  const wordCount = countWords(text);
+  const tier = getTier(wordCount);
+
+  console.log(`[PDF REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name}`);
+
+  try {
+    const message = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 8000,
+      messages: [
+        {
+          role: 'user',
+          content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${text}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
+        }
+      ],
+      system: PDF_REVIEW_PROMPT
+    });
+
+    let reviewText = message.content[0].text.trim();
+    // Strip any markdown code fences
+    reviewText = reviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+
+    let reviewData;
+    try {
+      reviewData = JSON.parse(reviewText);
+    } catch (parseErr) {
+      console.error('[JSON PARSE ERROR]', parseErr.message);
+      console.error('[RAW RESPONSE]', reviewText.substring(0, 500));
+      return res.status(500).json({ error: 'Failed to parse review data. Please try again.' });
+    }
+
+    reviewData.wordCount = `~${wordCount.toLocaleString()} words`;
+
+    // Generate PDF
+    const pdfBuffer = await generatePdf(reviewData);
+
+    // Store in Supabase if authenticated
+    if (supabaseAdmin && req.user) {
+      try {
+        await supabaseAdmin.from('reviews').insert({
+          user_id: req.user.id,
+          word_count: wordCount,
+          tier: tier.name,
+          price: tier.price,
+          review_markdown: JSON.stringify(reviewData),
+          input_tokens: message.usage.input_tokens,
+          output_tokens: message.usage.output_tokens,
+        });
+      } catch (e) {
+        console.error('[DB ERROR]', e.message);
+      }
+    }
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="ruthless-mentor-review-${Date.now()}.pdf"`);
+    res.send(pdfBuffer);
+
+  } catch (err) {
+    console.error('[PDF ERROR]', err.message);
+    res.status(500).json({ error: 'PDF review failed. Please try again.' });
   }
 });
 
