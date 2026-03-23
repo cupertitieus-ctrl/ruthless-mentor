@@ -183,6 +183,37 @@ details[open] summary::after{transform:rotate(45deg);color:var(--accent)}
 details p{padding:0 0 1rem;color:var(--text2);font-size:.85rem;line-height:1.7}
 
 /* FOOTER */
+/* LIGHT BODY — everything below the hero */
+.light-body{background:#faf9f7;color:#1a1a1a}
+.light-body section{background:transparent}
+.light-body h2{color:#1a1a1a}
+.light-body p,.light-body li{color:#333}
+.light-body .sub{color:#666}
+.light-body .f-card{background:#fff;border-color:#e5e2de}
+.light-body .f-card h3{color:#1a1a1a}
+.light-body .f-card p{color:#555}
+.light-body .f-num{color:var(--accent)}
+.light-body .demo-box{background:#fff;border-color:#e5e2de}
+.light-body .demo-label{color:#888}
+.light-body .demo-text{color:#333}
+.light-body .price-card{background:#fff;border-color:#e5e2de}
+.light-body .price-card .tier{color:#555}
+.light-body .price-card .amount{color:#1a1a1a}
+.light-body .price-card .period{color:#888}
+.light-body .price-card.popular{border-color:var(--accent)}
+.light-body .btn-outline{color:#1a1a1a;border-color:#ccc}
+.light-body .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.light-body .story-wrap{background:#fff;border:1px solid #e5e2de;border-radius:12px;padding:2.5rem}
+.light-body .story-wrap p{color:#444}
+.light-body .sig{color:#999}
+.light-body details{border-color:#e5e2de}
+.light-body details summary{color:#1a1a1a}
+.light-body details p{color:#555}
+.light-body .pricing-addon{color:#888}
+.light-body .badge{background:var(--accent);color:#fff}
+.light-body mark{background:#fff3cd;color:#1a1a1a}
+.light-body .tag-pill{background:#f0ede8;color:#1a1a1a;border-color:#ddd}
+
 footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;max-width:880px;margin:0 auto;padding:2rem;border-top:1px solid var(--border)}
 .footer-logo{font-size:.78rem;color:var(--text3)}
 .footer-links{display:flex;gap:1rem}
