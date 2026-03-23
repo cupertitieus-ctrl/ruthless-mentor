@@ -177,8 +177,20 @@ if (form) {
             return;
         }
 
+        const disclaimerCb = document.getElementById('disclaimer-cb');
+        if (disclaimerCb && !disclaimerCb.checked) {
+            alert('Please check the content review disclaimer before submitting.');
+            return;
+        }
+
         const text = textarea.value.trim();
         if (!text) { alert('Paste your text or upload a file first.'); return; }
+
+        // Collect manuscript info
+        const stage = document.getElementById('q-stage') ? document.getElementById('q-stage').value : '';
+        const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
+        const pov = document.getElementById('q-pov') ? document.getElementById('q-pov').value : '';
+        const manuscriptInfo = { stage, genre, pov };
 
         const btn = document.getElementById('submit-btn');
         const progressWrap = document.getElementById('progress-wrap');
@@ -216,7 +228,7 @@ if (form) {
             const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session.access_token };
 
             // Step 1: Get the text review
-            const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text }) });
+            const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
             const reviewData = await reviewRes.json();
             if (!reviewRes.ok) throw new Error(reviewData.error || 'Review failed');
 

@@ -288,9 +288,43 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
   }
 });
 
+// ===== MANUSCRIPT INFO LABELS =====
+const STAGE_LABELS = {
+  'complete': 'Complete draft (beginning, middle, end)',
+  'wip': 'Work in progress — ending not yet written',
+  'first': 'First draft',
+  'revised': 'Revised draft',
+  'polished': 'Polished / ready for submission',
+};
+const GENRE_LABELS = {
+  'picture-book': 'Picture book (Ages 3–8) — focus on story arc, emotional connection, read-aloud rhythm, and illustration pacing',
+  'early-reader': 'Early reader (Ages 5–8) — focus on simple sentence structure, repetition, vocabulary level, and decodable text',
+  'chapter-book': 'Chapter book (Ages 6–10) — focus on chapter hooks, age-appropriate humor, relatable situations, and pacing',
+  'middle-grade': 'Middle grade (Ages 8–12) — focus on character voice, emotional authenticity, theme depth, and coming-of-age resonance',
+  'young-adult': 'Young adult (Ages 12–18) — focus on authentic teen voice, stakes, identity, and emotional complexity',
+  'literary-fiction': 'Literary fiction (Ages 18+) — focus on prose style, thematic depth, character interiority, and structural ambition',
+  'genre-fiction': 'Genre fiction (Ages 18+) — focus on pacing, plot mechanics, genre conventions, and reader satisfaction',
+  'memoir': 'Memoir / narrative nonfiction (Ages 18+) — focus on truth, reflection, scene vs. summary, and emotional honesty',
+};
+const POV_LABELS = {
+  'first-person': 'First person ("I")',
+  'second-person': 'Second person ("you")',
+  'third-person': 'Third person ("he/she/they")',
+  'multiple-pov': 'Multiple POV (switches between characters)',
+};
+
+function buildManuscriptContext(manuscriptInfo) {
+  if (!manuscriptInfo) return '';
+  const parts = [];
+  if (manuscriptInfo.stage) parts.push(`Manuscript stage: ${STAGE_LABELS[manuscriptInfo.stage] || manuscriptInfo.stage}`);
+  if (manuscriptInfo.genre) parts.push(`Genre: ${GENRE_LABELS[manuscriptInfo.genre] || manuscriptInfo.genre}`);
+  if (manuscriptInfo.pov) parts.push(`POV: ${POV_LABELS[manuscriptInfo.pov] || manuscriptInfo.pov}`);
+  return parts.length ? '\n\nAuthor-provided context:\n' + parts.join('\n') : '';
+}
+
 // ===== SUBMIT REVIEW =====
 app.post('/api/review', requireAuth, async (req, res) => {
-  const { text } = req.body;
+  const { text, manuscriptInfo } = req.body;
 
   if (!text || !text.trim()) {
     return res.status(400).json({ error: 'No text provided' });
@@ -298,8 +332,8 @@ app.post('/api/review', requireAuth, async (req, res) => {
 
   const wordCount = countWords(text);
   const tier = getTier(wordCount);
-
   const totalCost = tier.price;
+  const context = buildManuscriptContext(manuscriptInfo);
 
   console.log(`[REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name} | $${totalCost}`);
   try {
@@ -309,7 +343,9 @@ app.post('/api/review', requireAuth, async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Please review the following manuscript/text. It is ${wordCount} words long and categorized as "${tier.name}".
+          content: `Please review the following manuscript/text. It is ${wordCount} words long and categorized as "${tier.name}".${context}
+
+IMPORTANT: Adjust your critique standards to match the genre and age group. A picture book should be evaluated on story arc, emotional resonance, and read-aloud flow — NOT on complex character arcs or world-building. A YA novel should be held to higher standards for voice, theme, and emotional complexity. If the manuscript is a first draft or work in progress, focus on structural and story-level issues rather than line-level polish.
 
 ---
 
