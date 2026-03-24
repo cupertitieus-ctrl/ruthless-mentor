@@ -20,34 +20,34 @@
   .toolbar-btn.outline:hover { border-color: #c9a96e; color: #c9a96e; }
 
   /* PAGE */
-  .page { max-width: 8.5in; margin: 8px auto; background: #fff; padding: 0.2in 0.75in 0.6in; box-shadow: 0 2px 20px rgba(0,0,0,.08); border-radius: 4px; }
+  .page { max-width: 8.5in; margin: 8px auto; background: #fff; padding: 0 0.5in 0.4in; box-shadow: 0 2px 20px rgba(0,0,0,.08); border-radius: 4px; }
 
   /* HEADER */
-  .report-header { text-align: center; margin-bottom: 8px; }
-  .report-header img { height: 140px; margin-bottom: -10px; }
+  .report-header { text-align: center; margin-bottom: 0; }
+  .report-header img { height: 180px; margin-bottom: -26px; }
   .brand-line { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 2px; }
-  .brand-line hr { flex: 1; max-width: 120px; border: none; border-top: 2px solid #b8860b; }
-  .brand-line { margin-top: -14px; }
-  .brand-line span { font-size: 10pt; font-weight: 700; letter-spacing: 3px; color: #1a1a1a; text-transform: uppercase; }
-  .report-title { font-family: 'Georgia', 'Times New Roman', serif; font-size: 22pt; font-weight: 900; margin: 6px 0 12px; line-height: 1.15; }
+  .brand-line hr { flex: 1; border: none; border-top: 2px solid #8b0000; }
+  .brand-line { margin-top: -30px; }
+  .brand-line span { font-size: 11pt; font-weight: 700; letter-spacing: 3px; color: #1a1a1a; text-transform: uppercase; }
+  .report-title { font-family: 'Georgia', 'Times New Roman', serif; font-size: 22pt; font-weight: 900; margin: 12px 0 10px; line-height: 1.15; }
   .report-title .accent { color: #8b0000; }
 
   /* METADATA */
-  .meta-table { margin-bottom: 28px; }
+  .meta-table { margin-bottom: 10px; }
   .meta-table table { border-collapse: collapse; }
-  .meta-table td { padding: 3px 0; vertical-align: top; }
+  .meta-table td { padding: 1px 0; vertical-align: top; }
   .meta-table td:first-child { font-weight: 700; width: 140px; color: #1a1a1a; }
   .meta-table td:last-child { font-style: italic; color: #333; }
 
   /* SECTION HEADERS */
-  .section-header { color: #8b0000; font-size: 16pt; font-weight: 800; margin: 36px 0 10px; padding-bottom: 6px; border-bottom: 3px solid #b8860b; text-transform: uppercase; }
+  .section-header { color: #8b0000; font-size: 13pt; font-weight: 800; margin: 16px 0 4px; padding-bottom: 3px; border-bottom: 2px solid #8b0000; text-transform: uppercase; }
 
   .section-body { margin-top: 10px; }
   .section-body p { margin-bottom: 10px; }
 
   /* Global paragraph spacing */
-  .page p { margin-bottom: 12px; line-height: 1.65; }
-  .page p strong:first-child { font-size: 11.5pt; display: inline-block; margin-top: 6px; text-transform: uppercase; }
+  .page p { margin-bottom: 8px; line-height: 1.55; }
+  .page p strong:first-child { font-size: 11.5pt; display: inline-block; margin-top: 2px; }
   .page h2 + p { margin-top: 12px; }
   .page ul { margin: 10px 0 16px 20px; }
   .page li { margin-bottom: 6px; line-height: 1.6; }
@@ -124,7 +124,7 @@
   /* FOOTER */
   .report-footer { text-align: center; font-size: 9pt; color: #888; padding-top: 16px; border-top: 1px solid #ddd; margin-top: 30px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
 
-  .sub-header { font-weight: 800; font-size: 12.5pt; margin: 18px 0 8px; color: #1a1a1a; text-transform: uppercase; }
+  .sub-header { font-weight: 800; font-size: 12.5pt; margin: 10px 0 4px; color: #1a1a1a; text-transform: uppercase; }
   .bold-text { font-weight: 700; }
 
   /* ICONS */
@@ -136,7 +136,7 @@
   @media print {
     .toolbar { display: none; }
     body { background: #fff; }
-    .page { box-shadow: none; margin: 0; padding: 0.3in 0.65in; }
+    .page { box-shadow: none; margin: 0; padding: 0 0.45in 0.3in; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
   }
 
@@ -209,11 +209,15 @@ function renderReport(md, meta) {
   const povLabels = { 'first-person': 'First Person', 'second-person': 'Second Person', 'third-person': 'Third Person', 'multiple-pov': 'Multiple POV' };
 
   let metaRows = '';
-  if (meta.title) metaRows += `<tr><td>Title:</td><td><strong>${esc(meta.title)}</strong></td></tr>`;
+  if (meta.title) {
+    let manuscriptLine = esc(meta.title);
+    if (meta.bookNumber) manuscriptLine += ` — Book ${esc(meta.bookNumber)}`;
+    metaRows += `<tr><td>Manuscript:</td><td>${manuscriptLine}</td></tr>`;
+  }
   metaRows += `<tr><td>Review Date:</td><td>${date}</td></tr>`;
+  if (meta.stage) metaRows += `<tr><td>Status:</td><td>${esc(stageLabels[meta.stage] || meta.stage)}</td></tr>`;
   metaRows += `<tr><td>Word Count:</td><td>~${(meta.wordCount || 0).toLocaleString()} words</td></tr>`;
-  if (meta.genre) metaRows += `<tr><td>Genre:</td><td>${esc(genreLabels[meta.genre] || meta.genre)}</td></tr>`;
-  if (meta.stage) metaRows += `<tr><td>Stage:</td><td>${esc(stageLabels[meta.stage] || meta.stage)}</td></tr>`;
+  if (meta.genre) metaRows += `<tr><td>Target Age:</td><td>${esc(genreLabels[meta.genre] || meta.genre)}</td></tr>`;
 
   // Parse markdown into HTML with special rendering
   const reviewHtml = parseReviewMarkdown(md);
@@ -223,6 +227,7 @@ function renderReport(md, meta) {
       <img src="logo.png" alt="RM">
       <div class="brand-line"><hr><span>Ruthless Mentor</span><hr></div>
     </div>
+    <div class="report-title">Manuscript <span class="accent">Review</span> Report</div>
     <div class="meta-table"><table>${metaRows}</table></div>
     ${reviewHtml}
     <div class="report-footer">RUTHLESS MENTOR REPORT &nbsp;|&nbsp; ${date}</div>

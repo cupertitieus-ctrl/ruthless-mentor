@@ -95,6 +95,18 @@ function updateSidebarPrice() {
 
 if (genreSelect) genreSelect.addEventListener('change', updateSidebarPrice);
 
+// ===== SCREENPLAY TOGGLE — hide Book Number + POV when screenplay selected =====
+const bookNumberGroup = document.getElementById('book-number-group');
+const povGroup = document.getElementById('pov-group');
+
+function toggleScreenplayFields() {
+    const isScreenplay = genreSelect && genreSelect.value === 'screenplay';
+    if (bookNumberGroup) bookNumberGroup.style.display = isScreenplay ? 'none' : '';
+    if (povGroup) povGroup.style.display = isScreenplay ? 'none' : '';
+}
+
+if (genreSelect) genreSelect.addEventListener('change', toggleScreenplayFields);
+
 // ===== COUPON =====
 const couponBtn = document.getElementById('apply-coupon');
 const couponInput = document.getElementById('coupon-input');
@@ -167,6 +179,8 @@ if (couponBtn) {
             if (savedInfo.stage) { const s = document.getElementById('q-stage'); if (s) s.value = savedInfo.stage; }
             if (savedInfo.genre) { const g = document.getElementById('q-genre'); if (g) { g.value = savedInfo.genre; updateSidebarPrice(); } }
             if (savedInfo.pov) { const p = document.getElementById('q-pov'); if (p) p.value = savedInfo.pov; }
+            if (savedInfo.bookNumber) { const b = document.getElementById('q-book-number'); if (b) b.value = savedInfo.bookNumber; }
+            toggleScreenplayFields();
             updateCost();
         }
         window.history.replaceState({}, '', '/review.html');
@@ -243,7 +257,8 @@ async function runReview(text, manuscriptInfo) {
             title: manuscriptInfo.title,
             stage: manuscriptInfo.stage,
             genre: manuscriptInfo.genre,
-            pov: manuscriptInfo.pov
+            pov: manuscriptInfo.pov,
+            bookNumber: manuscriptInfo.bookNumber
         }));
 
         // Clean up pending data
@@ -280,7 +295,8 @@ if (form) {
         const stage = document.getElementById('q-stage') ? document.getElementById('q-stage').value : '';
         const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
         const pov = document.getElementById('q-pov') ? document.getElementById('q-pov').value : '';
-        const manuscriptInfo = { title, stage, genre, pov };
+        const bookNumber = document.getElementById('q-book-number') ? document.getElementById('q-book-number').value : '';
+        const manuscriptInfo = { title, stage, genre, pov, bookNumber };
 
         // Save text to sessionStorage before redirecting to Stripe
         sessionStorage.setItem('rm_pending_text', text);

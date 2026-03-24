@@ -36,8 +36,8 @@
                         <p class="quiz-label">About your manuscript</p>
 
                         <div class="form-group">
-                            <label for="q-title">Book Title (optional)</label>
-                            <input type="text" id="q-title" placeholder="Type your book title here">
+                            <label for="q-title">Manuscript Title (optional)</label>
+                            <input type="text" id="q-title" placeholder="Type your manuscript title here">
                         </div>
 
                         <div class="form-group">
@@ -64,11 +64,28 @@
                                 <option value="literary-fiction">Literary fiction (55,000–100,000 words, Ages 18+)</option>
                                 <option value="genre-fiction">Genre fiction — thriller, romance, fantasy, sci-fi, horror, mystery (80,000–120,000 words)</option>
                                 <option value="memoir">Memoir / narrative nonfiction (60,000–90,000 words)</option>
-                                <option value="screenplay">Screenplay (15,000–25,000 words, 90–120 pages)</option>
+                                <option value="screenplay">Screenplay (15,000–25,000 words)</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="book-number-group">
+                            <label for="q-book-number">Book Number (series)</label>
+                            <select id="q-book-number">
+                                <option value="">N/A — standalone</option>
+                                <option value="1">Book 1</option>
+                                <option value="2">Book 2</option>
+                                <option value="3">Book 3</option>
+                                <option value="4">Book 4</option>
+                                <option value="5">Book 5</option>
+                                <option value="6">Book 6</option>
+                                <option value="7">Book 7</option>
+                                <option value="8">Book 8</option>
+                                <option value="9">Book 9</option>
+                                <option value="10">Book 10</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="pov-group">
                             <label for="q-pov">POV — Who's telling the story?</label>
                             <select id="q-pov">
                                 <option value="">Select...</option>
