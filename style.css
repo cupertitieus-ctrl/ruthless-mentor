@@ -184,6 +184,9 @@ details p{padding:0 0 1rem;color:var(--text2);font-size:.85rem;line-height:1.7}
 
 /* FOOTER */
 /* LIGHT BODY — everything below the hero */
+.beige-band{background:#f0ede8;padding:1rem 0;border-top:1px solid #e0ddd7;border-bottom:1px solid #e0ddd7}
+.beige-band .f-card{background:#faf9f7}
+.beige-band .demo-box{background:#faf9f7;border-color:#dbd8d2}
 .light-body{background:#faf9f7;color:#1a1a1a}
 .light-body section{background:transparent}
 .light-body h2{color:#1a1a1a}
