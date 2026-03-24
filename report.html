@@ -207,7 +207,9 @@ function renderReport(md, meta) {
   let metaRows = '';
   metaRows += `<tr><td>Review Date:</td><td>${date}</td></tr>`;
   metaRows += `<tr><td>Word Count:</td><td>~${(meta.wordCount || 0).toLocaleString()} words</td></tr>`;
+  if (meta.title) metaRows += `<tr><td>Title:</td><td>${esc(meta.title)}</td></tr>`;
   if (meta.genre) metaRows += `<tr><td>Genre:</td><td>${esc(genreLabels[meta.genre] || meta.genre)}</td></tr>`;
+  if (meta.stage) metaRows += `<tr><td>Stage:</td><td>${esc(stageLabels[meta.stage] || meta.stage)}</td></tr>`;
 
   // Parse markdown into HTML with special rendering
   const reviewHtml = parseReviewMarkdown(md);

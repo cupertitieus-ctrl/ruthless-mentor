@@ -144,10 +144,11 @@ if (form) {
         if (!text) { alert('Paste your text or upload a file first.'); return; }
 
         // Collect manuscript info
+        const title = document.getElementById('q-title') ? document.getElementById('q-title').value.trim() : '';
         const stage = document.getElementById('q-stage') ? document.getElementById('q-stage').value : '';
         const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
         const pov = document.getElementById('q-pov') ? document.getElementById('q-pov').value : '';
-        const manuscriptInfo = { stage, genre, pov };
+        const manuscriptInfo = { title, stage, genre, pov };
 
         const btn = document.getElementById('submit-btn');
         const progressWrap = document.getElementById('progress-wrap');
@@ -214,6 +215,7 @@ if (form) {
             sessionStorage.setItem('rm_meta', JSON.stringify({
                 wordCount: reviewData.wordCount,
                 tier: reviewData.tier,
+                title: manuscriptInfo.title,
                 stage: manuscriptInfo.stage,
                 genre: manuscriptInfo.genre,
                 pov: manuscriptInfo.pov

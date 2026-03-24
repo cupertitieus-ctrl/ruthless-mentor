@@ -128,14 +128,12 @@ You MUST include at least 2 showing-vs-telling comparisons in this section using
 The header MUST include a short label after the score. Examples:
 ### 3. Prose Quality: 5/10 — Needs Serious Tightening
 ### 3. Prose Quality: 8/10 — Clean and Confident
-Rate the writing quality from 1 to 10. Then go through each of these and quote specific examples from the text:
-- Overused words (name each one, count how many times it appears, show the different ways it's used)
+Rate the writing quality from 1 to 10. Do NOT list overused words here — that's covered in the Repeat Word Report. Instead focus on:
 - Vague or meaningless phrases that don't do any work
 - Metaphors or similes that don't make sense
 - Places where the author tells us something instead of showing it through action
 - Sentences that all sound the same rhythm over and over
 - Descriptions that are too generic (like "a beautiful day" instead of something specific)
-- Filler words like "very," "really," "just," "actually" — count them
 
 For every problem you find, quote the exact passage and explain what's wrong with it in plain language.
 
