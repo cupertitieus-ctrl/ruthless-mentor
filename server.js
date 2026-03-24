@@ -165,7 +165,6 @@ Give the main character a letter grade (A through F) and do a DEEP dive:
 - Arc: Do they change? Is the change earned?
 - Backstory: Do you know who this person is before the story started? What shaped them?
 - Flaws: Do they have real, meaningful flaws — not just "she's too caring"?
-- Mary Sue / Gary Stu check: Is the character suspiciously good at everything?
 - Diagnosis: Is this a real person or a cardboard cutout? Why?
 
 ### 7. Supporting Characters
