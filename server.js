@@ -192,12 +192,25 @@ If it's complete: say "This appears to be a complete manuscript."
 ### 10. Final Verdict
 2-4 paragraphs. Is it ready for readers? What's the single biggest thing to fix? What's the strongest thing to protect? Would you keep reading if you found this in a bookstore?
 
-Rules:
+CRITICAL FORMATTING RULES — follow these EXACTLY or the report will break:
+- Every [TELLING] must be on its OWN line, starting with [TELLING]. Never inline it in a paragraph.
+- Every [STRONGER] must be on its OWN line, starting with [STRONGER]. Always put it on the line AFTER [TELLING].
+- Every [FIX] must be on its OWN line, starting with [FIX].
+- Every [GOOD PASSAGE] must be on its OWN line, starting with [GOOD PASSAGE].
+- Every [BAD], [WARN], [GOOD], [NOTE] must be on its OWN line.
+- Every [STRENGTHS] must be on its OWN line, starting with [STRENGTHS].
+- You MUST include at least 2 [FIX] callouts throughout the review.
+- You MUST include at least 2 [TELLING]/[STRONGER] pairs.
+- You MUST include at least 2 [GOOD PASSAGE] callouts.
+- Section headers MUST use ### format: ### 1. First Impressions
+- Score headers MUST include the score: ### 2. Author's Voice: 7/10
+
+Other rules:
 - Be direct and specific. Never vague.
 - Be fair. Point out what's good too.
 - Use dry wit, not cruelty.
 - NEVER make up quotes. Only quote text that actually appears in the manuscript.
-- Write like a human, not a robot. No bullet point labels like "Problem:" or "Fix:" — just explain it naturally.
+- Write like a human, not a robot.
 - Adjust your standards to the genre. Don't judge a kids book by adult literary standards.`;
 
 // Structured JSON prompt for PDF generation
