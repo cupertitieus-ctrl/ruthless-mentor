@@ -238,6 +238,7 @@ CRITICAL FORMATTING RULES — follow these EXACTLY or the report will break:
 - You MUST include at least 2 [GOOD PASSAGE] callouts.
 - Section headers MUST use ### format: ### 1. First Impressions
 - Score headers MUST include the score: ### 2. Author's Voice: 7/10
+- Subheaders within sections (like Pacing:, Plot Holes:, Stakes:, Setting Accuracy:, Dialogue:, Theme:) should be **bold lowercase** not CAPS. Example: **Pacing:** not **PACING:**. This keeps them visually distinct from the main numbered section headers.
 
 Other rules:
 - Be direct and specific. Never vague.
