@@ -447,7 +447,31 @@ PICTURE BOOK BESTSELLER CRITERIA — Evaluate against ALL 10 of these:
     if (manuscriptInfo.rhyming === 'rhyming') {
       parts.push(`Style: RHYMING picture book — Criteria #1 and #2 above are CRITICAL. Meter and scansion are the #1 priority. Check every line for consistent stressed/unstressed syllable patterns. Flag forced rhymes where the author bent the sentence into an unnatural shape just to land the rhyme. Flag near-rhymes that do not quite work for young ears reading aloud. The rhyme scheme must be consistent throughout. If the meter breaks even once, call it out — broken meter kills a rhyming picture book faster than anything.`);
     } else if (manuscriptInfo.rhyming === 'non-rhyming') {
-      parts.push(`Style: NON-RHYMING picture book — Criteria #2 is still critical even without rhyme. Evaluate prose rhythm, sentence variety, word economy, lyrical quality, and read-aloud flow. The language should be musical without being metered. Sentences should vary in length for dramatic effect. The text must create natural pause points for page turns.`);
+      parts.push(`Style: NON-RHYMING picture book — Apply these 10 NON-RHYMING SPECIFIC CRITERIA in addition to the general picture book criteria above:
+
+1. THE IDEA CARRIES EVERYTHING: The concept must be amazing since there is no rhyme to charm the reader. Test: can you pitch it as "It is about a ___ who ___ but then ___ happens"? If not, the concept is weak. The best non-rhyming books are weird + simple + funny/emotional.
+
+2. VOICE OVER EVERYTHING: Without rhyme, voice is what makes it special. Look for personality, attitude, and humor in the wording itself. "I was nervous on the first day" is dead. "I was so nervous I almost stayed in the car forever" has voice. It should sound like a REAL kid or a super funny narrator — not a distant adult.
+
+3. EVERY LINE EARNS ITS SPOT: In rhyming books, rhythm helps carry things. Here, every sentence must: move the story, add humor, or build emotion. If it does none of those, flag it for deletion.
+
+4. PAGE TURNS ARE THE SECRET WEAPON: Even more important than in rhyming books. Structure should be: page = setup, page turn = payoff. "I knew today would be perfect." Turn = chaos. That contrast creates laughs.
+
+5. FUNNY BEATS WIN: Non-rhyming bestsellers are usually funny, slightly chaotic, and relatable. Kids love overreactions, bad decisions, and dramatic thoughts. If the manuscript is not getting at least one laugh, flag it.
+
+6. SUPER VISUAL WRITING: Must feel like scenes, not narration. "He had a bad day" is a summary. "His sandwich fell. Then his milk spilled. Then someone sat in his seat." is visual. Think in pictures, not summaries.
+
+7. SNEAKY REPETITION: Repetition still works without rhyme — same phrase repeated, escalating patterns, running jokes. Kids LOVE knowing what is coming. Flag if the manuscript has no repeating element.
+
+8. STRONG CHARACTER POV: Best hits feel like a kid telling the story or a super specific character voice. "There once was a boy..." is too distant. "Okay, so here is what happened..." pulls you in. Flag distant narrator voice.
+
+9. TIGHT ENDING THAT HITS: Best endings are a funny twist, full circle, or small emotional punch. If the ending feels like "And then everything was okay" — flag it as weak.
+
+10. TITLE THAT HOOKS INSTANTLY: Slightly weird, slightly funny, makes you curious. Flag generic titles.
+
+BRUTAL CHECKLIST — apply this test: Would a kid laugh at least once? Can a parent read it smoothly with zero prep? Is the main idea instantly clear? Does every page make you want to turn? Does the main character feel real or funny? If any answer is no, call it out.
+
+BIGGEST MISTAKE TO FLAG: Writing it like a short story. Picture books are NOT descriptive, slow, or deeply detailed. They are fast, punchy, and built for page turns. If the manuscript reads like a short story, that is the core problem.`);
     }
     if (manuscriptInfo.fiction === 'non-fiction') {
       parts.push(`Non-fiction picture book criteria: Evaluate accuracy of information for the age group, whether facts are presented in an engaging narrative way, whether the text sparks curiosity, and whether complex concepts are simplified without being dumbed down. Non-fiction picture books still need a strong narrative thread and must still hit criteria #3-#9 above. Facts alone are not enough.`);
