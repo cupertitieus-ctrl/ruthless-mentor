@@ -1,20 +1,11 @@
-// ===== AUTH CHECK =====
+// ===== AUTH CHECK (silent — no gate) =====
 let _session = null;
-const authGate = document.getElementById('auth-gate');
-const reviewPage = document.querySelector('.review-page');
 
 (async () => {
     try {
         const { data: { session } } = await sb.auth.getSession();
-        if (session) {
-            _session = session;
-            authGate.classList.add('hidden');
-        } else {
-            authGate.classList.remove('hidden');
-        }
-    } catch (e) {
-        authGate.classList.remove('hidden');
-    }
+        if (session) _session = session;
+    } catch (e) {}
     updateCost();
 })();
 
