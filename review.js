@@ -42,8 +42,14 @@ function updateCost() {
     const words = countWords(textarea ? textarea.value : '');
     if (wordCountEl) wordCountEl.textContent = words.toLocaleString();
 
+    // Use genre-selected price if available, otherwise fall back to word count tier
+    const genreVal = genreSelect ? genreSelect.value : '';
+    const genreInfo = GENRE_PRICES[genreVal];
     const tier = words > 0 ? getTier(words) : null;
-    let total = tier ? tier.price : 0;
+
+    let basePrice = genreInfo ? genreInfo.price : (tier ? tier.price : 0);
+    let tierName = genreInfo ? genreInfo.name : (tier ? tier.name : '--');
+    let total = basePrice;
 
     if (appliedCoupon && total > 0) {
         if (appliedCoupon.type === 'percent') total = Math.max(0, total - (total * appliedCoupon.discount / 100));
@@ -51,16 +57,9 @@ function updateCost() {
         else if (appliedCoupon.type === 'free') total = 0;
     }
 
-    if (estTierEl) estTierEl.textContent = words === 0 ? '--' : tier.name;
-    if (estCostEl) estCostEl.textContent = words === 0 ? '--' : '$' + tier.price;
-    if (totalEl) totalEl.textContent = words === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
-
-    document.querySelectorAll('.sidebar-tier').forEach(el => el.classList.remove('active'));
-    if (tier) {
-        const tiers = document.querySelectorAll('.sidebar-tier');
-        const idx = { "Children's / Picture Book": 0, 'Chapter Book': 1, 'Middle Grade': 2, "Young Adult / Adult": 3 }[tier.name];
-        if (tiers[idx]) tiers[idx].classList.add('active');
-    }
+    if (estTierEl) estTierEl.textContent = words === 0 && !genreInfo ? '--' : tierName;
+    if (estCostEl) estCostEl.textContent = basePrice === 0 ? '--' : '$' + basePrice;
+    if (totalEl) totalEl.textContent = basePrice === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
 }
 
 if (textarea) textarea.addEventListener('input', updateCost);
