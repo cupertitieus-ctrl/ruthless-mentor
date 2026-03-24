@@ -422,56 +422,56 @@ function buildManuscriptContext(manuscriptInfo) {
   // Picture book specific context
   if (manuscriptInfo.genre === 'picture-book') {
     parts.push(`
-PICTURE BOOK BESTSELLER CRITERIA — Evaluate against ALL 10 of these:
+PICTURE BOOK BESTSELLER CRITERIA — Be RUTHLESS. Do not soften. Do not hedge. If it fails a criterion, say so directly. Picture books are deceptively hard to write and most manuscripts are not ready. Your job is to tell them exactly where it breaks and why. Evaluate against ALL 10:
 
-1. INVISIBLE RHYME (rhyming books only): The rhyme must feel natural and invisible. If readers notice the rhyme too much, it is a problem. Flag: weird word choices made just to rhyme, awkward sentence inversions, anything that sounds like solving a puzzle instead of someone talking naturally. A forced rhyme like "The cat wore a hat / While sitting on a mat" is weak. A natural rhyme flows like speech.
+1. INVISIBLE RHYME (rhyming books only): The rhyme has to feel invisible. If a reader notices the rhyme, you have already lost. Weird word choices just to land a rhyme? Call it out. Awkward sentence flips? Call it out. If it sounds like someone solving a puzzle instead of talking, it is broken. "The cat wore a hat / While sitting on a mat" — that is amateur hour. Kill it.
 
-2. RHYTHM OVER RHYME: Kids do not care about rhyme — they care about FLOW. Every line must have the same beat, like music. If a parent stumbles reading it aloud, it is not bestseller-level. Test every line: can you read it without tripping? Does it have a consistent stressed/unstressed pattern?
+2. RHYTHM OVER RHYME: Kids do not care about your clever rhymes. They care about FLOW. Every line needs the same beat — like music. Read every line out loud. If a parent would stumble reading this at bedtime, it is not ready. Period. No excuses.
 
-3. ONE STICKY IDEA: Every great picture book can be explained in ONE sentence. "A pigeon really wants to drive a bus." "A crayon quits because it is tired of coloring the same thing." The concept must be simple, funny or emotional, and instantly understandable. If the pitch starts with "It is about a kid who learns..." it is already too weak.
+3. ONE STICKY IDEA: Can you explain this book in ONE sentence? "A pigeon really wants to drive a bus." "A crayon quits because it is tired of coloring the same thing." If the best pitch you can give starts with "It is about a kid who learns..." — stop. That is not a picture book concept. That is a homework assignment. Be blunt about whether the concept is strong enough to carry an entire book.
 
-4. PAGE-TURN POWER: Picture books are not stories — they are page-by-page experiences. Each page must make the kid think "What happens next??" Look for: setup then surprise on next page, repetition then twist, mini cliffhangers. This is the MOST important structural element.
+4. PAGE-TURN POWER: This is EVERYTHING. Picture books are not stories — they are page-by-page experiences. Every single page must make a kid think "What happens next??" If even one page feels flat, call it out. No mercy here. Setup on one page, surprise on the turn. Repetition building to a twist. Mini cliffhangers. If the manuscript reads like continuous prose instead of a page-turn experience, that is the core problem — say so.
 
-5. JOINABLE REPETITION: Bestsellers get read 100+ times. Kids need something to join in on: a repeating line, a chant, a predictable pattern. Something kids can shout along with.
+5. JOINABLE REPETITION: Bestsellers get read 100+ times. A kid needs something to shout along with — a repeating line, a chant, a predictable pattern. If there is nothing a 4-year-old can join in on, flag it. This is not optional for bestseller-level work.
 
-6. VISUAL POTENTIAL: Even without drawings, every scene must be instantly visual. "He felt sad" is dead. "He sat on the curb while his balloon floated away" gives an illustrator something to work with. If an illustrator can instantly picture the scene, it works. If not, it is dead.
+6. VISUAL POTENTIAL: No drawings yet, but every scene must be instantly visual. "He felt sad" is lazy and dead — an illustrator cannot draw a feeling. "He sat on the curb while his balloon floated away" — NOW we have a picture. If you cannot see the illustration in your head while reading a line, flag that line. Be specific about what is visual and what is not.
 
-7. SIMPLE EMOTIONAL HIT: Pick ONE emotion and commit: funny (best for virality), heartwarming, or slightly chaotic (kids LOVE chaos). Do not mix too many emotions. One clear emotional lane.
+7. SIMPLE EMOTIONAL HIT: Pick ONE lane and commit. Funny works best for virality. Heartwarming works. Slightly chaotic works — kids LOVE chaos. But mixing three emotions in 400 words? That is a mess. If the manuscript is trying to be funny AND sad AND educational, call it out. Pick one.
 
-8. RUTHLESS BREVITY: Most strong picture books are 300-600 words. Tight, no filler. If you can delete a line and nothing is lost, flag it. Every single word must earn its place.
+8. RUTHLESS BREVITY: 300-600 words. That is it. Every single word must EARN its place. If you can delete a line and the story still works, that line should not exist. Be merciless about filler. Point to specific lines that add nothing. Picture books are not the place for extra words — there are no extra words in a picture book.
 
-9. READ-IT-AGAIN ENDING: The best picture books end with a twist, a callback, or something funny that makes kids demand AGAIN. Evaluate whether the ending creates that pull.
+9. READ-IT-AGAIN ENDING: The best picture books end with a twist, a callback, or something that makes a kid slam the book shut and yell AGAIN. If the ending is "And then everything was okay" — flag it as weak. If there is no pull to reread, this book will get read once and shelved. Be honest about whether the ending earns a second read.
 
-10. TITLE POWER: The title matters enormously. Good titles feel like a joke, a mystery, or a bold statement. "The Adventures of..." is weak. "This Book Is NOT Funny" makes you want to check. Evaluate whether the title carries the book.`);
+10. TITLE POWER: The title sells the book. Good titles feel like a joke, a mystery, or a bold dare. "The Adventures of..." is forgettable garbage. "This Book Is NOT Funny" makes you pick it up. If the title is generic or forgettable, say so. Do not be nice about a weak title.`);
 
     if (manuscriptInfo.rhyming === 'rhyming') {
       parts.push(`Style: RHYMING picture book — Criteria #1 and #2 above are CRITICAL. Meter and scansion are the #1 priority. Check every line for consistent stressed/unstressed syllable patterns. Flag forced rhymes where the author bent the sentence into an unnatural shape just to land the rhyme. Flag near-rhymes that do not quite work for young ears reading aloud. The rhyme scheme must be consistent throughout. If the meter breaks even once, call it out — broken meter kills a rhyming picture book faster than anything.`);
     } else if (manuscriptInfo.rhyming === 'non-rhyming') {
-      parts.push(`Style: NON-RHYMING picture book — Apply these 10 NON-RHYMING SPECIFIC CRITERIA in addition to the general picture book criteria above:
+      parts.push(`Style: NON-RHYMING picture book — No rhyme to hide behind. The writing has to carry everything on its own. Be RUTHLESS. Apply these 10 criteria and do not pull punches:
 
-1. THE IDEA CARRIES EVERYTHING: The concept must be amazing since there is no rhyme to charm the reader. Test: can you pitch it as "It is about a ___ who ___ but then ___ happens"? If not, the concept is weak. The best non-rhyming books are weird + simple + funny/emotional.
+1. THE IDEA CARRIES EVERYTHING: Without rhyme to charm the reader, the concept has to be killer. Test it: "It is about a ___ who ___ but then ___ happens." If you cannot pitch it that cleanly, the concept is not strong enough. Say so directly. The best non-rhyming picture books are weird + simple + funny/emotional. If this reads like a lesson wrapped in a story, call it out — that is not a picture book concept.
 
-2. VOICE OVER EVERYTHING: Without rhyme, voice is what makes it special. Look for personality, attitude, and humor in the wording itself. "I was nervous on the first day" is dead. "I was so nervous I almost stayed in the car forever" has voice. It should sound like a REAL kid or a super funny narrator — not a distant adult.
+2. VOICE OVER EVERYTHING: This is the #1 thing that separates published non-rhyming picture books from slush pile rejects. "I was nervous on the first day" is flat and forgettable. "I was so nervous I almost stayed in the car forever" has personality. If the voice sounds like a distant adult narrating instead of a real kid (or a hilariously specific character) talking, flag every instance. Be blunt — weak voice kills non-rhyming picture books.
 
-3. EVERY LINE EARNS ITS SPOT: In rhyming books, rhythm helps carry things. Here, every sentence must: move the story, add humor, or build emotion. If it does none of those, flag it for deletion.
+3. EVERY LINE EARNS ITS SPOT: No rhyme or rhythm to carry dead weight. Every sentence must move the story, add humor, or build emotion. If it does NONE of those three things, point to it and say "cut this." Do not be gentle. In 400 words there is no room for a single wasted sentence.
 
-4. PAGE TURNS ARE THE SECRET WEAPON: Even more important than in rhyming books. Structure should be: page = setup, page turn = payoff. "I knew today would be perfect." Turn = chaos. That contrast creates laughs.
+4. PAGE TURNS ARE THE SECRET WEAPON: Even MORE critical without rhyme. Page = setup. Turn = payoff. "I knew today would be perfect." TURN — chaos everywhere. That contrast is where the laughs live. If the manuscript reads like continuous prose with no page-turn thinking, that is a fundamental structural problem — say so clearly.
 
-5. FUNNY BEATS WIN: Non-rhyming bestsellers are usually funny, slightly chaotic, and relatable. Kids love overreactions, bad decisions, and dramatic thoughts. If the manuscript is not getting at least one laugh, flag it.
+5. FUNNY BEATS WIN: Non-rhyming bestsellers are almost always funny, slightly chaotic, and relatable. Kids love overreactions, bad decisions, and dramatic internal thoughts. If there is not a single moment where a kid would laugh, flag it. Be specific about where the humor should be and is not.
 
-6. SUPER VISUAL WRITING: Must feel like scenes, not narration. "He had a bad day" is a summary. "His sandwich fell. Then his milk spilled. Then someone sat in his seat." is visual. Think in pictures, not summaries.
+6. SUPER VISUAL WRITING: "He had a bad day" is lazy narration — an illustrator cannot draw that. "His sandwich fell. Then his milk spilled. Then someone sat in his seat." — THAT is visual. Every line should paint a scene. If you read a line and cannot immediately picture what the illustrator would draw, flag it as dead writing.
 
-7. SNEAKY REPETITION: Repetition still works without rhyme — same phrase repeated, escalating patterns, running jokes. Kids LOVE knowing what is coming. Flag if the manuscript has no repeating element.
+7. SNEAKY REPETITION: Without rhyme, repetition is the structural glue. Same phrase building, escalating patterns, running jokes. Kids LOVE predicting what comes next. If the manuscript has ZERO repeating element, that is a problem. Flag it and suggest where repetition could work.
 
-8. STRONG CHARACTER POV: Best hits feel like a kid telling the story or a super specific character voice. "There once was a boy..." is too distant. "Okay, so here is what happened..." pulls you in. Flag distant narrator voice.
+8. STRONG CHARACTER POV: "There once was a boy..." — that is a fairy tale opening, not a picture book voice. "Okay, so here is what happened..." — NOW we are in it. The character voice should feel immediate, specific, and alive. If the narrator feels distant or generic, call it out line by line.
 
-9. TIGHT ENDING THAT HITS: Best endings are a funny twist, full circle, or small emotional punch. If the ending feels like "And then everything was okay" — flag it as weak.
+9. TIGHT ENDING THAT HITS: "And then everything was okay" is the weakest ending in picture books. The ending needs a funny twist, a full-circle callback, or a small emotional gut-punch. If the ending just... stops, say so. If it wraps up too neatly with a lesson, say so. Be honest about whether a kid would yell AGAIN or just close the book.
 
-10. TITLE THAT HOOKS INSTANTLY: Slightly weird, slightly funny, makes you curious. Flag generic titles.
+10. TITLE THAT HOOKS INSTANTLY: Weak title = nobody picks it up. Slightly weird, slightly funny, makes you curious. "The Adventures of..." is invisible on a shelf. If the title is generic, say it plainly and suggest what kind of title energy it needs.
 
-BRUTAL CHECKLIST — apply this test: Would a kid laugh at least once? Can a parent read it smoothly with zero prep? Is the main idea instantly clear? Does every page make you want to turn? Does the main character feel real or funny? If any answer is no, call it out.
+THE RUTHLESS TEST — answer these honestly in the review: Would a kid laugh at least once? Can a parent read it smoothly with zero prep? Is the main idea instantly clear? Does every page make you want to turn? Does the main character feel real or funny? If ANY answer is no, say so. Do not soften it.
 
-BIGGEST MISTAKE TO FLAG: Writing it like a short story. Picture books are NOT descriptive, slow, or deeply detailed. They are fast, punchy, and built for page turns. If the manuscript reads like a short story, that is the core problem.`);
+THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive, slow, deeply detailed — that is the core problem. Picture books are fast, punchy, and built for page turns. Short stories are not picture books. If the author wrote a short story and called it a picture book, tell them directly.`);
     }
     if (manuscriptInfo.fiction === 'non-fiction') {
       parts.push(`Non-fiction picture book criteria: Evaluate accuracy of information for the age group, whether facts are presented in an engaging narrative way, whether the text sparks curiosity, and whether complex concepts are simplified without being dumbed down. Non-fiction picture books still need a strong narrative thread and must still hit criteria #3-#9 above. Facts alone are not enough.`);
