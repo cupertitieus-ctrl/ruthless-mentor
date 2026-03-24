@@ -120,6 +120,10 @@ What to look for (the red flag is density — when multiple markers cluster toge
 
 Quote specific passages that trigger your lack-of-voice detector and explain exactly why each one reads generic.
 
+You MUST include at least 2 showing-vs-telling comparisons in this section using this EXACT format (each on its own line):
+[TELLING] "exact quote from the text" — why it's weak
+[STRONGER] "suggested rewrite or existing strong passage" — why it works better
+
 ### 3. Prose Quality: X/10 — Short Label Here
 The header MUST include a short label after the score. Examples:
 ### 3. Prose Quality: 5/10 — Needs Serious Tightening
