@@ -140,27 +140,30 @@ Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, coun
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
 
 ### 6. Main Character Report Card
-For each main character, use this format:
+Focus on the protagonist (main character) only. Use this format:
 
 **Character Name** — Grade: X
 
-Then explain strengths, weaknesses, and diagnosis as regular paragraphs.
-
-Do NOT use markdown tables for characters either.
-For each main character, give them a letter grade (A through F) and evaluate:
-- What's working (with examples from the text)
-- What's not working (with examples)
-- Motivation: Does the character want something specific and believable? Or do they just float through the plot?
-- Consistency: Do they act in character, or suddenly become brave/smart/dumb because the plot demands it?
-- Voice: Could you tell who's speaking without dialogue tags? If every character sounds the same, that's a problem.
-- Arc: Do they change? Is the change earned? Or do they have a magical epiphany in the final chapter?
-- Backstory: Do you know who this person is before the story started? What shaped them? A real character has a life outside the plot. A weak one only exists when the author needs them.
-- Flaws: Perfect characters are boring. Do they have real, meaningful flaws — not just "she's too caring" or "he works too hard"?
-- Mary Sue / Gary Stu check: Is the character suspiciously good at everything? Does the world revolve around them?
-- Relationships: Do the relationships between characters feel authentic or manufactured?
+Give the main character a letter grade (A through F) and do a DEEP dive:
+- What's working (with specific examples from the text)
+- What's not working (with specific examples)
+- Motivation: Does the character want something specific and believable?
+- Consistency: Do they act in character, or suddenly change because the plot demands it?
+- Voice: Is their voice distinct? Could you tell who's speaking without dialogue tags?
+- Arc: Do they change? Is the change earned?
+- Backstory: Do you know who this person is before the story started? What shaped them?
+- Flaws: Do they have real, meaningful flaws — not just "she's too caring"?
+- Mary Sue / Gary Stu check: Is the character suspiciously good at everything?
 - Diagnosis: Is this a real person or a cardboard cutout? Why?
 
-### 7. Story Mechanics
+### 7. Supporting Characters
+Brief summary for each supporting character. Use this format for each:
+
+**Character Name** — Grade: X
+
+Keep it to 2-3 sentences per supporting character. Hit the key points: what they add to the story, whether they feel like a real person or just a plot device, and one thing to improve. Don't do the full deep dive — just the essentials.
+
+### 8. Story Mechanics
 Cover these areas: pacing, plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
 
 For pacing, include a chapter-by-chapter breakdown using this EXACT format (one per line):
@@ -176,7 +179,7 @@ For showing vs telling comparisons, use this EXACT format:
 [TELLING] "exact quote from the text" — why it's weak
 [STRONGER] "suggested rewrite" — why it works better
 
-### 8. Line-Level Callouts
+### 9. Line-Level Callouts
 Pull at least 5-10 specific passages from the text. For each one:
 - Quote it exactly
 - Explain the problem
@@ -185,11 +188,11 @@ Pull at least 5-10 specific passages from the text. For each one:
 Also call out passages that are genuinely good and explain why they work. For good passages use:
 [GOOD PASSAGE] "exact quote" — why this works
 
-### 9. Where This Is Heading
+### 10. Where This Is Heading
 If the manuscript is unfinished: what problems will get worse? What should the author fix before writing more?
 If it's complete: say "This appears to be a complete manuscript."
 
-### 10. Final Verdict
+### 11. Final Verdict
 2-4 paragraphs. Is it ready for readers? What's the single biggest thing to fix? What's the strongest thing to protect? Would you keep reading if you found this in a bookstore?
 
 CRITICAL FORMATTING RULES — follow these EXACTLY or the report will break:
