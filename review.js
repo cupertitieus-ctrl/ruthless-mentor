@@ -268,7 +268,11 @@ if (form) {
             const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session.access_token };
 
             const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
-            const reviewData = await reviewRes.json();
+            const reviewText = await reviewRes.text();
+            let reviewData;
+            try { reviewData = JSON.parse(reviewText); } catch (e) {
+                throw new Error('Server is updating. Please wait 30 seconds and try again.');
+            }
             if (!reviewRes.ok) throw new Error(reviewData.error || 'Review failed');
 
             clearInterval(stepInterval);
