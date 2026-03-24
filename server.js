@@ -415,7 +415,22 @@ function buildManuscriptContext(manuscriptInfo) {
   const parts = [];
   if (manuscriptInfo.stage) parts.push(`Manuscript stage: ${STAGE_LABELS[manuscriptInfo.stage] || manuscriptInfo.stage}`);
   if (manuscriptInfo.genre) parts.push(`Genre: ${GENRE_LABELS[manuscriptInfo.genre] || manuscriptInfo.genre}`);
+  if (manuscriptInfo.fiction) parts.push(`Type: ${manuscriptInfo.fiction === 'fiction' ? 'Fiction' : 'Non-Fiction'}`);
   if (manuscriptInfo.pov) parts.push(`POV: ${POV_LABELS[manuscriptInfo.pov] || manuscriptInfo.pov}`);
+  if (manuscriptInfo.bookNumber) parts.push(`Book number: Book ${manuscriptInfo.bookNumber} in a series`);
+
+  // Picture book specific context
+  if (manuscriptInfo.genre === 'picture-book') {
+    if (manuscriptInfo.rhyming === 'rhyming') {
+      parts.push(`Style: RHYMING picture book — evaluate meter, scansion, rhyme scheme consistency, forced rhymes, near-rhymes, syllable count per line, and read-aloud rhythm. Rhyming picture books live or die on their meter. If the meter breaks, the whole book breaks. Check every line for consistent stressed/unstressed syllable patterns. Flag forced rhymes where the author bent the sentence into an unnatural shape just to land the rhyme. Check for near-rhymes that don't quite work for young ears reading aloud.`);
+    } else if (manuscriptInfo.rhyming === 'non-rhyming') {
+      parts.push(`Style: NON-RHYMING picture book — evaluate prose rhythm, sentence variety, word economy, lyrical quality, and read-aloud flow. Every single word must earn its place in a 100-500 word manuscript. Focus on whether the language is musical without being metered, whether sentences vary in length for dramatic effect, and whether the text creates natural pause points for page turns.`);
+    }
+    if (manuscriptInfo.fiction === 'non-fiction') {
+      parts.push(`Non-fiction picture book criteria: Evaluate accuracy of information for the age group, whether facts are presented in an engaging narrative way, whether the text sparks curiosity, and whether complex concepts are simplified without being dumbed down. Non-fiction picture books still need a strong narrative thread — facts alone are not enough.`);
+    }
+  }
+
   return parts.length ? '\n\nAuthor-provided context:\n' + parts.join('\n') : '';
 }
 
@@ -442,7 +457,13 @@ app.post('/api/review', optionalAuth, async (req, res) => {
           role: 'user',
           content: `Please review the following manuscript/text. It is ${wordCount} words long and categorized as "${tier.name}".${context}
 
-IMPORTANT: Adjust your critique standards to match the genre and age group. A picture book should be evaluated on story arc, emotional resonance, and read-aloud flow — NOT on complex character arcs or setting. A YA novel should be held to higher standards for voice, theme, and emotional complexity. If the manuscript is a first draft or work in progress, focus on structural and story-level issues rather than line-level polish.
+IMPORTANT: Adjust your critique standards to match the genre and age group.
+
+PICTURE BOOK RULES: Picture books are a UNIQUE format. The text is only HALF the story — illustrations carry the other half. DO NOT critique the author for: missing visual descriptions, lack of setting detail, characters not being physically described, or action that would be shown in illustrations. DO evaluate: story arc (even 300 words needs a beginning/middle/end), emotional resonance, page-turn pacing (each spread should end with a reason to turn the page), word economy (every word must earn its place), read-aloud quality, and whether the text leaves ROOM for illustrations to do their job. Picture books allow MORE imagination than other genres — talking animals, magical objects, impossible scenarios are EXPECTED, not plot holes. If the picture book is RHYMING, meter and scansion are the #1 priority — broken meter kills a rhyming picture book faster than anything else. If NON-FICTION, the narrative thread matters as much as the facts.
+
+A YA novel should be held to higher standards for voice, theme, and emotional complexity. If the manuscript is a first draft or work in progress, focus on structural and story-level issues rather than line-level polish.
+
+If the author indicated Fiction or Non-Fiction, adjust accordingly — non-fiction manuscripts need accuracy evaluation, factual engagement, and whether information is presented in a compelling narrative way.
 
 ---
 
@@ -743,6 +764,9 @@ app.post('/api/create-checkout', async (req, res) => {
         stage: manuscriptInfo?.stage || '',
         pov: manuscriptInfo?.pov || '',
         title: manuscriptInfo?.title || '',
+        bookNumber: manuscriptInfo?.bookNumber || '',
+        rhyming: manuscriptInfo?.rhyming || '',
+        fiction: manuscriptInfo?.fiction || '',
       },
     });
 
