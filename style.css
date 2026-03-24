@@ -167,7 +167,7 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .form-note{font-size:.72rem;color:var(--text3);text-align:center;margin-top:.6rem}
 
 /* STORY */
-.story-wrap{max-width:560px}
+.story-wrap{max-width:880px;margin:0 auto}
 .story-wrap h2{margin-bottom:1.2rem}
 .story-wrap p{color:var(--text2);font-size:.92rem;line-height:1.8;margin-bottom:.8rem}
 .sig{color:var(--text)!important;font-weight:600;margin-top:1rem!important}

@@ -55,10 +55,10 @@ async function loadReviews() {
             `;
         }).join('');
 
-        // Click handlers
+        // Click handlers — open branded report page
         listEl.querySelectorAll('.dash-card').forEach((card, i) => {
             card.querySelector('.dash-view-btn').addEventListener('click', () => {
-                showReview(reviews[i]);
+                openReport(reviews[i]);
             });
         });
 
@@ -67,53 +67,16 @@ async function loadReviews() {
     }
 }
 
-// ===== SHOW FULL REVIEW =====
-function showReview(r) {
-    const screen = document.getElementById('review-screen');
-    const date = new Date(r.created_at);
-    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const costStr = r.price === 0 ? 'Free' : '$' + r.price;
-
-    document.getElementById('review-meta').textContent =
-        `${r.tier} \u00B7 ${r.word_count.toLocaleString()} words \u00B7 ${costStr} \u00B7 ${dateStr}`;
-    document.getElementById('review-body').innerHTML = markdownToHtml(r.review_markdown);
-    screen.classList.remove('hidden');
-    window.scrollTo(0, 0);
-    window._lastReview = r.review_markdown;
-}
-
-document.getElementById('back-btn').addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('review-screen').classList.add('hidden');
-});
-
-document.getElementById('copy-btn').addEventListener('click', () => {
-    if (window._lastReview) {
-        navigator.clipboard.writeText(window._lastReview);
-        const btn = document.getElementById('copy-btn');
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Copy review', 1500);
-    }
-});
-
-// ===== MARKDOWN TO HTML =====
-function markdownToHtml(md) {
-    return md
-        .replace(/### (\d+)\. (.+)/g, '<h3><span class="review-num">$1.</span> $2</h3>')
-        .replace(/### (.+)/g, '<h3>$1</h3>')
-        .replace(/## (.+)/g, '<h2>$1</h2>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        .replace(/^- (.+)$/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-        .replace(/> (.+)/g, '<blockquote>$1</blockquote>')
-        .replace(/`(.+?)`/g, '<code>$1</code>')
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/^(?!<)(.*\S.*)$/gm, '<p>$1</p>')
-        .replace(/<p><h/g, '<h')
-        .replace(/<\/h[23]><\/p>/g, (m) => m.replace('<\/p>', ''))
-        .replace(/<p><ul>/g, '<ul>')
-        .replace(/<\/ul><\/p>/g, '</ul>')
-        .replace(/<p><blockquote>/g, '<blockquote>')
-        .replace(/<\/blockquote><\/p>/g, '</blockquote>');
+// ===== OPEN REPORT PAGE =====
+function openReport(r) {
+    sessionStorage.setItem('rm_review', r.review_markdown);
+    sessionStorage.setItem('rm_meta', JSON.stringify({
+        wordCount: r.word_count,
+        tier: r.tier,
+        stage: '',
+        genre: '',
+        pov: '',
+        date: r.created_at
+    }));
+    window.location.href = '/report.html';
 }

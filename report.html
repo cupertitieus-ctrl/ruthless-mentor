@@ -167,7 +167,9 @@ function renderReport(md, meta) {
   const page = document.getElementById('report-page');
 
   // Build metadata
-  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const date = meta.date
+    ? new Date(meta.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const stageLabels = { complete: 'Complete draft', wip: 'Work in progress', first: 'First draft', revised: 'Revised draft', polished: 'Polished / ready for submission' };
   const genreLabels = { 'picture-book': 'Picture Book (Ages 3-8)', 'early-reader': 'Early Reader (Ages 5-7)', 'chapter-book': 'Chapter Book (Ages 6-10)', 'middle-grade': 'Middle Grade (Ages 8-12)', 'young-adult': 'Young Adult (Ages 12-18)', 'literary-fiction': 'Literary Fiction (18+)', 'genre-fiction': 'Genre Fiction (18+)', 'memoir': 'Memoir / Narrative Nonfiction (18+)' };
   const povLabels = { 'first-person': 'First Person', 'second-person': 'Second Person', 'third-person': 'Third Person', 'multiple-pov': 'Multiple POV' };
