@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Review — Ruthless Mentor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; color: #1a1a1a; background: #f5f3ef; font-size: 11pt; line-height: 1.6; }
+
+  /* TOOLBAR */
+  .toolbar { position: sticky; top: 0; z-index: 100; background: #1a1816; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .toolbar .logo-img { height: 36px; filter: invert(1); }
+  .toolbar-btns { display: flex; gap: 10px; }
+  .toolbar-btn { background: #c9a96e; color: #0d0b09; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: .85rem; cursor: pointer; }
+  .toolbar-btn:hover { background: #dbb87a; }
+  .toolbar-btn.outline { background: transparent; border: 1px solid #555; color: #ccc; }
+  .toolbar-btn.outline:hover { border-color: #c9a96e; color: #c9a96e; }
+
+  /* PAGE */
+  .page { max-width: 8.5in; margin: 24px auto; background: #fff; padding: 0.6in 0.75in; box-shadow: 0 2px 20px rgba(0,0,0,.08); border-radius: 4px; }
+
+  /* HEADER */
+  .report-header { text-align: center; margin-bottom: 24px; }
+  .report-header img { height: 70px; margin-bottom: 4px; }
+  .brand-line { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 2px; }
+  .brand-line hr { flex: 1; max-width: 120px; border: none; border-top: 2px solid #b8860b; }
+  .brand-line span { font-size: 10pt; font-weight: 700; letter-spacing: 3px; color: #1a1a1a; text-transform: uppercase; }
+  .report-title { font-size: 26pt; font-weight: 900; margin: 20px 0 18px; line-height: 1.1; }
+  .report-title .accent { color: #b8860b; }
+
+  /* METADATA */
+  .meta-table { margin-bottom: 28px; }
+  .meta-table table { border-collapse: collapse; }
+  .meta-table td { padding: 3px 0; vertical-align: top; }
+  .meta-table td:first-child { font-weight: 700; width: 140px; color: #1a1a1a; }
+  .meta-table td:last-child { font-style: italic; color: #333; }
+
+  /* SECTION HEADERS */
+  .section-header { color: #8b0000; font-size: 16pt; font-weight: 800; margin: 30px 0 6px; padding-bottom: 4px; border-bottom: 3px solid #b8860b; }
+
+  .section-body { margin-top: 10px; }
+  .section-body p { margin-bottom: 10px; }
+
+  /* CALLOUT BOXES */
+  .callout { border-radius: 6px; padding: 12px 16px; margin: 14px 0; display: flex; align-items: flex-start; gap: 10px; }
+  .callout-icon { font-size: 18pt; flex-shrink: 0; line-height: 1; }
+  .callout-text { flex: 1; }
+  .callout-label { font-weight: 700; }
+  .callout-green { background: #e8f5e9; border-left: 4px solid #2e7d32; }
+  .callout-red { background: #fce4ec; border-left: 4px solid #8b0000; }
+  .callout-yellow { background: #fff8e1; border-left: 4px solid #f9a825; }
+
+  /* FIX BOX */
+  .fix-box { background: #fff8e1; border-left: 4px solid #8b0000; border-radius: 6px; padding: 14px 16px; margin: 14px 0; }
+  .fix-box-header { display: flex; align-items: center; gap: 8px; font-weight: 800; color: #8b0000; text-transform: uppercase; letter-spacing: 1px; font-size: 10pt; margin-bottom: 6px; }
+
+  /* PACING */
+  .pacing-list { list-style: none; margin: 10px 0; }
+  .pacing-list li { padding: 5px 0; display: flex; align-items: flex-start; gap: 8px; }
+  .pacing-icon { font-size: 14pt; flex-shrink: 0; width: 24px; text-align: center; }
+  .pacing-label { font-weight: 700; }
+
+  /* SCORE BAR */
+  .score-bar-wrap { display: flex; align-items: center; gap: 16px; margin: 12px 0 8px; background: #f5f5f5; border-radius: 6px; overflow: hidden; }
+  .score-bar-fill { padding: 10px 16px; font-weight: 800; font-size: 14pt; color: #fff; min-width: 70px; text-align: center; }
+  .score-bar-fill.red { background: #c62828; }
+  .score-bar-fill.yellow { background: #f9a825; color: #1a1a1a; }
+  .score-bar-fill.green { background: #2e7d32; }
+  .score-bar-label { font-style: italic; color: #555; font-size: 11pt; }
+
+  /* COMPARISON TABLE */
+  .compare-table { width: 100%; margin: 12px 0; border-collapse: collapse; }
+  .compare-table td { padding: 10px 14px; vertical-align: top; border-left: 4px solid transparent; }
+  .compare-table tr.telling td { border-left-color: #c62828; background: #fce4ec; }
+  .compare-table tr.stronger td { border-left-color: #2e7d32; background: #e8f5e9; }
+  .compare-label { font-weight: 800; text-transform: uppercase; font-size: 9pt; letter-spacing: 1px; margin-bottom: 2px; }
+  .compare-label.red { color: #c62828; }
+  .compare-label.green { color: #2e7d32; }
+  .compare-quote { font-style: italic; color: #333; }
+  .compare-note { font-size: 9pt; color: #777; margin-top: 3px; }
+
+  /* CHARACTER GRADES */
+  .char-card { background: #f9f9f9; border-radius: 6px; padding: 14px 16px; margin: 10px 0; border: 1px solid #e0e0e0; }
+  .char-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .char-name { font-weight: 700; font-size: 12pt; }
+  .char-grade { font-weight: 800; font-size: 13pt; color: #fff; padding: 3px 12px; border-radius: 4px; }
+  .grade-a { background: #2e7d32; }
+  .grade-b { background: #558b2f; }
+  .grade-c { background: #f9a825; color: #1a1a1a; }
+  .grade-d { background: #e65100; }
+  .grade-f { background: #c62828; }
+  .char-body p { margin-bottom: 6px; font-size: 10pt; }
+
+  /* QUOTE BLOCKS */
+  .quote-block { background: #f5f5f5; border-left: 3px solid #b8860b; padding: 10px 14px; margin: 10px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; }
+  .quote-ref { font-weight: 700; font-style: normal; color: #1a1a1a; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+  /* DEPTH BADGE */
+  .depth-badge { display: inline-block; padding: 5px 18px; border-radius: 4px; font-weight: 700; color: #fff; font-size: 11pt; margin: 8px 0; }
+  .depth-shallow { background: #c62828; }
+  .depth-surface { background: #e65100; }
+  .depth-adequate { background: #f9a825; color: #1a1a1a; }
+  .depth-deep { background: #558b2f; }
+  .depth-unflinching { background: #2e7d32; }
+
+  /* VERDICT */
+  .verdict-box { background: #f9f6f0; border: 2px solid #b8860b; border-radius: 8px; padding: 20px; margin: 16px 0; }
+
+  /* GOOD PASSAGE */
+  .good-passage { background: #e8f5e9; border-left: 4px solid #2e7d32; border-radius: 6px; padding: 12px 16px; margin: 14px 0; }
+  .good-passage .gp-header { font-weight: 700; color: #2e7d32; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+
+  /* FOOTER */
+  .report-footer { text-align: center; font-size: 9pt; color: #888; padding-top: 16px; border-top: 1px solid #ddd; margin-top: 30px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+
+  .sub-header { font-weight: 700; font-size: 11pt; margin: 14px 0 6px; }
+  .bold-text { font-weight: 700; }
+
+  /* PRINT */
+  @media print {
+    .toolbar { display: none; }
+    body { background: #fff; }
+    .page { box-shadow: none; margin: 0; padding: 0.5in 0.65in; }
+  }
+
+  /* LOADING */
+  .loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; }
+  .loading-screen h2 { color: #1a1a1a; }
+  .loading-screen p { color: #666; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #e0e0e0; border-top-color: #8b0000; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="/"><img src="logo.png" class="logo-img" alt="RM"></a>
+  <div class="toolbar-btns">
+    <button class="toolbar-btn" onclick="window.print()">Print / Save as PDF</button>
+    <button class="toolbar-btn outline" onclick="window.location='/review.html'">Submit another</button>
+  </div>
+</div>
+
+<div class="page" id="report-page">
+  <div class="loading-screen" id="loading">
+    <div class="spinner"></div>
+    <h2>Building your report...</h2>
+    <p id="loading-text">Reading through your manuscript...</p>
+  </div>
+</div>
+
+<script>
+// Read review data from sessionStorage
+const reviewMarkdown = sessionStorage.getItem('rm_review');
+const reviewMeta = JSON.parse(sessionStorage.getItem('rm_meta') || '{}');
+
+if (!reviewMarkdown) {
+  document.getElementById('loading').innerHTML = '<h2>No review found.</h2><p>Go back and submit your manuscript first.</p><a href="/review.html" style="margin-top:12px;color:#8b0000;font-weight:600">Submit work</a>';
+} else {
+  renderReport(reviewMarkdown, reviewMeta);
+}
+
+function renderReport(md, meta) {
+  const page = document.getElementById('report-page');
+
+  // Build metadata
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const stageLabels = { complete: 'Complete draft', wip: 'Work in progress', first: 'First draft', revised: 'Revised draft', polished: 'Polished / ready for submission' };
+  const genreLabels = { 'picture-book': 'Picture Book (Ages 3-8)', 'early-reader': 'Early Reader (Ages 5-7)', 'chapter-book': 'Chapter Book (Ages 6-10)', 'middle-grade': 'Middle Grade (Ages 8-12)', 'young-adult': 'Young Adult (Ages 12-18)', 'literary-fiction': 'Literary Fiction (18+)', 'genre-fiction': 'Genre Fiction (18+)', 'memoir': 'Memoir / Narrative Nonfiction (18+)' };
+  const povLabels = { 'first-person': 'First Person', 'second-person': 'Second Person', 'third-person': 'Third Person', 'multiple-pov': 'Multiple POV' };
+
+  let metaRows = '';
+  metaRows += `<tr><td>Review Date:</td><td>${date}</td></tr>`;
+  metaRows += `<tr><td>Word Count:</td><td>~${(meta.wordCount || 0).toLocaleString()} words</td></tr>`;
+  metaRows += `<tr><td>Tier:</td><td>${esc(meta.tier || '')}</td></tr>`;
+  if (meta.stage) metaRows += `<tr><td>Stage:</td><td>${esc(stageLabels[meta.stage] || meta.stage)}</td></tr>`;
+  if (meta.genre) metaRows += `<tr><td>Genre:</td><td>${esc(genreLabels[meta.genre] || meta.genre)}</td></tr>`;
+  if (meta.pov) metaRows += `<tr><td>POV:</td><td>${esc(povLabels[meta.pov] || meta.pov)}</td></tr>`;
+
+  // Parse markdown into HTML with special rendering
+  const reviewHtml = parseReviewMarkdown(md);
+
+  page.innerHTML = `
+    <div class="report-header">
+      <img src="logo.png" alt="RM">
+      <div class="brand-line"><hr><span>Ruthless Mentor</span><hr></div>
+    </div>
+    <h1 class="report-title">Manuscript <span class="accent">Review</span> Report</h1>
+    <div class="meta-table"><table>${metaRows}</table></div>
+    ${reviewHtml}
+    <div class="report-footer">RUTHLESS MENTOR REPORT &nbsp;|&nbsp; ${date}</div>
+  `;
+}
+
+function parseReviewMarkdown(md) {
+  const lines = md.split('\n');
+  let html = '';
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Section headers: ### N. Title or ### N. Title: X/10
+    if (trimmed.startsWith('### ')) {
+      const headerText = trimmed.replace(/^#{1,3}\s*/, '');
+      const scoreMatch = headerText.match(/(.+?):\s*(\d+)\/10/);
+      if (scoreMatch) {
+        const title = scoreMatch[1].trim();
+        const score = parseInt(scoreMatch[2]);
+        const color = score <= 3 ? 'red' : score <= 6 ? 'yellow' : 'green';
+        html += `<h2 class="section-header">${esc(title)}</h2>`;
+        html += `<div class="score-bar-wrap"><div class="score-bar-fill ${color}">${score}/10</div><span class="score-bar-label"></span></div>`;
+      } else {
+        html += `<h2 class="section-header">${esc(headerText)}</h2>`;
+      }
+      i++; continue;
+    }
+
+    // [STRENGTHS] callout
+    if (trimmed.startsWith('[STRENGTHS]')) {
+      const content = trimmed.replace('[STRENGTHS]', '').trim();
+      html += `<div class="callout callout-green"><span class="callout-icon">\u2705</span><div class="callout-text"><span class="callout-label">You've Got:</span> ${esc(content)}</div></div>`;
+      i++; continue;
+    }
+
+    // [FIX] callout
+    if (trimmed.startsWith('[FIX]')) {
+      const content = trimmed.replace('[FIX]', '').trim();
+      html += `<div class="fix-box"><div class="fix-box-header">\u23F0 RUTHLESS FIX:</div><p>${esc(content)}</p></div>`;
+      i++; continue;
+    }
+
+    // [GOOD PASSAGE] callout
+    if (trimmed.startsWith('[GOOD PASSAGE]')) {
+      const content = trimmed.replace('[GOOD PASSAGE]', '').trim();
+      html += `<div class="good-passage"><div class="gp-header">\u2705 Strong Passage</div><p>${formatInline(content)}</p></div>`;
+      i++; continue;
+    }
+
+    // Pacing icons: [BAD], [WARN], [GOOD], [NOTE]
+    if (/^\[(BAD|WARN|GOOD|NOTE)\]/.test(trimmed)) {
+      const match = trimmed.match(/^\[(BAD|WARN|GOOD|NOTE)\]\s*(.*)/);
+      if (match) {
+        const icons = { BAD: '\u274C', WARN: '\u26A0\uFE0F', GOOD: '\u2705', NOTE: '\u27A1\uFE0F' };
+        const parts = match[2].split(':');
+        const label = parts[0] ? parts[0].trim() : '';
+        const text = parts.slice(1).join(':').trim();
+        html += `<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0"><span style="font-size:14pt;width:24px;text-align:center">${icons[match[1]]}</span><span><strong>${esc(label)}:</strong> ${esc(text)}</span></div>`;
+        i++; continue;
+      }
+    }
+
+    // [TELLING] / [STRONGER] comparison
+    if (trimmed.startsWith('[TELLING]')) {
+      const tellingContent = trimmed.replace('[TELLING]', '').trim();
+      let strongerContent = '';
+      if (i + 1 < lines.length && lines[i + 1].trim().startsWith('[STRONGER]')) {
+        strongerContent = lines[i + 1].trim().replace('[STRONGER]', '').trim();
+        i++;
+      }
+      html += `<table class="compare-table">
+        <tr class="telling"><td><div class="compare-label red">TELLING:</div><div class="compare-quote">${formatInline(tellingContent)}</div></td></tr>
+        ${strongerContent ? `<tr class="stronger"><td><div class="compare-label green">STRONGER:</div><div class="compare-quote">${formatInline(strongerContent)}</div></td></tr>` : ''}
+      </table>`;
+      i++; continue;
+    }
+
+    // Character grade: **Name** — Grade: X
+    const charMatch = trimmed.match(/^\*\*(.+?)\*\*\s*[-—]\s*Grade:\s*([A-F][+-]?)/i);
+    if (charMatch) {
+      const name = charMatch[1];
+      const grade = charMatch[2].toUpperCase();
+      const gradeClass = grade.startsWith('A') ? 'grade-a' : grade.startsWith('B') ? 'grade-b' : grade.startsWith('C') ? 'grade-c' : grade.startsWith('D') ? 'grade-d' : 'grade-f';
+      // Collect body paragraphs until next character or section
+      let bodyHtml = '';
+      i++;
+      while (i < lines.length && !lines[i].trim().startsWith('**') && !lines[i].trim().startsWith('### ') && !lines[i].trim().startsWith('[')) {
+        if (lines[i].trim()) bodyHtml += `<p>${formatInline(lines[i].trim())}</p>`;
+        i++;
+      }
+      html += `<div class="char-card"><div class="char-header"><span class="char-name">${esc(name)}</span><span class="char-grade ${gradeClass}">${esc(grade)}</span></div><div class="char-body">${bodyHtml}</div></div>`;
+      continue;
+    }
+
+    // Depth rating
+    const depthMatch = trimmed.match(/^(?:Rating|Depth):\s*(Shallow|Surface|Adequate|Deep|Unflinching)/i);
+    if (depthMatch) {
+      const rating = depthMatch[1];
+      const depthClass = 'depth-' + rating.toLowerCase();
+      html += `<span class="depth-badge ${depthClass}">${esc(rating)}</span>`;
+      i++; continue;
+    }
+
+    // Quote blocks (lines starting with >)
+    if (trimmed.startsWith('>')) {
+      let quoteText = trimmed.replace(/^>\s*/, '');
+      i++;
+      while (i < lines.length && lines[i].trim().startsWith('>')) {
+        quoteText += '\n' + lines[i].trim().replace(/^>\s*/, '');
+        i++;
+      }
+      html += `<div class="quote-block">${formatInline(quoteText)}</div>`;
+      continue;
+    }
+
+    // Horizontal rule
+    if (/^---+$/.test(trimmed)) { i++; continue; }
+
+    // Bullet lists
+    if (/^[-*]\s/.test(trimmed)) {
+      html += '<ul style="margin:8px 0 8px 20px">';
+      while (i < lines.length && /^[-*]\s/.test(lines[i].trim())) {
+        html += `<li style="margin-bottom:4px">${formatInline(lines[i].trim().replace(/^[-*]\s/, ''))}</li>`;
+        i++;
+      }
+      html += '</ul>';
+      continue;
+    }
+
+    // Bold repeat word entries: **"word"** (Xx) — description
+    const repeatMatch = trimmed.match(/^\*\*"(.+?)"\*\*\s*\((\d+)x?\)\s*[-—]\s*(.*)/i);
+    if (repeatMatch) {
+      html += `<p><strong style="color:#8b0000">"${esc(repeatMatch[1])}"</strong> <strong>(${repeatMatch[2]}x)</strong> — ${esc(repeatMatch[3])}</p>`;
+      i++; continue;
+    }
+
+    // Regular paragraphs
+    if (trimmed) {
+      html += `<p>${formatInline(trimmed)}</p>`;
+    }
+
+    i++;
+  }
+
+  return html;
+}
+
+function formatInline(text) {
+  return esc(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:10pt">$1</code>')
+    .replace(/"([^"]+)"/g, '&ldquo;$1&rdquo;');
+}
+
+function esc(str) {
+  if (!str) return '';
+  const el = document.createElement('div');
+  el.textContent = str;
+  return el.innerHTML;
+}
+</script>
+</body>
+</html>

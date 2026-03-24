@@ -194,9 +194,7 @@ async function handleFile(file) {
     }
 }
 
-// ===== SUBMIT — generates review + auto-downloads PDF =====
-let _lastPdfBlob = null;
-
+// ===== SUBMIT — generates review + opens report page =====
 if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -234,14 +232,19 @@ if (form) {
         progressFill.style.width = '0%';
 
         const steps = [
-            { pct: 10, text: 'Uploading your work...' },
-            { pct: 25, text: 'Reading through it...' },
-            { pct: 40, text: 'Checking prose quality...' },
-            { pct: 55, text: 'Counting repeat words...' },
-            { pct: 65, text: 'Grading characters...' },
-            { pct: 75, text: 'Evaluating story mechanics...' },
-            { pct: 85, text: 'Writing line-level notes...' },
-            { pct: 92, text: 'Preparing your verdict...' },
+            { pct: 8, text: 'Uploading your manuscript...' },
+            { pct: 15, text: 'Reading through every page...' },
+            { pct: 25, text: 'Critiquing the author\'s voice...' },
+            { pct: 35, text: 'Scanning for repeat words...' },
+            { pct: 45, text: 'Checking prose quality...' },
+            { pct: 52, text: 'Hunting for broken metaphors...' },
+            { pct: 60, text: 'Grading your characters...' },
+            { pct: 68, text: 'Evaluating story mechanics...' },
+            { pct: 75, text: 'Testing the dialogue...' },
+            { pct: 82, text: 'Running the depth check...' },
+            { pct: 88, text: 'Writing line-level callouts...' },
+            { pct: 93, text: 'Drafting your final verdict...' },
+            { pct: 97, text: 'Almost there...' },
         ];
 
         let stepIdx = 0;
@@ -252,62 +255,36 @@ if (form) {
                 progressText.className = 'progress-text pulsing';
                 stepIdx++;
             }
-        }, 3000);
+        }, 2500);
 
         try {
             const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session.access_token };
 
-            // Step 1: Get the text review
             const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
             const reviewData = await reviewRes.json();
             if (!reviewRes.ok) throw new Error(reviewData.error || 'Review failed');
 
-            progressFill.style.width = '95%';
-            progressText.textContent = 'Generating your PDF...';
-
-            // Step 2: Generate PDF from the review
-            const pdfRes = await fetch('/api/generate-pdf', {
-                method: 'POST', headers,
-                body: JSON.stringify({
-                    reviewMarkdown: reviewData.review,
-                    wordCount: reviewData.wordCount,
-                    tier: reviewData.tier
-                })
-            });
-
-            if (!pdfRes.ok) {
-                const err = await pdfRes.json().catch(() => ({ error: 'PDF failed' }));
-                throw new Error(err.error || 'PDF generation failed');
-            }
-
-            // Auto-download PDF
-            _lastPdfBlob = await pdfRes.blob();
-            downloadBlob(_lastPdfBlob, 'ruthless-mentor-review.pdf');
-
             clearInterval(stepInterval);
             progressFill.style.width = '100%';
-            progressText.textContent = 'Done!';
-            progressText.className = 'progress-text';
+            progressText.textContent = 'Opening your report...';
 
-            // Show done screen
-            const wordCount = reviewData.wordCount;
-            const tier = reviewData.tier;
-            document.getElementById('done-meta').textContent = `${tier} \u00B7 ${wordCount.toLocaleString()} words`;
-            document.getElementById('done-screen').classList.remove('hidden');
-            window.scrollTo(0, 0);
+            // Store review in sessionStorage and redirect to report page
+            sessionStorage.setItem('rm_review', reviewData.review);
+            sessionStorage.setItem('rm_meta', JSON.stringify({
+                wordCount: reviewData.wordCount,
+                tier: reviewData.tier,
+                stage: manuscriptInfo.stage,
+                genre: manuscriptInfo.genre,
+                pov: manuscriptInfo.pov
+            }));
 
-            // Save for re-download and email
-            window._lastSubmittedText = text;
-            window._lastReview = reviewData.review;
-            window._lastWordCount = wordCount;
-            window._lastTier = tier;
+            window.location.href = '/report.html';
 
         } catch (err) {
             clearInterval(stepInterval);
             progressText.textContent = 'Error: ' + err.message;
             progressText.className = 'progress-text';
             alert('Error: ' + err.message);
-        } finally {
             btn.textContent = 'Submit for review';
             btn.disabled = false;
             btn.style.opacity = '1';
@@ -316,79 +293,4 @@ if (form) {
     });
 }
 
-function downloadBlob(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-// ===== DONE SCREEN BUTTONS =====
-document.getElementById('download-again-btn').addEventListener('click', () => {
-    if (_lastPdfBlob) {
-        downloadBlob(_lastPdfBlob, 'ruthless-mentor-review.pdf');
-    } else {
-        alert('No PDF available. Submit a review first.');
-    }
-});
-
-document.getElementById('new-btn').addEventListener('click', () => {
-    document.getElementById('done-screen').classList.add('hidden');
-    textarea.value = '';
-    _lastPdfBlob = null;
-    updateCost();
-});
-
-// ===== EMAIL PDF =====
-const emailModal = document.getElementById('email-modal');
-const emailInput = document.getElementById('email-pdf-input');
-const emailStatus = document.getElementById('email-status');
-
-document.getElementById('email-pdf-btn').addEventListener('click', () => {
-    emailModal.classList.remove('hidden');
-    emailInput.focus();
-    if (_session && _session.user && _session.user.email) {
-        emailInput.value = _session.user.email;
-    }
-});
-
-document.getElementById('email-cancel-btn').addEventListener('click', () => {
-    emailModal.classList.add('hidden');
-    emailStatus.className = 'email-status hidden';
-});
-
-document.getElementById('email-send-btn').addEventListener('click', async () => {
-    const email = emailInput.value.trim();
-    if (!email) { emailInput.focus(); return; }
-
-    const btn = document.getElementById('email-send-btn');
-    btn.textContent = 'Sending...';
-    btn.disabled = true;
-    emailStatus.className = 'email-status hidden';
-
-    try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
-
-        const res = await fetch('/api/email-pdf', {
-            method: 'POST', headers,
-            body: JSON.stringify({ text: window._lastSubmittedText, email })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to send');
-
-        emailStatus.textContent = 'PDF sent to ' + email + '!';
-        emailStatus.className = 'email-status success';
-        setTimeout(() => emailModal.classList.add('hidden'), 2000);
-    } catch (err) {
-        emailStatus.textContent = err.message;
-        emailStatus.className = 'email-status error';
-    } finally {
-        btn.textContent = 'Send';
-        btn.disabled = false;
-    }
-});
+// Old done screen / email / download code removed — report.html handles everything now
