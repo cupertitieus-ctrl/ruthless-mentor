@@ -266,7 +266,7 @@ if (form) {
                 progressText.className = 'progress-text pulsing';
                 stepIdx++;
             }
-        }, 2500);
+        }, 3500);
 
         try {
             const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session.access_token };
