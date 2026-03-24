@@ -205,6 +205,10 @@ const reviewMeta = JSON.parse(sessionStorage.getItem('rm_meta') || '{}');
 if (!reviewMarkdown) {
   document.getElementById('loading').innerHTML = '<h2>No review found.</h2><p>Go back and submit your manuscript first.</p><a href="/review.html" style="margin-top:12px;color:#8b0000;font-weight:600">Submit work</a>';
 } else {
+  // Set page title to book name for PDF filename
+  if (reviewMeta.title) {
+    document.title = reviewMeta.title + ' — Ruthless Mentor Review';
+  }
   renderReport(reviewMarkdown, reviewMeta);
 }
 
