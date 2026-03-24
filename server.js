@@ -193,7 +193,7 @@ Then include a chapter-by-chapter pacing breakdown using this EXACT format (one 
 [GOOD] Ch. 7-12: description of what works
 [NOTE] Overall: summary
 
-Then cover the rest: plot holes, setting accuracy, stakes, show vs tell, dialogue quality, and theme.
+Then cover the rest: plot holes, setting accuracy, tension & consequences, show vs tell, dialogue quality, and theme.
 
 For showing vs telling comparisons, use this EXACT format:
 [TELLING] "exact quote from the text" — why it's weak
@@ -369,7 +369,7 @@ const GENRE_LABELS = {
   'early-reader': 'Early reader (1,000–4,000 words, Ages 5–7) — focus on simple sentence structure, repetition, vocabulary level, and decodable text',
   'chapter-book': 'Chapter book (5,000–10,000 words, Ages 6–10) — focus on chapter hooks, age-appropriate humor, relatable situations, and pacing',
   'middle-grade': 'Middle grade (Ages 8–12) — focus on character voice, emotional authenticity, theme depth, and coming-of-age resonance',
-  'young-adult': 'Young adult (Ages 12–18) — focus on authentic teen voice, stakes, identity, and emotional complexity',
+  'young-adult': 'Young adult (Ages 12–18) — focus on authentic teen voice, tension & consequences, identity, and emotional complexity',
   'literary-fiction': 'Literary fiction (Ages 18+) — focus on prose style, thematic depth, character interiority, and structural ambition',
   'genre-fiction': 'Genre fiction (Ages 18+) — focus on pacing, plot mechanics, genre conventions, and reader satisfaction',
   'memoir': 'Memoir / narrative nonfiction (Ages 18+) — focus on truth, reflection, scene vs. summary, and emotional honesty',
