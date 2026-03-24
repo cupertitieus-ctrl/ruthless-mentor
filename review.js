@@ -136,63 +136,7 @@ if (couponBtn) {
     });
 }
 
-// ===== FILE DROP =====
-const dropZone = document.getElementById('drop-zone');
-const fileInput = document.getElementById('file-input');
-const fileNameEl = document.getElementById('file-name');
-
-if (dropZone) {
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-    });
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length) handleFile(fileInput.files[0]);
-    });
-}
-
-async function handleFile(file) {
-    const ext = '.' + file.name.split('.').pop().toLowerCase();
-    if (!['.pdf', '.docx', '.txt'].includes(ext)) {
-        fileNameEl.textContent = 'Unsupported format. Use PDF, DOCX, or TXT.';
-        fileNameEl.style.color = '#ef4444';
-        return;
-    }
-    fileNameEl.style.color = '';
-    fileNameEl.textContent = file.name + ' — extracting text...';
-
-    if (ext === '.txt') {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            textarea.value = e.target.result;
-            fileNameEl.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
-            updateCost();
-        };
-        reader.readAsText(file);
-    } else {
-        try {
-            const formData = new FormData();
-            formData.append('file', file);
-            const res = await fetch('/api/parse-file', { method: 'POST', body: formData });
-            const text = await res.text();
-            let data;
-            try { data = JSON.parse(text); } catch (e) {
-                throw new Error('Server error. Try pasting your text instead.');
-            }
-            if (!res.ok) throw new Error(data.error || 'Parse failed');
-            textarea.value = data.text;
-            fileNameEl.textContent = file.name + ' (' + data.wordCount.toLocaleString() + ' words extracted)';
-            updateCost();
-        } catch (err) {
-            fileNameEl.textContent = err.message;
-            fileNameEl.style.color = '#ef4444';
-        }
-    }
-}
+// File upload removed — paste only
 
 // ===== SUBMIT — generates review + opens report page =====
 if (form) {
