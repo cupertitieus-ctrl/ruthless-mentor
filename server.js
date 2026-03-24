@@ -421,13 +421,36 @@ function buildManuscriptContext(manuscriptInfo) {
 
   // Picture book specific context
   if (manuscriptInfo.genre === 'picture-book') {
+    parts.push(`
+PICTURE BOOK BESTSELLER CRITERIA — Evaluate against ALL 10 of these:
+
+1. INVISIBLE RHYME (rhyming books only): The rhyme must feel natural and invisible. If readers notice the rhyme too much, it is a problem. Flag: weird word choices made just to rhyme, awkward sentence inversions, anything that sounds like solving a puzzle instead of someone talking naturally. A forced rhyme like "The cat wore a hat / While sitting on a mat" is weak. A natural rhyme flows like speech.
+
+2. RHYTHM OVER RHYME: Kids do not care about rhyme — they care about FLOW. Every line must have the same beat, like music. If a parent stumbles reading it aloud, it is not bestseller-level. Test every line: can you read it without tripping? Does it have a consistent stressed/unstressed pattern?
+
+3. ONE STICKY IDEA: Every great picture book can be explained in ONE sentence. "A pigeon really wants to drive a bus." "A crayon quits because it is tired of coloring the same thing." The concept must be simple, funny or emotional, and instantly understandable. If the pitch starts with "It is about a kid who learns..." it is already too weak.
+
+4. PAGE-TURN POWER: Picture books are not stories — they are page-by-page experiences. Each page must make the kid think "What happens next??" Look for: setup then surprise on next page, repetition then twist, mini cliffhangers. This is the MOST important structural element.
+
+5. JOINABLE REPETITION: Bestsellers get read 100+ times. Kids need something to join in on: a repeating line, a chant, a predictable pattern. Something kids can shout along with.
+
+6. VISUAL POTENTIAL: Even without drawings, every scene must be instantly visual. "He felt sad" is dead. "He sat on the curb while his balloon floated away" gives an illustrator something to work with. If an illustrator can instantly picture the scene, it works. If not, it is dead.
+
+7. SIMPLE EMOTIONAL HIT: Pick ONE emotion and commit: funny (best for virality), heartwarming, or slightly chaotic (kids LOVE chaos). Do not mix too many emotions. One clear emotional lane.
+
+8. RUTHLESS BREVITY: Most strong picture books are 300-600 words. Tight, no filler. If you can delete a line and nothing is lost, flag it. Every single word must earn its place.
+
+9. READ-IT-AGAIN ENDING: The best picture books end with a twist, a callback, or something funny that makes kids demand AGAIN. Evaluate whether the ending creates that pull.
+
+10. TITLE POWER: The title matters enormously. Good titles feel like a joke, a mystery, or a bold statement. "The Adventures of..." is weak. "This Book Is NOT Funny" makes you want to check. Evaluate whether the title carries the book.`);
+
     if (manuscriptInfo.rhyming === 'rhyming') {
-      parts.push(`Style: RHYMING picture book — evaluate meter, scansion, rhyme scheme consistency, forced rhymes, near-rhymes, syllable count per line, and read-aloud rhythm. Rhyming picture books live or die on their meter. If the meter breaks, the whole book breaks. Check every line for consistent stressed/unstressed syllable patterns. Flag forced rhymes where the author bent the sentence into an unnatural shape just to land the rhyme. Check for near-rhymes that don't quite work for young ears reading aloud.`);
+      parts.push(`Style: RHYMING picture book — Criteria #1 and #2 above are CRITICAL. Meter and scansion are the #1 priority. Check every line for consistent stressed/unstressed syllable patterns. Flag forced rhymes where the author bent the sentence into an unnatural shape just to land the rhyme. Flag near-rhymes that do not quite work for young ears reading aloud. The rhyme scheme must be consistent throughout. If the meter breaks even once, call it out — broken meter kills a rhyming picture book faster than anything.`);
     } else if (manuscriptInfo.rhyming === 'non-rhyming') {
-      parts.push(`Style: NON-RHYMING picture book — evaluate prose rhythm, sentence variety, word economy, lyrical quality, and read-aloud flow. Every single word must earn its place in a 100-500 word manuscript. Focus on whether the language is musical without being metered, whether sentences vary in length for dramatic effect, and whether the text creates natural pause points for page turns.`);
+      parts.push(`Style: NON-RHYMING picture book — Criteria #2 is still critical even without rhyme. Evaluate prose rhythm, sentence variety, word economy, lyrical quality, and read-aloud flow. The language should be musical without being metered. Sentences should vary in length for dramatic effect. The text must create natural pause points for page turns.`);
     }
     if (manuscriptInfo.fiction === 'non-fiction') {
-      parts.push(`Non-fiction picture book criteria: Evaluate accuracy of information for the age group, whether facts are presented in an engaging narrative way, whether the text sparks curiosity, and whether complex concepts are simplified without being dumbed down. Non-fiction picture books still need a strong narrative thread — facts alone are not enough.`);
+      parts.push(`Non-fiction picture book criteria: Evaluate accuracy of information for the age group, whether facts are presented in an engaging narrative way, whether the text sparks curiosity, and whether complex concepts are simplified without being dumbed down. Non-fiction picture books still need a strong narrative thread and must still hit criteria #3-#9 above. Facts alone are not enough.`);
     }
   }
 
