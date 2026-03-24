@@ -300,17 +300,36 @@ function parseReviewMarkdown(md) {
       i++; continue;
     }
 
-    // Character grade: **Name** — Grade: X
-    const charMatch = trimmed.match(/^\*\*(.+?)\*\*\s*[-—]\s*Grade:\s*([A-F][+-]?)/i);
+    // Character grade: many formats
+    // **Name** — Grade: X | **Name — X** | **Name**: X | **Name** (Grade: X) | Name — Grade: X
+    const charPatterns = [
+      /^\*\*(.+?)\*\*\s*[-—:]\s*Grade:\s*([A-F][+-]?)/i,
+      /^\*\*(.+?)\s*[-—]\s*([A-F][+-]?)\*\*/i,
+      /^\*\*(.+?)\*\*\s*[-—:]\s*([A-F][+-]?)\s*$/i,
+      /^\*\*(.+?)\*\*\s*\((?:Grade:?\s*)?([A-F][+-]?)\)/i,
+      /^(.+?)\s*[-—]\s*Grade:\s*([A-F][+-]?)\s*$/i,
+    ];
+    let charMatch = null;
+    for (const pat of charPatterns) {
+      charMatch = trimmed.match(pat);
+      if (charMatch) break;
+    }
     if (charMatch) {
-      const name = charMatch[1];
+      const name = charMatch[1].replace(/\*+/g, '').trim();
       const grade = charMatch[2].toUpperCase();
       const gradeClass = grade.startsWith('A') ? 'grade-a' : grade.startsWith('B') ? 'grade-b' : grade.startsWith('C') ? 'grade-c' : grade.startsWith('D') ? 'grade-d' : 'grade-f';
       // Collect body paragraphs until next character or section
       let bodyHtml = '';
       i++;
-      while (i < lines.length && !lines[i].trim().startsWith('**') && !lines[i].trim().startsWith('### ') && !lines[i].trim().startsWith('[')) {
-        if (lines[i].trim()) bodyHtml += `<p>${formatInline(lines[i].trim())}</p>`;
+      while (i < lines.length) {
+        const nextLine = lines[i].trim();
+        // Stop at next character, section header, or marker
+        if (nextLine.startsWith('### ') || nextLine.startsWith('## ')) break;
+        let isNextChar = false;
+        for (const pat of charPatterns) { if (nextLine.match(pat)) { isNextChar = true; break; } }
+        if (isNextChar) break;
+        if (nextLine.startsWith('[')) break;
+        if (nextLine) bodyHtml += `<p>${formatInline(nextLine)}</p>`;
         i++;
       }
       html += `<div class="char-card"><div class="char-header"><span class="char-name">${esc(name)}</span><span class="char-grade ${gradeClass}">${esc(grade)}</span></div><div class="char-body">${bodyHtml}</div></div>`;
