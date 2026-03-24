@@ -357,6 +357,7 @@ const GENRE_LABELS = {
   'literary-fiction': 'Literary fiction (Ages 18+) — focus on prose style, thematic depth, character interiority, and structural ambition',
   'genre-fiction': 'Genre fiction (Ages 18+) — focus on pacing, plot mechanics, genre conventions, and reader satisfaction',
   'memoir': 'Memoir / narrative nonfiction (Ages 18+) — focus on truth, reflection, scene vs. summary, and emotional honesty',
+  'screenplay': 'Screenplay (90–120 pages) — focus on structure (three-act), dialogue authenticity, scene direction, visual storytelling, subtext, character introductions, action lines, pacing, and format conventions (sluglines, transitions, parentheticals)',
 };
 const POV_LABELS = {
   'first-person': 'First person ("I")',

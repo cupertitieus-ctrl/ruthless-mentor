@@ -75,6 +75,7 @@ const GENRE_PRICES = {
     'literary-fiction': { name: 'Adult', price: 20 },
     'genre-fiction': { name: 'Adult', price: 20 },
     'memoir': { name: 'Adult', price: 20 },
+    'screenplay': { name: 'Screenplay', price: 25 },
 };
 
 const genreSelect = document.getElementById('q-genre');
