@@ -868,6 +868,32 @@ app.post('/api/coupon', (req, res) => {
   res.json(coupon);
 });
 
+// ===== CONTACT FORM =====
+app.post('/api/contact', async (req, res) => {
+  const { name, email, topic, message } = req.body;
+  if (!name || !email || !message) return res.status(400).json({ error: 'All fields are required' });
+
+  // Send via Resend if available, otherwise log
+  if (resend) {
+    try {
+      await resend.emails.send({
+        from: 'Ruthless Mentor <noreply@ruthlessmentor.com>',
+        to: 'support@ruthlessmentor.com',
+        replyTo: email,
+        subject: `[Contact] ${topic || 'General'} — ${name}`,
+        text: `Name: ${name}\nEmail: ${email}\nTopic: ${topic || 'General'}\n\nMessage:\n${message}`
+      });
+      res.json({ ok: true });
+    } catch (err) {
+      console.error('[CONTACT EMAIL ERROR]', err.message);
+      res.status(500).json({ error: 'Failed to send message. Please try again.' });
+    }
+  } else {
+    console.log(`[CONTACT FORM] From: ${name} <${email}> | Topic: ${topic} | Message: ${message}`);
+    res.json({ ok: true });
+  }
+});
+
 // Word count + tier endpoint (no auth needed)
 app.post('/api/tier', (req, res) => {
   const { text } = req.body;

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact — Ruthless Mentor</title>
+    <meta name="description" content="Get in touch with Ruthless Mentor support.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .contact-wrap {
+            max-width: 580px;
+            margin: 100px auto 60px;
+            padding: 0 1.5rem;
+        }
+        .contact-wrap h1 {
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+        .contact-wrap .subtitle {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .contact-form {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .form-group textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+        .contact-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--accent);
+            color: #0d0b09;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.25s;
+            margin-top: 0.5rem;
+        }
+        .contact-submit:hover {
+            background: var(--accent2);
+            transform: translateY(-1px);
+        }
+        .contact-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .contact-success {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        .contact-success h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .contact-success p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .contact-error {
+            display: none;
+            background: rgba(180, 0, 0, 0.1);
+            border: 1px solid rgba(180, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo"><img src="logo.png" alt="ruthlessmentor.com" class="logo-img"></a>
+        <button class="mobile-menu" id="mobile-toggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="/#how">How it works</a>
+            <a href="/#pricing">Pricing</a>
+            <a href="/review.html" class="nav-cta">Submit</a>
+        </div>
+    </nav>
+
+    <div class="contact-wrap">
+        <h1>Get in touch.</h1>
+        <p class="subtitle">Questions, feedback, or just want to say hi? We'll get back to you within 24 hours.</p>
+
+        <div class="contact-form" id="contact-form">
+            <div class="contact-error" id="contact-error"></div>
+
+            <div class="form-group">
+                <label for="contact-name">Name</label>
+                <input type="text" id="contact-name" placeholder="Your name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contact-email">Email</label>
+                <input type="email" id="contact-email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contact-topic">Topic</label>
+                <select id="contact-topic">
+                    <option value="general">General question</option>
+                    <option value="review">About my review</option>
+                    <option value="billing">Billing / payment</option>
+                    <option value="bug">Report a bug</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="contact-message">Message</label>
+                <textarea id="contact-message" placeholder="How can we help?" required></textarea>
+            </div>
+
+            <button class="contact-submit" id="contact-btn">Send message</button>
+        </div>
+
+        <div class="contact-success" id="contact-success">
+            <h2>Message sent.</h2>
+            <p>We'll get back to you soon. Thanks for reaching out.</p>
+            <a href="/" class="btn" style="margin-top:1.5rem;">Back to home</a>
+        </div>
+    </div>
+
+    <footer>
+        <img src="logo.png" alt="ruthlessmentor.com" class="logo-img footer-logo-img">
+        <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="/contact.html">Contact</a></div>
+        <span class="footer-copy">&copy; 2026</span>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const toggle = document.getElementById('mobile-toggle');
+        const navLinks = document.getElementById('nav-links');
+        if (toggle) toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+
+        const btn = document.getElementById('contact-btn');
+        const form = document.getElementById('contact-form');
+        const success = document.getElementById('contact-success');
+        const errorEl = document.getElementById('contact-error');
+
+        btn.addEventListener('click', async () => {
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const topic = document.getElementById('contact-topic').value;
+            const message = document.getElementById('contact-message').value.trim();
+
+            errorEl.style.display = 'none';
+
+            if (!name || !email || !message) {
+                errorEl.textContent = 'Please fill in all fields.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            try {
+                const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, topic, message })
+                });
+
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Failed to send message');
+                }
+
+                form.style.display = 'none';
+                success.style.display = 'block';
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Send message';
+            }
+        });
+    </script>
+</body>
+</html>
