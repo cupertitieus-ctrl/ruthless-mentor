@@ -29,8 +29,8 @@
   .brand-line hr { flex: 1; max-width: 120px; border: none; border-top: 2px solid #b8860b; }
   .brand-line { margin-top: -14px; }
   .brand-line span { font-size: 10pt; font-weight: 700; letter-spacing: 3px; color: #1a1a1a; text-transform: uppercase; }
-  .report-title { font-family: 'Georgia', 'Times New Roman', serif; font-size: 28pt; font-weight: 900; margin: 16px 0 18px; line-height: 1.15; }
-  .report-title .accent { color: #b8860b; }
+  .report-title { font-family: 'Georgia', 'Times New Roman', serif; font-size: 22pt; font-weight: 900; margin: 12px 0 16px; line-height: 1.15; }
+  .report-title .accent { color: #8b0000; }
 
   /* METADATA */
   .meta-table { margin-bottom: 28px; }
@@ -190,9 +190,6 @@ function renderReport(md, meta) {
   metaRows += `<tr><td>Review Date:</td><td>${date}</td></tr>`;
   metaRows += `<tr><td>Word Count:</td><td>~${(meta.wordCount || 0).toLocaleString()} words</td></tr>`;
   metaRows += `<tr><td>Tier:</td><td>${esc(meta.tier || '')}</td></tr>`;
-  if (meta.stage) metaRows += `<tr><td>Stage:</td><td>${esc(stageLabels[meta.stage] || meta.stage)}</td></tr>`;
-  if (meta.genre) metaRows += `<tr><td>Genre:</td><td>${esc(genreLabels[meta.genre] || meta.genre)}</td></tr>`;
-  if (meta.pov) metaRows += `<tr><td>POV:</td><td>${esc(povLabels[meta.pov] || meta.pov)}</td></tr>`;
 
   // Parse markdown into HTML with special rendering
   const reviewHtml = parseReviewMarkdown(md);
@@ -202,7 +199,7 @@ function renderReport(md, meta) {
       <img src="logo.png" alt="RM">
       <div class="brand-line"><hr><span>Ruthless Mentor</span><hr></div>
     </div>
-    <h1 class="report-title">Manuscript <span class="accent">Read</span> Report</h1>
+    <h1 class="report-title">Manuscript <span class="accent">Review</span> Report</h1>
     <div class="meta-table"><table>${metaRows}</table></div>
     ${reviewHtml}
     <div class="report-footer">RUTHLESS MENTOR REPORT &nbsp;|&nbsp; ${date}</div>
@@ -217,6 +214,13 @@ function parseReviewMarkdown(md) {
   while (i < lines.length) {
     const line = lines[i];
     const trimmed = line.trim();
+
+    // Book title: # REVIEW: TITLE or ## REVIEW: TITLE
+    if (/^#{1,2}\s/.test(trimmed) && !trimmed.startsWith('### ')) {
+      const titleText = trimmed.replace(/^#{1,2}\s*/, '');
+      html += `<h2 style="font-size:15pt;font-weight:800;margin:20px 0 8px;color:#1a1a1a;text-transform:uppercase;letter-spacing:0.5px">${esc(titleText)}</h2>`;
+      i++; continue;
+    }
 
     // Section headers: ### N. Title or ### N. Title: X/10
     if (trimmed.startsWith('### ')) {
