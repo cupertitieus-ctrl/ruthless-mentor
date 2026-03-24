@@ -332,11 +332,15 @@ function parseReviewMarkdown(md) {
     // Character grade: many formats
     // **Name** — Grade: X | **Name — X** | **Name**: X | **Name** (Grade: X) | Name — Grade: X
     const charPatterns = [
-      /^\*\*(.+?)\*\*\s*[-—:]\s*Grade:\s*([A-F][+-]?)/i,
-      /^\*\*(.+?)\s*[-—]\s*([A-F][+-]?)\*\*/i,
-      /^\*\*(.+?)\*\*\s*[-—:]\s*([A-F][+-]?)\s*$/i,
+      /^\*\*(.+?)\*\*\s*[-–—:]\s*Grade:\s*([A-F][+-]?)/i,
+      /^\*\*(.+?)\s*[-–—]\s*([A-F][+-]?)\*\*/i,
+      /^\*\*(.+?)\*\*\s*[-–—:]\s*([A-F][+-]?)\s*$/i,
       /^\*\*(.+?)\*\*\s*\((?:Grade:?\s*)?([A-F][+-]?)\)/i,
-      /^(.+?)\s*[-—]\s*Grade:\s*([A-F][+-]?)\s*$/i,
+      /^(.+?)\s*[-–—]\s*Grade:\s*([A-F][+-]?)\s*$/i,
+      /^\*\*(.+?)\*\*\s*[-–—]\s*\*\*Grade:\s*([A-F][+-]?)\*\*/i,
+      /^\*\*(.+?)\*\*\s*[-–—]\s*\*\*([A-F][+-]?)\*\*/i,
+      /^####?\s*(.+?)\s*[-–—:]\s*(?:Grade:?\s*)?([A-F][+-]?)\s*$/i,
+      /^\*\*(.+?)\*\*.*?([A-F][+-]?)\s*$/i,
     ];
     let charMatch = null;
     for (const pat of charPatterns) {
