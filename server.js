@@ -180,13 +180,19 @@ For showing vs telling comparisons, use this EXACT format:
 [STRONGER] "suggested rewrite" — why it works better
 
 ### 9. Line-Level Callouts
-Pull at least 5-10 specific passages from the text. For each one:
-- Quote it exactly
-- Explain the problem
-- Suggest a specific fix or rewrite
+Pull at least 5-10 specific passages. For each one, use this exact format:
 
-Also call out passages that are genuinely good and explain why they work. For good passages use:
-[GOOD PASSAGE] "exact quote" — why this works
+> "exact quote from the text"
+
+Brief explanation of what's wrong (1-2 sentences, no labels like "Problem:").
+
+[FIX] Specific rewrite or actionable suggestion.
+
+For good passages, use:
+
+[GOOD PASSAGE] "exact quote" — why this works and why the author should do more of it.
+
+Alternate between bad and good passages. Don't dump all the bad ones first.
 
 ### 10. Where This Is Heading
 If the manuscript is unfinished: what problems will get worse? What should the author fix before writing more?
