@@ -214,16 +214,12 @@ function parseReviewMarkdown(md) {
     const line = lines[i];
     const trimmed = line.trim();
 
-    // Book title: # TITLE, ## TITLE, or lines with just *TITLE* at the start
+    // Skip any # or ## title headers (RUTHLESS MENTOR REVIEW, book titles, etc.)
     if (/^#{1,2}\s/.test(trimmed) && !trimmed.startsWith('### ')) {
-      const titleText = trimmed.replace(/^#{1,2}\s*/, '').replace(/^\*+|\*+$/g, '').replace(/^REVIEW:\s*/i, '').replace(/^RUTHLESS MENTOR REVIEW:?\s*/i, '');
-      html += `<h2 style="font-size:16pt;font-weight:800;margin:10px 0 4px;color:#8b0000;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #b8860b;padding-bottom:6px">${esc(titleText)}</h2>`;
       i++; continue;
     }
-    // Standalone bold title like *DON'T TRUST THE NACHO HAMSTER*
+    // Skip standalone bold title lines like *DON'T TRUST THE NACHO HAMSTER*
     if (/^\*[A-Z][^*]+\*$/.test(trimmed)) {
-      const titleText = trimmed.replace(/^\*+|\*+$/g, '').replace(/^REVIEW:\s*/i, '').replace(/^RUTHLESS MENTOR REVIEW:?\s*/i, '');
-      html += `<h2 style="font-size:16pt;font-weight:800;margin:10px 0 4px;color:#8b0000;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #b8860b;padding-bottom:6px">${esc(titleText)}</h2>`;
       i++; continue;
     }
 

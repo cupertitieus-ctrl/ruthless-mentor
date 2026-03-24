@@ -85,6 +85,8 @@ Write in plain English. No jargon. No academic labels. Talk like a smart human g
 
 Produce your review using these exact section headers. Every section is mandatory.
 
+IMPORTANT: Do NOT include any title headers like "# RUTHLESS MENTOR REVIEW" or "# BOOK TITLE" or "## REVIEW:" at the top. Start directly with ### 1. First Impressions. No preamble, no title, no introduction — just go straight into the review.
+
 ### 1. First Impressions
 2-3 sentences. Your gut reaction after reading. What grabbed you? What made you wince?
 
