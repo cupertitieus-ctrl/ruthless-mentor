@@ -332,15 +332,26 @@ function parseReviewMarkdown(md) {
     // Character grade: many formats
     // **Name** — Grade: X | **Name — X** | **Name**: X | **Name** (Grade: X) | Name — Grade: X
     const charPatterns = [
-      /^\*\*(.+?)\*\*\s*[-–—:]\s*Grade:\s*([A-F][+-]?)/i,
-      /^\*\*(.+?)\s*[-–—]\s*([A-F][+-]?)\*\*/i,
-      /^\*\*(.+?)\*\*\s*[-–—:]\s*([A-F][+-]?)\s*$/i,
-      /^\*\*(.+?)\*\*\s*\((?:Grade:?\s*)?([A-F][+-]?)\)/i,
-      /^(.+?)\s*[-–—]\s*Grade:\s*([A-F][+-]?)\s*$/i,
-      /^\*\*(.+?)\*\*\s*[-–—]\s*\*\*Grade:\s*([A-F][+-]?)\*\*/i,
-      /^\*\*(.+?)\*\*\s*[-–—]\s*\*\*([A-F][+-]?)\*\*/i,
-      /^####?\s*(.+?)\s*[-–—:]\s*(?:Grade:?\s*)?([A-F][+-]?)\s*$/i,
-      /^\*\*(.+?)\*\*.*?([A-F][+-]?)\s*$/i,
+      // **Name** — Grade: B+ (grade outside bold)
+      /^\*\*(.+?)\*\*\s*[-–—:]\s*Grade:\s*([A-F][+\-−]?)/i,
+      // **Name — Grade: B+** (grade inside bold)
+      /^\*\*(.+?)\s*[-–—]\s*Grade:\s*([A-F][+\-−]?)\*\*/i,
+      // **Name — B+** (no "Grade:" label, inside bold)
+      /^\*\*(.+?)\s*[-–—]\s*([A-F][+\-−]?)\*\*/i,
+      // **Name**: B+ or **Name** — B+
+      /^\*\*(.+?)\*\*\s*[-–—:]\s*([A-F][+\-−]?)\s*$/i,
+      // **Name** (Grade: B+)
+      /^\*\*(.+?)\*\*\s*\((?:Grade:?\s*)?([A-F][+\-−]?)\)/i,
+      // Name — Grade: B+ (no bold)
+      /^(.+?)\s*[-–—]\s*Grade:\s*([A-F][+\-−]?)\s*$/i,
+      // **Name** — **Grade: B+**
+      /^\*\*(.+?)\*\*\s*[-–—]\s*\*\*Grade:\s*([A-F][+\-−]?)\*\*/i,
+      // **Name** — **B+**
+      /^\*\*(.+?)\*\*\s*[-–—]\s*\*\*([A-F][+\-−]?)\*\*/i,
+      // #### Name — Grade: B+
+      /^####?\s*(.+?)\s*[-–—:]\s*(?:Grade:?\s*)?([A-F][+\-−]?)\s*$/i,
+      // Broad fallback: **Name** ... B+ (anything with bold name ending in grade)
+      /^\*\*(.+?)\*\*.*?([A-F][+\-−]?)\s*$/i,
     ];
     let charMatch = null;
     for (const pat of charPatterns) {
