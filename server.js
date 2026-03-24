@@ -101,7 +101,26 @@ After your impression, include a strengths callout using this EXACT format:
 
 Use pipe-separated items. This will render as a green callout box.
 
-### 2. Author's Voice: X/10 — Short Label Here
+### 2. Structure & Pacing
+
+Start with "The Core Issue:" — identify the single biggest structural or pacing problem in the manuscript in 1-2 sentences.
+
+Then immediately give a ruthless fix using this EXACT format:
+[FIX] Your specific actionable fix for the core issue here.
+
+Then include a chapter-by-chapter pacing breakdown using this EXACT format (one per line):
+[BAD] Ch. 1-2: description of what's wrong
+[WARN] Ch. 3-6: description of concern
+[GOOD] Ch. 7-12: description of what works
+[NOTE] Overall: summary
+
+Then cover the rest: plot holes, setting accuracy, tension & consequences, show vs tell, dialogue quality, and theme.
+
+For showing vs telling comparisons, use this EXACT format:
+[TELLING] "exact quote from the text" — why it's weak
+[STRONGER] "suggested rewrite" — why it works better
+
+### 3. Author's Voice: X/10 — Short Label Here
 Rate the voice and tone from 1 to 10. At a 10, there's a talented writer behind these words. At a 1, the writing feels generic — just words on a page.
 
 IMPORTANT: The header MUST include a short label after the score, separated by " — ". Examples:
@@ -130,10 +149,10 @@ You MUST include at least 2 showing-vs-telling comparisons in this section using
 [TELLING] "exact quote from the text" — why it's weak
 [STRONGER] "suggested rewrite or existing strong passage" — why it works better
 
-### 3. Prose Quality: X/10 — Short Label Here
+### 4. Prose Quality: X/10 — Short Label Here
 The header MUST include a short label after the score. Examples:
-### 3. Prose Quality: 5/10 — Needs Serious Tightening
-### 3. Prose Quality: 8/10 — Clean and Confident
+### 4. Prose Quality: 5/10 — Needs Serious Tightening
+### 4. Prose Quality: 8/10 — Clean and Confident
 Rate the writing quality from 1 to 10. Do NOT list overused words here — that's covered in the Repeat Word Report. Instead focus on:
 - Vague or meaningless phrases that don't do any work
 - Metaphors or similes that don't make sense
@@ -143,7 +162,7 @@ Rate the writing quality from 1 to 10. Do NOT list overused words here — that'
 
 For every problem you find, quote the exact passage and explain what's wrong with it in plain language.
 
-### 4. Repeat Word Report
+### 5. Repeat Word Report
 List every word that's used too much. Use this EXACT format for each word (one per line, no tables, no pipes, no dashes):
 
 **"word"** (Xx) — brief description of how it's used
@@ -154,10 +173,10 @@ Example:
 
 Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, count in parentheses, dash, description.
 
-### 5. Depth Check
+### 6. Depth Check
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
 
-### 6. Main Character Report Card
+### 7. Main Character Report Card
 Focus on the protagonist (main character) only. Use this format:
 
 **Character Name** — Grade: X
@@ -173,31 +192,12 @@ Give the main character a letter grade (A through F) and do a DEEP dive:
 - Flaws: Do they have real, meaningful flaws — not just "she's too caring"?
 - Diagnosis: Is this a real person or a cardboard cutout? Why?
 
-### 7. Supporting Characters
+### 8. Supporting Characters
 Brief summary for each supporting character. Use this format for each:
 
 **Character Name** — Grade: X
 
 Keep it to 2-3 sentences per supporting character. Hit the key points: what they add to the story, whether they feel like a real person or just a plot device, and one thing to improve. Don't do the full deep dive — just the essentials.
-
-### 8. Structure & Pacing
-
-Start with "The Core Issue:" — identify the single biggest structural or pacing problem in the manuscript in 1-2 sentences.
-
-Then immediately give a ruthless fix using this EXACT format:
-[FIX] Your specific actionable fix for the core issue here.
-
-Then include a chapter-by-chapter pacing breakdown using this EXACT format (one per line):
-[BAD] Ch. 1-2: description of what's wrong
-[WARN] Ch. 3-6: description of concern
-[GOOD] Ch. 7-12: description of what works
-[NOTE] Overall: summary
-
-Then cover the rest: plot holes, setting accuracy, tension & consequences, show vs tell, dialogue quality, and theme.
-
-For showing vs telling comparisons, use this EXACT format:
-[TELLING] "exact quote from the text" — why it's weak
-[STRONGER] "suggested rewrite" — why it works better
 
 ### 9. Line-Level Callouts
 Pull at least 5-10 specific passages. For each one, use this exact format:
