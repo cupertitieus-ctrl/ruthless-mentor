@@ -329,7 +329,16 @@ function parseReviewMarkdown(md) {
         for (const pat of charPatterns) { if (nextLine.match(pat)) { isNextChar = true; break; } }
         if (isNextChar) break;
         if (nextLine.startsWith('[')) break;
-        if (nextLine) bodyHtml += `<p>${formatInline(nextLine)}</p>`;
+        if (nextLine) {
+          // Add icons for what's working / not working
+          if (/^what'?s\s+working/i.test(nextLine) || /^strengths?:/i.test(nextLine)) {
+            bodyHtml += `<p><img src="icon-good.png" class="pacing-img" style="vertical-align:middle;margin-right:6px"><strong style="color:#2e7d32">${formatInline(nextLine)}</strong></p>`;
+          } else if (/^what'?s\s+(not\s+working|broken)/i.test(nextLine) || /^weakness(es)?:/i.test(nextLine)) {
+            bodyHtml += `<p><img src="icon-bad.png" class="pacing-img" style="vertical-align:middle;margin-right:6px"><strong style="color:#8b0000">${formatInline(nextLine)}</strong></p>`;
+          } else {
+            bodyHtml += `<p>${formatInline(nextLine)}</p>`;
+          }
+        }
         i++;
       }
       html += `<div class="char-card"><div class="char-header"><span class="char-name">${esc(name)}</span><span class="char-grade ${gradeClass}">${esc(grade)}</span></div><div class="char-body">${bodyHtml}</div></div>`;
