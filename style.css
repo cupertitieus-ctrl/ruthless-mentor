@@ -246,6 +246,21 @@ footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:w
 .sidebar-list{list-style:none;font-size:.8rem}
 .sidebar-list li{color:var(--text2);padding:.3rem 0;border-bottom:1px solid var(--border)}
 .sidebar-list li::before{content:'';display:inline-block;width:4px;height:4px;background:var(--accent);border-radius:50%;margin-right:.5rem;vertical-align:middle}
+.light-body .review-page-header h1{color:#1a1a1a}
+.light-body .review-page-header .sub{color:#666}
+.light-body .review-form-card{background:#fff;border-color:#e5e2de}
+.light-body .sidebar-card{background:#fff;border-color:#e5e2de}
+.light-body .sidebar-card h3{color:#1a1a1a}
+.light-body .sidebar-list li{color:#555;border-color:#eee}
+.light-body .form-group label{color:#333}
+.light-body .form-group input,.light-body .form-group textarea,.light-body .form-group select{background:#fff;color:#1a1a1a;border-color:#ddd}
+.light-body .word-count-bar{background:#f0ede8;color:#333}
+.light-body .total-row{color:#1a1a1a}
+.light-body .form-note{color:#888}
+.light-body .form-included{color:#888}
+.light-body .quiz-label{color:#1a1a1a}
+.light-body .coupon-input{background:#fff;color:#1a1a1a;border-color:#ddd}
+.light-body .disclaimer{color:#555}
 @media(max-width:768px){.review-page-grid{grid-template-columns:1fr}.review-sidebar{position:static}}
 
 /* REVIEW SCREEN */
