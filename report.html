@@ -139,6 +139,20 @@
     .page { box-shadow: none; margin: 0; padding: 0.5in 0.65in; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
     .score-bar-wrap, .score-bar-fill, .char-grade, .callout, .callout-green, .fix-box, .good-passage, .compare-table td, .depth-badge { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    /* Prevent elements from splitting across pages */
+    .section-header { page-break-after: avoid; }
+    .char-card { page-break-inside: avoid; }
+    .callout, .callout-green { page-break-inside: avoid; }
+    .fix-box { page-break-inside: avoid; }
+    .good-passage { page-break-inside: avoid; }
+    .score-bar-wrap { page-break-inside: avoid; }
+    .compare-table { page-break-inside: avoid; }
+    .quote-block { page-break-inside: avoid; }
+    .verdict-box { page-break-inside: avoid; }
+    .meta-table { page-break-inside: avoid; }
+    .report-header { page-break-inside: avoid; page-break-after: avoid; }
+    h2 { page-break-after: avoid; }
+    p { orphans: 3; widows: 3; }
   }
 
   /* LOADING */
