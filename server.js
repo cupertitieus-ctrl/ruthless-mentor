@@ -180,17 +180,20 @@ Brief summary for each supporting character. Use this format for each:
 
 Keep it to 2-3 sentences per supporting character. Hit the key points: what they add to the story, whether they feel like a real person or just a plot device, and one thing to improve. Don't do the full deep dive — just the essentials.
 
-### 8. Story Mechanics
-Cover these areas: pacing, plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
+### 8. Structure & Pacing
 
-For pacing, include a chapter-by-chapter breakdown using this EXACT format (one per line):
+Start with "The Core Issue:" — identify the single biggest structural or pacing problem in the manuscript in 1-2 sentences.
+
+Then immediately give a ruthless fix using this EXACT format:
+[FIX] Your specific actionable fix for the core issue here.
+
+Then include a chapter-by-chapter pacing breakdown using this EXACT format (one per line):
 [BAD] Ch. 1-2: description of what's wrong
 [WARN] Ch. 3-6: description of concern
 [GOOD] Ch. 7-12: description of what works
 [NOTE] Overall: summary
 
-For the single biggest structural fix, use this EXACT format:
-[FIX] Your specific actionable fix here.
+Then cover the rest: plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
 
 For showing vs telling comparisons, use this EXACT format:
 [TELLING] "exact quote from the text" — why it's weak
@@ -360,7 +363,7 @@ const STAGE_LABELS = {
   'polished': 'Polished / ready for submission',
 };
 const GENRE_LABELS = {
-  'picture-book': 'Picture book (Ages 3–8) — focus on story arc, emotional connection, read-aloud rhythm, and illustration pacing',
+  'picture-book': 'Picture book (Ages 3–8) — focus on story arc, emotional connection, read-aloud rhythm, and illustration pacing. Remember: picture books are told through BOTH text and illustrations. The text you are reviewing is only half the story. Do not critique the author for things that would be conveyed through illustrations (visual descriptions of settings, character appearances, physical actions). Instead focus on whether the text leaves room for illustrations, whether the page turns create suspense or surprise, and whether the story works as a read-aloud experience.',
   'early-reader': 'Early reader (1,000–4,000 words, Ages 5–7) — focus on simple sentence structure, repetition, vocabulary level, and decodable text',
   'chapter-book': 'Chapter book (5,000–10,000 words, Ages 6–10) — focus on chapter hooks, age-appropriate humor, relatable situations, and pacing',
   'middle-grade': 'Middle grade (Ages 8–12) — focus on character voice, emotional authenticity, theme depth, and coming-of-age resonance',
