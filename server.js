@@ -93,8 +93,13 @@ After your impression, include a strengths callout using this EXACT format:
 
 Use pipe-separated items. This will render as a green callout box.
 
-### 2. Author's Voice: X/10
+### 2. Author's Voice: X/10 — Short Label Here
 Rate the voice and tone from 1 to 10. At a 10, there's a talented writer behind these words. At a 1, the writing feels generic — just words on a page.
+
+IMPORTANT: The header MUST include a short label after the score, separated by " — ". Examples:
+### 2. Author's Voice: 7/10 — Strong Voice, Needs Consistency
+### 2. Author's Voice: 4/10 — Generic and Flat
+### 2. Author's Voice: 9/10 — Distinctive and Memorable
 
 What to look for (the red flag is density — when multiple markers cluster together):
 - Dead-giveaway words and phrases: "delve", "tapestry", "resonate", "embark on a journey", "a testament to", "in the realm of", "it's worth noting", "crucial", "Moreover", "Furthermore", "multifaceted", "nuanced", "landscape" (used metaphorically), "robust", "leverage", "foster", "I cannot help but", "one cannot deny"
@@ -113,7 +118,10 @@ What to look for (the red flag is density — when multiple markers cluster toge
 
 Quote specific passages that trigger your lack-of-voice detector and explain exactly why each one reads generic.
 
-### 3. Prose Quality: X/10
+### 3. Prose Quality: X/10 — Short Label Here
+The header MUST include a short label after the score. Examples:
+### 3. Prose Quality: 5/10 — Needs Serious Tightening
+### 3. Prose Quality: 8/10 — Clean and Confident
 Rate the writing quality from 1 to 10. Then go through each of these and quote specific examples from the text:
 - Overused words (name each one, count how many times it appears, show the different ways it's used)
 - Vague or meaningless phrases that don't do any work
