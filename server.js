@@ -139,7 +139,7 @@ Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, coun
 ### 5. Depth Check
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
 
-### 6. Character Report Card
+### 6. Main Character Report Card
 For each main character, use this format:
 
 **Character Name** — Grade: X
