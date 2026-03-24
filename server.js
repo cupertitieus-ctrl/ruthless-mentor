@@ -66,8 +66,8 @@ async function requireAuth(req, res, next) {
 const TIERS = [
   { name: "Children's / Picture Book", max: 5000, price: 5 },
   { name: 'Chapter Book', max: 25000, price: 10 },
-  { name: 'Middle Grade', max: 50000, price: 15 },
-  { name: 'Young Adult / Adult', max: Infinity, price: 15 },
+  { name: 'Middle Grade / Young Adult', max: 100000, price: 15 },
+  { name: 'Adult', max: Infinity, price: 20 },
 ];
 
 function getTier(wordCount) {

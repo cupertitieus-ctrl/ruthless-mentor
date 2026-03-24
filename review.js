@@ -29,8 +29,8 @@ document.querySelectorAll('.anim-fade,.anim-slide-up,.anim-scale').forEach(el =>
 function getTier(words) {
     if (words <= 5000) return { name: "Children's / Picture Book", price: 5 };
     if (words <= 25000) return { name: 'Chapter Book', price: 10 };
-    if (words <= 50000) return { name: 'Middle Grade', price: 15 };
-    return { name: 'Young Adult / Adult', price: 15 };
+    if (words <= 100000) return { name: 'Middle Grade / Young Adult', price: 15 };
+    return { name: 'Adult', price: 20 };
 }
 
 function countWords(text) {
@@ -79,11 +79,11 @@ const GENRE_PRICES = {
     'picture-book': { name: 'Picture Book', price: 5 },
     'early-reader': { name: 'Early Reader', price: 5 },
     'chapter-book': { name: 'Chapter Book', price: 10 },
-    'middle-grade': { name: 'Middle Grade', price: 15 },
-    'young-adult': { name: 'Young Adult', price: 15 },
-    'literary-fiction': { name: 'Literary Fiction', price: 15 },
-    'genre-fiction': { name: 'Genre Fiction', price: 15 },
-    'memoir': { name: 'Memoir', price: 15 },
+    'middle-grade': { name: 'Middle Grade / Young Adult', price: 15 },
+    'young-adult': { name: 'Middle Grade / Young Adult', price: 15 },
+    'literary-fiction': { name: 'Adult', price: 20 },
+    'genre-fiction': { name: 'Adult', price: 20 },
+    'memoir': { name: 'Adult', price: 20 },
 };
 
 const genreSelect = document.getElementById('q-genre');
