@@ -158,6 +158,17 @@ if (couponBtn) {
         }
     }
     if (params.get('cancelled') === 'true') {
+        // Restore text from sessionStorage
+        const savedText = sessionStorage.getItem('rm_pending_text');
+        const savedInfo = JSON.parse(sessionStorage.getItem('rm_pending_info') || '{}');
+        if (savedText && textarea) {
+            textarea.value = savedText;
+            if (savedInfo.title) { const t = document.getElementById('q-title'); if (t) t.value = savedInfo.title; }
+            if (savedInfo.stage) { const s = document.getElementById('q-stage'); if (s) s.value = savedInfo.stage; }
+            if (savedInfo.genre) { const g = document.getElementById('q-genre'); if (g) { g.value = savedInfo.genre; updateSidebarPrice(); } }
+            if (savedInfo.pov) { const p = document.getElementById('q-pov'); if (p) p.value = savedInfo.pov; }
+            updateCost();
+        }
         window.history.replaceState({}, '', '/review.html');
         alert('Payment was cancelled. Your text is still here — submit when ready.');
     }
