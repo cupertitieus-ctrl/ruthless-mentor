@@ -143,12 +143,6 @@ if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Require auth
-        if (!_session) {
-            authGate.classList.remove('hidden');
-            return;
-        }
-
         const disclaimerCb = document.getElementById('disclaimer-cb');
         if (disclaimerCb && !disclaimerCb.checked) {
             alert('Please check the content review disclaimer before submitting.');
@@ -209,7 +203,8 @@ if (form) {
         }, 3500);
 
         try {
-            const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _session.access_token };
+            const headers = { 'Content-Type': 'application/json' };
+            if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
 
             const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
             const reviewText = await reviewRes.text();

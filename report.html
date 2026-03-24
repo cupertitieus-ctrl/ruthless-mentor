@@ -153,6 +153,7 @@
   <div class="toolbar-btns">
     <button class="toolbar-btn" onclick="window.print()">Print / Save as PDF</button>
     <button class="toolbar-btn outline" onclick="window.location='/review.html'">Submit another</button>
+    <button class="toolbar-btn outline" id="save-account-btn" style="display:none" onclick="window.location='/auth.html'">Create account to save</button>
   </div>
 </div>
 
@@ -165,6 +166,21 @@
 </div>
 
 <script>
+// Check auth — show save button if not logged in
+(async () => {
+  try {
+    const { createClient } = window.supabase || {};
+    if (!createClient) return;
+    const sb = createClient('https://kzmilbmfaauruedekfmu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6bWlsYm1mYWF1cnVlZGVrZm11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjY5OTMsImV4cCI6MjA4OTcwMjk5M30._SL6KJxICd_Yhi5yU8XBUccxnioMB-nog5G8U-xWlyw');
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      document.getElementById('save-account-btn').style.display = '';
+    }
+  } catch (e) {
+    document.getElementById('save-account-btn').style.display = '';
+  }
+})();
+
 // Read review data from sessionStorage
 const reviewMarkdown = sessionStorage.getItem('rm_review');
 const reviewMeta = JSON.parse(sessionStorage.getItem('rm_meta') || '{}');
