@@ -210,7 +210,7 @@ If the manuscript is unfinished: what problems will get worse? What should the a
 If it's complete: say "This appears to be a complete manuscript."
 
 ### 11. Final Verdict
-2-4 paragraphs. Is it ready for readers? What's the single biggest thing to fix? What's the strongest thing to protect? Would you keep reading if you found this in a bookstore?
+2-4 paragraphs. Is it ready for readers? What's the single biggest thing to fix? What's the strongest thing to protect? For books: Would you keep reading if you found this in a bookstore? For screenplays: Would you watch this if it was produced as a movie, show, or play?
 
 CRITICAL FORMATTING RULES — follow these EXACTLY or the report will break:
 - Every [TELLING] must be on its OWN line, starting with [TELLING]. Never inline it in a paragraph.
