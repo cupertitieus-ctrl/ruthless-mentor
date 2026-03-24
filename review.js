@@ -66,15 +66,15 @@ if (textarea) textarea.addEventListener('input', updateCost);
 
 // ===== GENRE → SIDEBAR PRICE =====
 const GENRE_PRICES = {
-    'picture-book': { name: 'Picture Book', price: 5 },
-    'early-reader': { name: 'Early Reader', price: 5 },
-    'chapter-book': { name: 'Chapter Book', price: 10 },
-    'middle-grade': { name: 'Middle Grade / Young Adult', price: 15 },
-    'young-adult': { name: 'Middle Grade / Young Adult', price: 15 },
-    'literary-fiction': { name: 'Adult', price: 20 },
-    'genre-fiction': { name: 'Adult', price: 20 },
-    'memoir': { name: 'Adult', price: 20 },
-    'screenplay': { name: 'Screenplay', price: 25 },
+    'picture-book': { name: 'Picture Book', price: 20 },
+    'early-reader': { name: 'Early Reader', price: 20 },
+    'chapter-book': { name: 'Chapter Book', price: 20 },
+    'middle-grade': { name: 'Middle Grade / Young Adult', price: 25 },
+    'young-adult': { name: 'Middle Grade / Young Adult', price: 25 },
+    'literary-fiction': { name: 'Adult', price: 30 },
+    'genre-fiction': { name: 'Adult', price: 30 },
+    'memoir': { name: 'Adult', price: 30 },
+    'screenplay': { name: 'Screenplay', price: 30 },
 };
 
 const genreSelect = document.getElementById('q-genre');

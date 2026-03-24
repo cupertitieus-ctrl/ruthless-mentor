@@ -216,7 +216,12 @@ If the manuscript is unfinished: what problems will get worse? What should the a
 If it's complete: say "This appears to be a complete manuscript."
 
 ### 11. Final Verdict
-2-4 paragraphs. Is it ready for readers? What's the single biggest thing to fix? What's the strongest thing to protect? For books: Would you keep reading if you found this in a bookstore? For screenplays: Would you watch this if it was produced as a movie, show, or play?
+2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
+
+IMPORTANT: Match your final question to the genre:
+- For books: "Would you keep reading if you found this in a bookstore?"
+- For screenplays: "Would you greenlight this? Would audiences stay in their seats?" Do NOT mention bookstores, picking up books, or reading for screenplays.
+- For memoir: "Does this story earn the reader's trust?"
 
 CRITICAL FORMATTING RULES — follow these EXACTLY or the report will break:
 - Every [TELLING] must be on its OWN line, starting with [TELLING]. Never inline it in a paragraph.
@@ -665,11 +670,11 @@ app.post('/api/create-checkout', async (req, res) => {
   const { genre, manuscriptInfo } = req.body;
 
   const GENRE_PRICES = {
-    'picture-book': 500, 'early-reader': 500,
-    'chapter-book': 1000,
-    'middle-grade': 1500, 'young-adult': 1500,
-    'literary-fiction': 2000, 'genre-fiction': 2000, 'memoir': 2000,
-    'screenplay': 2500,
+    'picture-book': 2000, 'early-reader': 2000,
+    'chapter-book': 2000,
+    'middle-grade': 2500, 'young-adult': 2500,
+    'literary-fiction': 3000, 'genre-fiction': 3000, 'memoir': 3000,
+    'screenplay': 3000,
   };
 
   const GENRE_NAMES = {
@@ -740,6 +745,7 @@ const COUPONS = {
   'BETATEST': { type: 'free', discount: 100, message: 'Beta test code applied — this review is free!' },
   'FIRST50': { type: 'percent', discount: 50, message: '50% off applied!' },
   'LAUNCH': { type: 'fixed', discount: 5, message: '$5 off applied!' },
+  '50OFFRM': { type: 'percent', discount: 50, message: '50% off applied!' },
 };
 
 app.post('/api/coupon', (req, res) => {
