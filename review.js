@@ -95,17 +95,21 @@ function updateSidebarPrice() {
 
 if (genreSelect) genreSelect.addEventListener('change', updateSidebarPrice);
 
-// ===== SCREENPLAY TOGGLE — hide Book Number + POV when screenplay selected =====
+// ===== GENRE-CONDITIONAL FIELDS =====
 const bookNumberGroup = document.getElementById('book-number-group');
 const povGroup = document.getElementById('pov-group');
+const rhymingGroup = document.getElementById('rhyming-group');
 
-function toggleScreenplayFields() {
-    const isScreenplay = genreSelect && genreSelect.value === 'screenplay';
+function toggleGenreFields() {
+    const val = genreSelect ? genreSelect.value : '';
+    const isScreenplay = val === 'screenplay';
+    const isPictureBook = val === 'picture-book';
     if (bookNumberGroup) bookNumberGroup.style.display = isScreenplay ? 'none' : '';
     if (povGroup) povGroup.style.display = isScreenplay ? 'none' : '';
+    if (rhymingGroup) rhymingGroup.style.display = isPictureBook ? '' : 'none';
 }
 
-if (genreSelect) genreSelect.addEventListener('change', toggleScreenplayFields);
+if (genreSelect) genreSelect.addEventListener('change', toggleGenreFields);
 
 // ===== COUPON =====
 const couponBtn = document.getElementById('apply-coupon');
@@ -180,7 +184,8 @@ if (couponBtn) {
             if (savedInfo.genre) { const g = document.getElementById('q-genre'); if (g) { g.value = savedInfo.genre; updateSidebarPrice(); } }
             if (savedInfo.pov) { const p = document.getElementById('q-pov'); if (p) p.value = savedInfo.pov; }
             if (savedInfo.bookNumber) { const b = document.getElementById('q-book-number'); if (b) b.value = savedInfo.bookNumber; }
-            toggleScreenplayFields();
+            if (savedInfo.rhyming) { const r = document.getElementById('q-rhyming'); if (r) r.value = savedInfo.rhyming; }
+            toggleGenreFields();
             updateCost();
         }
         window.history.replaceState({}, '', '/review.html');
@@ -296,7 +301,8 @@ if (form) {
         const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
         const pov = document.getElementById('q-pov') ? document.getElementById('q-pov').value : '';
         const bookNumber = document.getElementById('q-book-number') ? document.getElementById('q-book-number').value : '';
-        const manuscriptInfo = { title, stage, genre, pov, bookNumber };
+        const rhyming = document.getElementById('q-rhyming') ? document.getElementById('q-rhyming').value : '';
+        const manuscriptInfo = { title, stage, genre, pov, bookNumber, rhyming };
 
         // Save text to sessionStorage before redirecting to Stripe
         sessionStorage.setItem('rm_pending_text', text);
