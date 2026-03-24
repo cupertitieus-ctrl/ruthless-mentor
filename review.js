@@ -129,7 +129,129 @@ if (couponBtn) {
 
 // File upload removed — paste only
 
-// ===== SUBMIT — generates review + opens report page =====
+// ===== CHECK IF RETURNING FROM STRIPE =====
+(async () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true' && params.get('session_id')) {
+        // Verify payment
+        try {
+            const verifyRes = await fetch('/api/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId: params.get('session_id') })
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyData.paid) {
+                // Payment verified — restore text from sessionStorage and run review
+                const savedText = sessionStorage.getItem('rm_pending_text');
+                const savedInfo = JSON.parse(sessionStorage.getItem('rm_pending_info') || '{}');
+                if (savedText && textarea) {
+                    textarea.value = savedText;
+                    updateCost();
+                    // Auto-submit the review
+                    window.history.replaceState({}, '', '/review.html');
+                    setTimeout(() => runReview(savedText, savedInfo), 500);
+                }
+            }
+        } catch (e) {
+            console.error('[VERIFY ERROR]', e);
+        }
+    }
+    if (params.get('cancelled') === 'true') {
+        window.history.replaceState({}, '', '/review.html');
+        alert('Payment was cancelled. Your text is still here — submit when ready.');
+    }
+})();
+
+// ===== SUBMIT — payment then review =====
+async function runReview(text, manuscriptInfo) {
+    const btn = document.getElementById('submit-btn');
+    const progressWrap = document.getElementById('progress-wrap');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    btn.textContent = 'Reviewing...';
+    progressWrap.classList.remove('hidden');
+    progressFill.style.width = '0%';
+
+    const steps = [
+        { pct: 5, text: 'Uploading your work...' },
+        { pct: 10, text: 'Reading through every page...' },
+        { pct: 16, text: 'Getting into the story...' },
+        { pct: 22, text: 'Evaluating the writing voice...' },
+        { pct: 28, text: 'Scanning for overused words...' },
+        { pct: 34, text: 'Checking the prose...' },
+        { pct: 40, text: 'Looking at your descriptions...' },
+        { pct: 46, text: 'Reviewing the characters...' },
+        { pct: 52, text: 'Checking the pacing...' },
+        { pct: 58, text: 'Evaluating the dialogue...' },
+        { pct: 63, text: 'Looking for story issues...' },
+        { pct: 68, text: 'Pulling specific passages...' },
+        { pct: 73, text: 'Writing detailed notes...' },
+        { pct: 78, text: 'Finding what works well...' },
+        { pct: 83, text: 'Putting the report together...' },
+        { pct: 87, text: 'Writing the final verdict...' },
+        { pct: 91, text: 'Polishing the report...' },
+        { pct: 94, text: 'Adding the finishing touches...' },
+        { pct: 96, text: 'Almost there...' },
+        { pct: 98, text: 'Just a few more seconds...' },
+    ];
+
+    let stepIdx = 0;
+    const stepInterval = setInterval(() => {
+        if (stepIdx < steps.length) {
+            progressFill.style.width = steps[stepIdx].pct + '%';
+            progressText.textContent = steps[stepIdx].text;
+            progressText.className = 'progress-text pulsing';
+            stepIdx++;
+        }
+    }, 3500);
+
+    try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
+
+        const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
+        const reviewText = await reviewRes.text();
+        let reviewData;
+        try { reviewData = JSON.parse(reviewText); } catch (e) {
+            throw new Error('Server is updating. Please wait 30 seconds and try again.');
+        }
+        if (!reviewRes.ok) throw new Error(reviewData.error || 'Review failed');
+
+        clearInterval(stepInterval);
+        progressFill.style.width = '100%';
+        progressText.textContent = 'Opening your report...';
+
+        sessionStorage.setItem('rm_review', reviewData.review);
+        sessionStorage.setItem('rm_meta', JSON.stringify({
+            wordCount: reviewData.wordCount,
+            tier: reviewData.tier,
+            title: manuscriptInfo.title,
+            stage: manuscriptInfo.stage,
+            genre: manuscriptInfo.genre,
+            pov: manuscriptInfo.pov
+        }));
+
+        // Clean up pending data
+        sessionStorage.removeItem('rm_pending_text');
+        sessionStorage.removeItem('rm_pending_info');
+
+        window.location.href = '/report.html';
+    } catch (err) {
+        clearInterval(stepInterval);
+        progressText.textContent = 'Error: ' + err.message;
+        progressText.className = 'progress-text';
+        alert('Error: ' + err.message);
+        btn.textContent = 'Submit for review';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        setTimeout(() => progressWrap.classList.add('hidden'), 3000);
+    }
+}
+
 if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -143,95 +265,53 @@ if (form) {
         const text = textarea.value.trim();
         if (!text) { alert('Paste your text or upload a file first.'); return; }
 
-        // Collect manuscript info
         const title = document.getElementById('q-title') ? document.getElementById('q-title').value.trim() : '';
         const stage = document.getElementById('q-stage') ? document.getElementById('q-stage').value : '';
         const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
         const pov = document.getElementById('q-pov') ? document.getElementById('q-pov').value : '';
         const manuscriptInfo = { title, stage, genre, pov };
 
-        const btn = document.getElementById('submit-btn');
-        const progressWrap = document.getElementById('progress-wrap');
-        const progressFill = document.getElementById('progress-fill');
-        const progressText = document.getElementById('progress-text');
+        // Save text to sessionStorage before redirecting to Stripe
+        sessionStorage.setItem('rm_pending_text', text);
+        sessionStorage.setItem('rm_pending_info', JSON.stringify(manuscriptInfo));
 
+        const btn = document.getElementById('submit-btn');
         btn.disabled = true;
         btn.style.opacity = '.6';
-        btn.textContent = 'Reviewing...';
-        progressWrap.classList.remove('hidden');
-        progressFill.style.width = '0%';
+        btn.textContent = 'Setting up payment...';
 
-        const steps = [
-            { pct: 5, text: 'Uploading your work...' },
-            { pct: 10, text: 'Reading through every page...' },
-            { pct: 16, text: 'Getting into the story...' },
-            { pct: 22, text: 'Evaluating the writing voice...' },
-            { pct: 28, text: 'Scanning for overused words...' },
-            { pct: 34, text: 'Checking the prose...' },
-            { pct: 40, text: 'Looking at your descriptions...' },
-            { pct: 46, text: 'Reviewing the characters...' },
-            { pct: 52, text: 'Checking the pacing...' },
-            { pct: 58, text: 'Evaluating the dialogue...' },
-            { pct: 63, text: 'Looking for story issues...' },
-            { pct: 68, text: 'Pulling specific passages...' },
-            { pct: 73, text: 'Writing detailed notes...' },
-            { pct: 78, text: 'Finding what works well...' },
-            { pct: 83, text: 'Putting the report together...' },
-            { pct: 87, text: 'Writing the final verdict...' },
-            { pct: 91, text: 'Polishing the report...' },
-            { pct: 94, text: 'Adding the finishing touches...' },
-            { pct: 96, text: 'Almost there...' },
-            { pct: 98, text: 'Just a few more seconds...' },
-        ];
+        // Check if coupon makes it free
+        const genreVal = genreSelect ? genreSelect.value : '';
+        const genreInfo = GENRE_PRICES[genreVal];
+        let finalPrice = genreInfo ? genreInfo.price : 5;
 
-        let stepIdx = 0;
-        const stepInterval = setInterval(() => {
-            if (stepIdx < steps.length) {
-                progressFill.style.width = steps[stepIdx].pct + '%';
-                progressText.textContent = steps[stepIdx].text;
-                progressText.className = 'progress-text pulsing';
-                stepIdx++;
-            }
-        }, 3500);
+        if (appliedCoupon) {
+            if (appliedCoupon.type === 'free') finalPrice = 0;
+            else if (appliedCoupon.type === 'percent') finalPrice = Math.max(0, finalPrice - (finalPrice * appliedCoupon.discount / 100));
+            else if (appliedCoupon.type === 'fixed') finalPrice = Math.max(0, finalPrice - appliedCoupon.discount);
+        }
 
+        if (finalPrice <= 0) {
+            // Free — skip payment, go straight to review
+            runReview(text, manuscriptInfo);
+            return;
+        }
+
+        // Redirect to Stripe Checkout
         try {
-            const headers = { 'Content-Type': 'application/json' };
-            if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
-
-            const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
-            const reviewText = await reviewRes.text();
-            let reviewData;
-            try { reviewData = JSON.parse(reviewText); } catch (e) {
-                throw new Error('Server is updating. Please wait 30 seconds and try again.');
-            }
-            if (!reviewRes.ok) throw new Error(reviewData.error || 'Review failed');
-
-            clearInterval(stepInterval);
-            progressFill.style.width = '100%';
-            progressText.textContent = 'Opening your report...';
-
-            // Store review in sessionStorage and redirect to report page
-            sessionStorage.setItem('rm_review', reviewData.review);
-            sessionStorage.setItem('rm_meta', JSON.stringify({
-                wordCount: reviewData.wordCount,
-                tier: reviewData.tier,
-                title: manuscriptInfo.title,
-                stage: manuscriptInfo.stage,
-                genre: manuscriptInfo.genre,
-                pov: manuscriptInfo.pov
-            }));
-
-            window.location.href = '/report.html';
-
+            const res = await fetch('/api/create-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ genre: genreVal, manuscriptInfo })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Payment setup failed');
+            window.location.href = data.url;
         } catch (err) {
-            clearInterval(stepInterval);
-            progressText.textContent = 'Error: ' + err.message;
-            progressText.className = 'progress-text';
             alert('Error: ' + err.message);
             btn.textContent = 'Submit for review';
             btn.disabled = false;
             btn.style.opacity = '1';
-            setTimeout(() => progressWrap.classList.add('hidden'), 3000);
         }
     });
 }

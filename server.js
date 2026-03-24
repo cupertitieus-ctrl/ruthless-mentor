@@ -17,6 +17,12 @@ app.use(express.static(path.join(__dirname)));
 // Anthropic client
 const client = new Anthropic();
 
+// Stripe
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeKey ? require('stripe')(stripeKey) : null;
+if (stripe) console.log('[OK] Stripe connected');
+else console.warn('[WARN] Stripe not configured — payments disabled');
+
 // Supabase (optional — gracefully degrade if not configured)
 let supabaseAdmin = null;
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -649,6 +655,83 @@ app.post('/api/email-pdf', optionalAuth, async (req, res) => {
   } catch (err) {
     console.error('[EMAIL PDF ERROR]', err.message);
     res.status(500).json({ error: 'Failed to generate and send PDF. Try downloading instead.' });
+  }
+});
+
+// ===== STRIPE CHECKOUT =====
+app.post('/api/create-checkout', async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
+
+  const { genre, manuscriptInfo } = req.body;
+
+  const GENRE_PRICES = {
+    'picture-book': 500, 'early-reader': 500,
+    'chapter-book': 1000,
+    'middle-grade': 1500, 'young-adult': 1500,
+    'literary-fiction': 2000, 'genre-fiction': 2000, 'memoir': 2000,
+    'screenplay': 2500,
+  };
+
+  const GENRE_NAMES = {
+    'picture-book': "Children's / Picture Book", 'early-reader': 'Early Reader',
+    'chapter-book': 'Chapter Book',
+    'middle-grade': 'Middle Grade', 'young-adult': 'Young Adult',
+    'literary-fiction': 'Literary Fiction', 'genre-fiction': 'Genre Fiction', 'memoir': 'Memoir',
+    'screenplay': 'Screenplay',
+  };
+
+  const priceInCents = GENRE_PRICES[genre] || 1000;
+  const tierName = GENRE_NAMES[genre] || 'Review';
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `Ruthless Mentor Review — ${tierName}`,
+            description: 'Full manuscript review with printable report',
+          },
+          unit_amount: priceInCents,
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/review.html?paid=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/review.html?cancelled=true`,
+      metadata: {
+        genre: genre || '',
+        stage: manuscriptInfo?.stage || '',
+        pov: manuscriptInfo?.pov || '',
+        title: manuscriptInfo?.title || '',
+      },
+    });
+
+    res.json({ url: session.url, sessionId: session.id });
+  } catch (err) {
+    console.error('[STRIPE ERROR]', err.message);
+    res.status(500).json({ error: 'Payment setup failed. Try again.' });
+  }
+});
+
+// Verify payment was completed
+app.post('/api/verify-payment', async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
+
+  const { sessionId } = req.body;
+  if (!sessionId) return res.status(400).json({ error: 'No session ID' });
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    if (session.payment_status === 'paid') {
+      res.json({ paid: true, metadata: session.metadata });
+    } else {
+      res.json({ paid: false });
+    }
+  } catch (err) {
+    console.error('[VERIFY ERROR]', err.message);
+    res.status(500).json({ error: 'Could not verify payment' });
   }
 });
 
