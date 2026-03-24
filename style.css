@@ -255,7 +255,10 @@ footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:w
 .light-body .form-group label{color:#333}
 .light-body .form-group input,.light-body .form-group textarea,.light-body .form-group select{background:#fff;color:#1a1a1a;border-color:#ddd}
 .light-body .word-count-bar{background:#f0ede8;color:#333}
-.light-body .total-row{color:#1a1a1a}
+.light-body .total-row{color:#1a1a1a;background:#fff;border:1px solid #e5e2de}
+.light-body .disclaimer{background:#fff;border-color:#e5e2de;color:#555}
+.light-body .word-count-bar{background:#fff;border:1px solid #e5e2de;color:#333}
+.light-body .sidebar-price-display{background:#fff;border:1px solid #e5e2de}
 .light-body .form-note{color:#888}
 .light-body .form-included{color:#888}
 .light-body .quiz-label{color:#1a1a1a}
