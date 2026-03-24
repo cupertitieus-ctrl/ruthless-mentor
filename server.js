@@ -236,9 +236,10 @@ CRITICAL FORMATTING RULES — follow these EXACTLY or the report will break:
 - You MUST include at least 2 [FIX] callouts throughout the review.
 - You MUST include at least 2 [TELLING]/[STRONGER] pairs.
 - You MUST include at least 2 [GOOD PASSAGE] callouts.
-- Section headers MUST use ### format: ### 1. First Impressions
-- Score headers MUST include the score: ### 2. Author's Voice: 7/10
-- Subheaders within sections (like Pacing:, Plot Holes:, Stakes:, Setting Accuracy:, Dialogue:, Theme:) should be **bold lowercase** not CAPS. Example: **Pacing:** not **PACING:**. This keeps them visually distinct from the main numbered section headers.
+- Section headers MUST use ### format with title case, NOT all caps: ### 1. First Impressions (NOT ### 1. FIRST IMPRESSIONS)
+- Score headers MUST include the score in title case: ### 2. Author's Voice: 7/10 (NOT ### 2. AUTHOR'S VOICE: 7/10)
+- Subheaders within sections (like PACING:, PLOT HOLES:, STAKES:, SETTING ACCURACY:, DIALOGUE:, THEME:) should be **bold ALL CAPS**.
+- BUT numbered items within those subheaders should be **bold title case**, NOT all caps. Example: **1. The Escape Mechanism:** not **1. THE ESCAPE MECHANISM:**
 
 Other rules:
 - Be direct and specific. Never vague.
