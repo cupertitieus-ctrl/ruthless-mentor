@@ -87,7 +87,7 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .tag-pill.pop.animate{animation:tagPop .4s cubic-bezier(.16,1,.3,1) forwards;animation-delay:calc(var(--i) * .1s)}
 
 /* PRICING */
-.pricing-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;align-items:start}
+.pricing-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;align-items:start;max-width:800px;margin:0 auto}
 .price-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.8rem 1.4rem;text-align:center;position:relative;transition:all .3s}
 .price-card:hover{transform:translateY(-3px);border-color:var(--border2)}
 .price-card.popular{border-color:var(--accent-border)}
@@ -368,3 +368,14 @@ footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:w
     .features-grid,.pricing-row{grid-template-columns:1fr}
     .hero-tagline{font-size:1rem}
 }
+
+/* SAMPLE MODAL */
+.sample-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.sample-modal-inner{background:#fff;border-radius:12px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem;position:relative;color:#1a1a1a;text-align:center}
+.sample-modal-inner h2{font-size:1.4rem;margin-bottom:.5rem}
+.sample-note{color:#555;font-size:.9rem;margin-bottom:1.2rem;line-height:1.5}
+.sample-img-wrap{margin:1rem 0 1.5rem;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden}
+.sample-img-wrap img{width:100%;display:block}
+.sample-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.8rem;cursor:pointer;color:#999;line-height:1}
+.sample-close:hover{color:#333}
+.sample-modal-inner .btn{margin-top:.5rem}

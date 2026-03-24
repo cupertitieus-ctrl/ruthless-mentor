@@ -55,3 +55,16 @@ if (toggle) {
         })
     );
 }
+
+// ===== SAMPLE MODAL =====
+const sampleBtn = document.getElementById('sample-btn');
+const sampleModal = document.getElementById('sample-modal');
+const sampleClose = document.getElementById('sample-close');
+
+if (sampleBtn && sampleModal) {
+    sampleBtn.addEventListener('click', () => sampleModal.classList.remove('hidden'));
+    sampleClose.addEventListener('click', () => sampleModal.classList.add('hidden'));
+    sampleModal.addEventListener('click', (e) => {
+        if (e.target === sampleModal) sampleModal.classList.add('hidden');
+    });
+}
