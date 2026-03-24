@@ -114,19 +114,47 @@ Then include a chapter-by-chapter pacing breakdown using this EXACT format (one 
 [GOOD] Ch. 7-12: description of what works
 [NOTE] Overall: summary
 
-Then cover the rest: plot holes, setting accuracy, tension & consequences, show vs tell, dialogue quality, and theme.
+Then cover the rest using ALL CAPS bold subheaders. Follow this EXACT format:
+
+**PLOT HOLES:**
+
+**1. The First Issue Title:** Description of the plot hole and why it matters...
+
+**2. The Second Issue Title:** Description...
+
+**SETTING ACCURACY:**
+
+Description of setting issues...
+
+**TENSION & CONSEQUENCES:**
+
+Description of what's at risk...
+
+**SHOW VS. TELL:**
+
+Description of show vs tell issues...
 
 For showing vs telling comparisons, use this EXACT format:
 [TELLING] "exact quote from the text" — why it's weak
 [STRONGER] "suggested rewrite" — why it works better
 
+**DIALOGUE:**
+
+Description of dialogue quality...
+
+**THEME:**
+
+Description of thematic throughline...
+
+IMPORTANT: The subheaders (PLOT HOLES, SETTING ACCURACY, etc.) MUST be **bold ALL CAPS** followed by a colon. The numbered items under PLOT HOLES must be **bold title case** (like **1. The Escape Mechanism:**), NOT all caps.
+
 ### 3. Author's Voice: X/10 — Short Label Here
 Rate the voice and tone from 1 to 10. At a 10, there's a talented writer behind these words. At a 1, the writing feels generic — just words on a page.
 
 IMPORTANT: The header MUST include a short label after the score, separated by " — ". Examples:
-### 2. Author's Voice: 7/10 — Strong Voice, Needs Consistency
-### 2. Author's Voice: 4/10 — Generic and Flat
-### 2. Author's Voice: 9/10 — Distinctive and Memorable
+### 3. Author's Voice: 7/10 — Strong Voice, Needs Consistency
+### 3. Author's Voice: 4/10 — Generic and Flat
+### 3. Author's Voice: 9/10 — Distinctive and Memorable
 
 What to look for (the red flag is density — when multiple markers cluster together):
 - Dead-giveaway words and phrases: "delve", "tapestry", "resonate", "embark on a journey", "a testament to", "in the realm of", "it's worth noting", "crucial", "Moreover", "Furthermore", "multifaceted", "nuanced", "landscape" (used metaphorically), "robust", "leverage", "foster", "I cannot help but", "one cannot deny"
