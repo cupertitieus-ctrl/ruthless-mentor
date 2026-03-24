@@ -193,7 +193,7 @@ Then include a chapter-by-chapter pacing breakdown using this EXACT format (one 
 [GOOD] Ch. 7-12: description of what works
 [NOTE] Overall: summary
 
-Then cover the rest: plot holes, world-building, stakes, show vs tell, dialogue quality, and theme.
+Then cover the rest: plot holes, setting accuracy, stakes, show vs tell, dialogue quality, and theme.
 
 For showing vs telling comparisons, use this EXACT format:
 [TELLING] "exact quote from the text" — why it's weak
@@ -412,7 +412,7 @@ app.post('/api/review', optionalAuth, async (req, res) => {
           role: 'user',
           content: `Please review the following manuscript/text. It is ${wordCount} words long and categorized as "${tier.name}".${context}
 
-IMPORTANT: Adjust your critique standards to match the genre and age group. A picture book should be evaluated on story arc, emotional resonance, and read-aloud flow — NOT on complex character arcs or world-building. A YA novel should be held to higher standards for voice, theme, and emotional complexity. If the manuscript is a first draft or work in progress, focus on structural and story-level issues rather than line-level polish.
+IMPORTANT: Adjust your critique standards to match the genre and age group. A picture book should be evaluated on story arc, emotional resonance, and read-aloud flow — NOT on complex character arcs or setting. A YA novel should be held to higher standards for voice, theme, and emotional complexity. If the manuscript is a first draft or work in progress, focus on structural and story-level issues rather than line-level polish.
 
 ---
 
