@@ -99,6 +99,7 @@ if (genreSelect) genreSelect.addEventListener('change', updateSidebarPrice);
 const bookNumberGroup = document.getElementById('book-number-group');
 const povGroup = document.getElementById('pov-group');
 const rhymingGroup = document.getElementById('rhyming-group');
+const fictionGroup = document.getElementById('fiction-group');
 
 function toggleGenreFields() {
     const val = genreSelect ? genreSelect.value : '';
@@ -107,6 +108,7 @@ function toggleGenreFields() {
     if (bookNumberGroup) bookNumberGroup.style.display = isScreenplay ? 'none' : '';
     if (povGroup) povGroup.style.display = isScreenplay ? 'none' : '';
     if (rhymingGroup) rhymingGroup.style.display = isPictureBook ? '' : 'none';
+    if (fictionGroup) fictionGroup.style.display = '';
 }
 
 if (genreSelect) genreSelect.addEventListener('change', toggleGenreFields);
@@ -185,6 +187,7 @@ if (couponBtn) {
             if (savedInfo.pov) { const p = document.getElementById('q-pov'); if (p) p.value = savedInfo.pov; }
             if (savedInfo.bookNumber) { const b = document.getElementById('q-book-number'); if (b) b.value = savedInfo.bookNumber; }
             if (savedInfo.rhyming) { const r = document.getElementById('q-rhyming'); if (r) r.value = savedInfo.rhyming; }
+            if (savedInfo.fiction) { const f = document.getElementById('q-fiction'); if (f) f.value = savedInfo.fiction; }
             toggleGenreFields();
             updateCost();
         }
@@ -302,7 +305,8 @@ if (form) {
         const pov = document.getElementById('q-pov') ? document.getElementById('q-pov').value : '';
         const bookNumber = document.getElementById('q-book-number') ? document.getElementById('q-book-number').value : '';
         const rhyming = document.getElementById('q-rhyming') ? document.getElementById('q-rhyming').value : '';
-        const manuscriptInfo = { title, stage, genre, pov, bookNumber, rhyming };
+        const fiction = document.getElementById('q-fiction') ? document.getElementById('q-fiction').value : '';
+        const manuscriptInfo = { title, stage, genre, pov, bookNumber, rhyming, fiction };
 
         // Save text to sessionStorage before redirecting to Stripe
         sessionStorage.setItem('rm_pending_text', text);
