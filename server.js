@@ -774,7 +774,7 @@ app.post('/api/email-pdf', optionalAuth, async (req, res) => {
 app.post('/api/create-checkout', async (req, res) => {
   if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
 
-  const { genre, manuscriptInfo } = req.body;
+  const { genre, manuscriptInfo, couponCode } = req.body;
 
   const GENRE_PRICES = {
     'picture-book': 2000, 'early-reader': 2000,
@@ -792,7 +792,18 @@ app.post('/api/create-checkout', async (req, res) => {
     'screenplay': 'Screenplay',
   };
 
-  const priceInCents = GENRE_PRICES[genre] || 1000;
+  let priceInCents = GENRE_PRICES[genre] || 1000;
+
+  // Apply coupon to Stripe price
+  if (couponCode) {
+    const coupon = COUPONS[couponCode.trim().toUpperCase()];
+    if (coupon) {
+      if (coupon.type === 'free') priceInCents = 0;
+      else if (coupon.type === 'percent') priceInCents = Math.max(50, Math.round(priceInCents - (priceInCents * coupon.discount / 100)));
+      else if (coupon.type === 'fixed') priceInCents = Math.max(50, priceInCents - (coupon.discount * 100));
+      else if (coupon.type === 'fixed_price') priceInCents = coupon.discount * 100;
+    }
+  }
   const tierName = GENRE_NAMES[genre] || 'Review';
 
   try {

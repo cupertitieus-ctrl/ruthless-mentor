@@ -341,7 +341,7 @@ if (form) {
             const res = await fetch('/api/create-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ genre: genreVal, manuscriptInfo })
+                body: JSON.stringify({ genre: genreVal, manuscriptInfo, couponCode: appliedCoupon ? couponInput.value.trim() : null })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Payment setup failed');
