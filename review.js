@@ -162,27 +162,38 @@ if (couponBtn) {
         const tySteps = [
             'Verifying your payment...',
             'Payment confirmed! Thank you.',
-            'Reading through your manuscript...',
+            'Loading your manuscript...',
+            'Reading through every page...',
             'Getting into the story...',
             'Evaluating the writing voice...',
             'Scanning for overused words...',
-            'Checking the prose...',
+            'Checking the prose quality...',
+            'Looking at your descriptions...',
             'Reviewing the characters...',
-            'Checking the pacing...',
+            'Checking the pacing and structure...',
             'Evaluating the dialogue...',
+            'Looking for story issues...',
             'Pulling specific passages...',
             'Writing detailed notes...',
+            'Finding what works well...',
             'Putting the report together...',
+            'Writing the final verdict...',
+            'Polishing the report...',
+            'Adding the finishing touches...',
             'Almost there...',
+            'Just a few more seconds...',
         ];
-        let tyStep = 0;
+        // Show first step immediately
+        if (tyFill) tyFill.style.width = '3%';
+        if (tyText) tyText.textContent = tySteps[0];
+        let tyStep = 1;
         const tyInterval = setInterval(() => {
             if (tyStep < tySteps.length) {
                 if (tyFill) tyFill.style.width = Math.min(95, (tyStep / tySteps.length) * 100) + '%';
                 if (tyText) tyText.textContent = tySteps[tyStep];
                 tyStep++;
             }
-        }, 3000);
+        }, 2500);
 
         try {
             const verifyRes = await fetch('/api/verify-payment', {
