@@ -498,6 +498,11 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   }
 
   const wordCount = countWords(text);
+
+  if (wordCount > 150000) {
+    return res.status(400).json({ error: `Your manuscript is ${wordCount.toLocaleString()} words. We currently support up to 150,000 words per submission. For longer works, try submitting in sections (e.g. first half, second half).` });
+  }
+
   const tier = getTier(wordCount);
   const totalCost = tier.price;
   const context = buildManuscriptContext(manuscriptInfo);
@@ -578,6 +583,11 @@ app.post('/api/review-pdf', optionalAuth, async (req, res) => {
   }
 
   const wordCount = countWords(text);
+
+  if (wordCount > 150000) {
+    return res.status(400).json({ error: `Your manuscript is ${wordCount.toLocaleString()} words. We currently support up to 150,000 words per submission.` });
+  }
+
   const tier = getTier(wordCount);
 
   console.log(`[PDF REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name}`);

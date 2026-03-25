@@ -401,6 +401,12 @@ if (form) {
         const text = textarea.value.trim();
         if (!text) { alert('Paste your text or upload a file first.'); return; }
 
+        const wc = countWords(text);
+        if (wc > 150000) {
+            alert(`Your manuscript is ${wc.toLocaleString()} words. We currently support up to 150,000 words per submission. For longer works, try submitting in two halves.`);
+            return;
+        }
+
         const title = document.getElementById('q-title') ? document.getElementById('q-title').value.trim() : '';
         const stage = document.getElementById('q-stage') ? document.getElementById('q-stage').value : '';
         const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
