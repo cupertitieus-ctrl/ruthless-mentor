@@ -506,7 +506,7 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   try {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 8000,
+      max_tokens: 16000,
       messages: [
         {
           role: 'user',
@@ -585,7 +585,7 @@ app.post('/api/review-pdf', optionalAuth, async (req, res) => {
   try {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 8000,
+      max_tokens: 16000,
       messages: [
         {
           role: 'user',
@@ -727,7 +727,7 @@ app.post('/api/email-pdf', optionalAuth, async (req, res) => {
     // Generate structured review
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 8000,
+      max_tokens: 16000,
       messages: [{
         role: 'user',
         content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${text}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
@@ -907,7 +907,7 @@ app.post('/api/verify-payment', async (req, res) => {
 
       const message = await client.messages.create({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 8000,
+        max_tokens: 16000,
         messages: [{
           role: 'user',
           content: `Review this manuscript (${wordCount} words, "${tier.name}" category, genre: "${genre}", stage: "${savedInfo.stage || 'unknown'}", POV: "${savedInfo.pov || 'unknown'}"):\n\n---\n\n${savedText}\n\n---\n\nProvide your complete review following the structure in your instructions.`
