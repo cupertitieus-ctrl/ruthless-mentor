@@ -161,15 +161,41 @@ if (couponBtn) {
             });
             const verifyData = await verifyRes.json();
             if (verifyData.paid) {
-                // Payment verified — restore text from sessionStorage and run review
+                window.history.replaceState({}, '', '/review.html');
+
+                if (verifyData.autoReview && verifyData.review) {
+                    // Server already ran the review — go straight to report
+                    const meta = verifyData.metadata || {};
+                    sessionStorage.setItem('rm_review', verifyData.review);
+                    sessionStorage.setItem('rm_meta', JSON.stringify({
+                        wordCount: verifyData.wordCount,
+                        tier: verifyData.tier,
+                        title: meta.title || '',
+                        stage: meta.stage || '',
+                        genre: meta.genre || '',
+                        pov: meta.pov || '',
+                        bookNumber: meta.bookNumber || ''
+                    }));
+                    sessionStorage.removeItem('rm_pending_text');
+                    sessionStorage.removeItem('rm_pending_info');
+                    window.location.href = '/report.html';
+                    return;
+                }
+
+                if (verifyData.alreadyProcessed) {
+                    alert('This review has already been processed. Check your dashboard for past reviews.');
+                    return;
+                }
+
+                // Fallback: try sessionStorage
                 const savedText = sessionStorage.getItem('rm_pending_text');
                 const savedInfo = JSON.parse(sessionStorage.getItem('rm_pending_info') || '{}');
                 if (savedText && textarea) {
                     textarea.value = savedText;
                     updateCost();
-                    // Auto-submit the review
-                    window.history.replaceState({}, '', '/review.html');
                     setTimeout(() => runReview(savedText, savedInfo), 500);
+                } else {
+                    alert('Payment confirmed! Thank you.\n\nPlease paste your text again and click Submit. You won\'t be charged again.');
                 }
             }
         } catch (e) {
@@ -341,7 +367,7 @@ if (form) {
             const res = await fetch('/api/create-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ genre: genreVal, manuscriptInfo, couponCode: appliedCoupon ? couponInput.value.trim() : null })
+                body: JSON.stringify({ genre: genreVal, manuscriptInfo, couponCode: appliedCoupon ? couponInput.value.trim() : null, text })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Payment setup failed');

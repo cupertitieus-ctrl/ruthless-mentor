@@ -774,7 +774,7 @@ app.post('/api/email-pdf', optionalAuth, async (req, res) => {
 app.post('/api/create-checkout', async (req, res) => {
   if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
 
-  const { genre, manuscriptInfo, couponCode } = req.body;
+  const { genre, manuscriptInfo, couponCode, text } = req.body;
 
   const GENRE_PRICES = {
     'picture-book': 2000, 'early-reader': 2000,
@@ -807,6 +807,20 @@ app.post('/api/create-checkout', async (req, res) => {
   const tierName = GENRE_NAMES[genre] || 'Review';
 
   try {
+    // Save manuscript text server-side before Stripe redirect
+    let pendingId = null;
+    if (supabaseAdmin && text) {
+      const { data, error } = await supabaseAdmin.from('pending_reviews').insert({
+        manuscript_text: text,
+        manuscript_info: manuscriptInfo || {},
+        genre: genre || '',
+        price_cents: priceInCents,
+        status: 'pending',
+      }).select('id').single();
+      if (!error && data) pendingId = data.id;
+      else console.error('[PENDING SAVE ERROR]', error?.message);
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
@@ -831,8 +845,14 @@ app.post('/api/create-checkout', async (req, res) => {
         bookNumber: manuscriptInfo?.bookNumber || '',
         rhyming: manuscriptInfo?.rhyming || '',
         fiction: manuscriptInfo?.fiction || '',
+        pendingId: pendingId || '',
       },
     });
+
+    // Update pending record with stripe session ID
+    if (pendingId && supabaseAdmin) {
+      await supabaseAdmin.from('pending_reviews').update({ stripe_session_id: session.id }).eq('id', pendingId);
+    }
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
@@ -841,7 +861,7 @@ app.post('/api/create-checkout', async (req, res) => {
   }
 });
 
-// Verify payment was completed
+// Verify payment and auto-run review from server-saved text
 app.post('/api/verify-payment', async (req, res) => {
   if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
 
@@ -850,10 +870,81 @@ app.post('/api/verify-payment', async (req, res) => {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    if (session.payment_status === 'paid') {
-      res.json({ paid: true, metadata: session.metadata });
+    if (session.payment_status !== 'paid') {
+      return res.json({ paid: false });
+    }
+
+    const pendingId = session.metadata?.pendingId;
+
+    // Try to get text from server-side storage
+    let savedText = null;
+    let savedInfo = {};
+    if (pendingId && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from('pending_reviews')
+        .select('manuscript_text, manuscript_info, status')
+        .eq('id', pendingId)
+        .single();
+      if (!error && data) {
+        // Don't re-run if already processed
+        if (data.status === 'completed') {
+          return res.json({ paid: true, alreadyProcessed: true, metadata: session.metadata });
+        }
+        savedText = data.manuscript_text;
+        savedInfo = data.manuscript_info || {};
+      }
+    }
+
+    if (savedText) {
+      // Auto-run the review
+      console.log(`[PAID REVIEW] Running review for pending ${pendingId} (${countWords(savedText)} words)`);
+
+      const wordCount = countWords(savedText);
+      const tier = getTier(wordCount);
+      const genre = session.metadata?.genre || '';
+
+      const message = await client.messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 8000,
+        messages: [{
+          role: 'user',
+          content: `Review this manuscript (${wordCount} words, "${tier.name}" category, genre: "${genre}", stage: "${savedInfo.stage || 'unknown'}", POV: "${savedInfo.pov || 'unknown'}"):\n\n---\n\n${savedText}\n\n---\n\nProvide your complete review following the structure in your instructions.`
+        }],
+        system: REVIEW_PROMPT
+      });
+
+      const review = message.content[0].text;
+
+      // Mark as completed
+      if (supabaseAdmin) {
+        await supabaseAdmin.from('pending_reviews').update({ status: 'completed' }).eq('id', pendingId);
+      }
+
+      // Store in reviews table
+      if (supabaseAdmin) {
+        try {
+          await supabaseAdmin.from('reviews').insert({
+            word_count: wordCount,
+            tier: tier.name,
+            price: session.amount_total / 100,
+            review_markdown: review,
+            input_tokens: message.usage.input_tokens,
+            output_tokens: message.usage.output_tokens,
+          });
+        } catch (e) { console.error('[DB ERROR]', e.message); }
+      }
+
+      res.json({
+        paid: true,
+        autoReview: true,
+        review,
+        wordCount,
+        tier: tier.name,
+        metadata: session.metadata
+      });
     } else {
-      res.json({ paid: false });
+      // No server-saved text — client needs to provide it
+      res.json({ paid: true, autoReview: false, metadata: session.metadata });
     }
   } catch (err) {
     console.error('[VERIFY ERROR]', err.message);
