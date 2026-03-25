@@ -152,7 +152,38 @@ if (couponBtn) {
 (async () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true' && params.get('session_id')) {
-        // Verify payment
+        // Show thank you overlay immediately
+        const tyOverlay = document.getElementById('thankyou-overlay');
+        const tyFill = document.getElementById('thankyou-fill');
+        const tyText = document.getElementById('thankyou-text');
+        if (tyOverlay) tyOverlay.classList.remove('hidden');
+
+        // Animate progress while waiting
+        const tySteps = [
+            'Verifying your payment...',
+            'Payment confirmed! Thank you.',
+            'Reading through your manuscript...',
+            'Getting into the story...',
+            'Evaluating the writing voice...',
+            'Scanning for overused words...',
+            'Checking the prose...',
+            'Reviewing the characters...',
+            'Checking the pacing...',
+            'Evaluating the dialogue...',
+            'Pulling specific passages...',
+            'Writing detailed notes...',
+            'Putting the report together...',
+            'Almost there...',
+        ];
+        let tyStep = 0;
+        const tyInterval = setInterval(() => {
+            if (tyStep < tySteps.length) {
+                if (tyFill) tyFill.style.width = Math.min(95, (tyStep / tySteps.length) * 100) + '%';
+                if (tyText) tyText.textContent = tySteps[tyStep];
+                tyStep++;
+            }
+        }, 3000);
+
         try {
             const verifyRes = await fetch('/api/verify-payment', {
                 method: 'POST',
@@ -162,8 +193,12 @@ if (couponBtn) {
             const verifyData = await verifyRes.json();
             if (verifyData.paid) {
                 window.history.replaceState({}, '', '/review.html');
+                clearInterval(tyInterval);
 
                 if (verifyData.autoReview && verifyData.review) {
+                    if (tyFill) tyFill.style.width = '100%';
+                    if (tyText) tyText.textContent = 'Your review is ready! Opening now...';
+                    await new Promise(r => setTimeout(r, 1500));
                     // Server already ran the review — go straight to report
                     const meta = verifyData.metadata || {};
                     sessionStorage.setItem('rm_review', verifyData.review);
@@ -235,6 +270,7 @@ async function runReview(text, manuscriptInfo) {
     btn.textContent = 'Reviewing...';
     progressWrap.classList.remove('hidden');
     progressFill.style.width = '0%';
+    progressWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     const steps = [
         { pct: 5, text: 'Uploading your work...' },

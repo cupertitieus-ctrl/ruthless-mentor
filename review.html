@@ -180,6 +180,20 @@
     </section>
     </div><!-- end light-body -->
 
+    <!-- THANK YOU OVERLAY (shown after payment while review generates) -->
+    <div id="thankyou-overlay" class="thankyou-overlay hidden">
+        <div class="thankyou-card">
+            <img src="logo.png" alt="rm" class="thankyou-logo">
+            <h2>Thank you for your purchase!</h2>
+            <p>Your review is being generated right now. This usually takes 30-60 seconds.</p>
+            <div class="progress-wrap" id="thankyou-progress">
+                <div class="progress-bar"><div class="progress-fill" id="thankyou-fill"></div></div>
+                <p class="progress-text pulsing" id="thankyou-text">Starting your review...</p>
+            </div>
+            <p class="thankyou-note">Please don't close this page.</p>
+        </div>
+    </div>
+
     <!-- AUTH GATE (shown if not logged in) -->
     <div id="auth-gate" class="auth-gate hidden">
         <div class="auth-gate-card">
