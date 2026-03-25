@@ -54,6 +54,7 @@ function updateCost() {
     if (appliedCoupon && total > 0) {
         if (appliedCoupon.type === 'percent') total = Math.max(0, total - (total * appliedCoupon.discount / 100));
         else if (appliedCoupon.type === 'fixed') total = Math.max(0, total - appliedCoupon.discount);
+        else if (appliedCoupon.type === 'fixed_price') total = appliedCoupon.discount;
         else if (appliedCoupon.type === 'free') total = 0;
     }
 
@@ -326,6 +327,7 @@ if (form) {
             if (appliedCoupon.type === 'free') finalPrice = 0;
             else if (appliedCoupon.type === 'percent') finalPrice = Math.max(0, finalPrice - (finalPrice * appliedCoupon.discount / 100));
             else if (appliedCoupon.type === 'fixed') finalPrice = Math.max(0, finalPrice - appliedCoupon.discount);
+            else if (appliedCoupon.type === 'fixed_price') finalPrice = appliedCoupon.discount;
         }
 
         if (finalPrice <= 0) {
