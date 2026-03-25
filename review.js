@@ -183,13 +183,20 @@ if (couponBtn) {
             'Almost there...',
             'Just a few more seconds...',
         ];
-        // Show first step immediately
-        if (tyFill) tyFill.style.width = '3%';
+        // Force bar styling inline (CSS vars may not resolve in overlay)
+        if (tyFill) {
+            tyFill.style.background = '#c9a96e';
+            tyFill.style.height = '100%';
+            tyFill.style.borderRadius = '4px';
+            tyFill.style.transition = 'width 0.5s ease';
+            tyFill.style.width = '3%';
+        }
         if (tyText) tyText.textContent = tySteps[0];
         let tyStep = 1;
         const tyInterval = setInterval(() => {
             if (tyStep < tySteps.length) {
-                if (tyFill) tyFill.style.width = Math.min(95, (tyStep / tySteps.length) * 100) + '%';
+                const pct = Math.min(95, Math.round((tyStep / tySteps.length) * 100));
+                if (tyFill) tyFill.style.width = pct + '%';
                 if (tyText) tyText.textContent = tySteps[tyStep];
                 tyStep++;
             }
