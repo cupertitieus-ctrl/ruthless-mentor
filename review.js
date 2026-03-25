@@ -283,6 +283,12 @@ async function runReview(text, manuscriptInfo) {
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
 
+    // Show thank you overlay for ALL reviews (free and paid)
+    const tyOverlay = document.getElementById('thankyou-overlay');
+    const tyFill = document.getElementById('thankyou-fill');
+    const tyText = document.getElementById('thankyou-text');
+    if (tyOverlay) tyOverlay.classList.remove('hidden');
+
     btn.disabled = true;
     btn.style.opacity = '.6';
     btn.textContent = 'Reviewing...';
@@ -313,12 +319,25 @@ async function runReview(text, manuscriptInfo) {
         { pct: 98, text: 'Just a few more seconds...' },
     ];
 
+    // Force thank you bar styling
+    if (tyFill) {
+        tyFill.style.background = '#c9a96e';
+        tyFill.style.height = '100%';
+        tyFill.style.borderRadius = '4px';
+        tyFill.style.transition = 'width 0.5s ease';
+        tyFill.style.width = '3%';
+    }
+    if (tyText) tyText.textContent = steps[0].text;
+
     let stepIdx = 0;
     const stepInterval = setInterval(() => {
         if (stepIdx < steps.length) {
             progressFill.style.width = steps[stepIdx].pct + '%';
             progressText.textContent = steps[stepIdx].text;
             progressText.className = 'progress-text pulsing';
+            // Sync thank you overlay
+            if (tyFill) tyFill.style.width = steps[stepIdx].pct + '%';
+            if (tyText) tyText.textContent = steps[stepIdx].text;
             stepIdx++;
         }
     }, 3500);
@@ -338,6 +357,8 @@ async function runReview(text, manuscriptInfo) {
         clearInterval(stepInterval);
         progressFill.style.width = '100%';
         progressText.textContent = 'Opening your report...';
+        if (tyFill) tyFill.style.width = '100%';
+        if (tyText) tyText.textContent = 'Your review is ready! Opening now...';
 
         sessionStorage.setItem('rm_review', reviewData.review);
         sessionStorage.setItem('rm_meta', JSON.stringify({
