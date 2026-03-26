@@ -100,6 +100,25 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .pricing-addon{text-align:center;margin-top:1.5rem;font-size:.85rem;color:var(--text2)}
 .pricing-addon strong{color:var(--accent)}
 
+/* TIME GRAPH */
+.time-graph-section{padding:4rem 2rem;background:#faf8f5}
+.time-graph-wrap{max-width:700px;margin:0 auto}
+.time-bars{margin:2.5rem 0 2rem}
+.time-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.time-label{width:120px;font-size:.85rem;font-weight:600;color:#333;text-align:right;flex-shrink:0}
+.time-track{flex:1;height:36px;background:#e8e3dc;border-radius:6px;overflow:hidden;position:relative}
+.time-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:.8rem;font-weight:600;color:#fff;transition:width 1.5s ease}
+.writing-fill{background:#333}
+.editing-fill{background:#666}
+.cover-fill{background:#999}
+.feedback-fill{background:#c62828}
+.time-tiny{font-size:.75rem;color:#c62828;font-weight:700;white-space:nowrap}
+.time-cta{text-align:center;margin-top:2rem}
+.time-warning{font-size:1.1rem;font-weight:700;color:#c62828;margin-bottom:.5rem}
+.time-pitch{font-size:.95rem;color:#555;margin-bottom:1.5rem}
+.time-pitch strong{color:#333}
+@media(max-width:600px){.time-label{width:80px;font-size:.75rem}.time-fill{font-size:.7rem}}
+
 /* TESTIMONIALS */
 #testimonials{padding:4rem 2rem;max-width:1200px;margin:0 auto}
 .testimonials-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
