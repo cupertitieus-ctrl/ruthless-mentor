@@ -101,6 +101,13 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .pricing-addon strong{color:var(--accent)}
 
 /* TIME GRAPH */
+.unfinished-section{padding:4rem 2rem;background:#fff}
+.unfinished-wrap{max-width:650px;margin:0 auto;text-align:center}
+.unfinished-wrap h2{font-size:clamp(1.3rem,2.5vw,1.8rem);color:#1a1a1a;margin-bottom:1rem}
+.unfinished-wrap p{color:#444;font-size:.95rem;line-height:1.7;margin-bottom:1rem}
+.unfinished-highlight{font-weight:700;color:#8b0000;font-size:1.05rem;margin:1.5rem 0}
+.unfinished-wrap .btn{margin-top:.5rem}
+
 .time-graph-section{padding:4rem 2rem;background:#faf8f5}
 .time-graph-wrap{max-width:700px;margin:0 auto}
 .time-bars{margin:2.5rem 0 2rem}
