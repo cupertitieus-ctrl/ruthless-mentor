@@ -101,12 +101,13 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .pricing-addon strong{color:var(--accent)}
 
 /* TESTIMONIALS */
-#testimonials{padding:4rem 2rem;max-width:900px;margin:0 auto}
-.testimonials-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2rem}
+#testimonials{padding:4rem 2rem;max-width:1200px;margin:0 auto}
+.testimonials-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
 .testimonial-card{background:#fff;border:1px solid #e8e3dc;border-radius:12px;padding:2rem;position:relative}
 .testimonial-stars{color:#f57c00;font-size:1.1rem;margin-bottom:.8rem;letter-spacing:2px}
 .testimonial-quote{font-size:1rem;line-height:1.6;color:#333;font-style:italic;margin-bottom:1rem}
 .testimonial-author{font-size:.85rem;font-weight:600;color:#888}
+@media(max-width:1024px){.testimonials-row{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.testimonials-row{grid-template-columns:1fr}}
 
 /* CHECKOUT */
