@@ -971,6 +971,7 @@ const COUPONS = {
   'LAUNCH': { type: 'fixed', discount: 5, message: '$5 off applied!' },
   '50OFFRM': { type: 'percent', discount: 50, message: '50% off applied!' },
   '1DIANE': { type: 'fixed_price', discount: 1, message: 'Special code applied — your review is just $1!' },
+  'TRYFOR5': { type: 'fixed_price', discount: 5, message: 'Code applied — your review is just $5!' },
 };
 
 app.post('/api/coupon', (req, res) => {
