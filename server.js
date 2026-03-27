@@ -789,11 +789,11 @@ app.post('/api/create-checkout', async (req, res) => {
   const { genre, manuscriptInfo, couponCode, text } = req.body;
 
   const GENRE_PRICES = {
-    'picture-book': 2000, 'early-reader': 2000,
-    'chapter-book': 2000,
-    'middle-grade': 2500, 'young-adult': 2500,
-    'literary-fiction': 3000, 'genre-fiction': 3000, 'memoir': 3000,
-    'screenplay': 3000,
+    'picture-book': 1500, 'early-reader': 1500,
+    'chapter-book': 1500,
+    'middle-grade': 2000, 'young-adult': 2000,
+    'literary-fiction': 2500, 'genre-fiction': 2500, 'memoir': 2500,
+    'screenplay': 2500,
   };
 
   const GENRE_NAMES = {
