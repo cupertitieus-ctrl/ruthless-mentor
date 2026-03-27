@@ -808,12 +808,18 @@ app.post('/api/create-checkout', async (req, res) => {
 
   // Apply coupon to Stripe price
   if (couponCode) {
-    const coupon = COUPONS[couponCode.trim().toUpperCase()];
+    const upperCoupon = couponCode.trim().toUpperCase();
+    const coupon = COUPONS[upperCoupon];
     if (coupon) {
+      if (coupon.oneTime && usedOneTimeCoupons.has(upperCoupon)) {
+        return res.status(400).json({ error: 'This coupon has already been used.' });
+      }
       if (coupon.type === 'free') priceInCents = 0;
       else if (coupon.type === 'percent') priceInCents = Math.max(50, Math.round(priceInCents - (priceInCents * coupon.discount / 100)));
       else if (coupon.type === 'fixed') priceInCents = Math.max(50, priceInCents - (coupon.discount * 100));
       else if (coupon.type === 'fixed_price') priceInCents = coupon.discount * 100;
+      // Mark one-time coupon as used
+      if (coupon.oneTime) usedOneTimeCoupons.add(upperCoupon);
     }
   }
   const tierName = GENRE_NAMES[genre] || 'Review';
@@ -972,14 +978,24 @@ const COUPONS = {
   '50OFFRM': { type: 'percent', discount: 50, message: '50% off applied!' },
   '1DIANE': { type: 'fixed_price', discount: 1, message: 'Special code applied — your review is just $1!' },
   'TRYFOR5': { type: 'fixed_price', discount: 5, message: 'Code applied — your review is just $5!' },
+  'GIFT-9B833C2E': { type: 'free', discount: 100, oneTime: true, message: 'Gift code applied — this review is free!' },
 };
+
+// Track used one-time coupons (persists in memory; resets on server restart)
+const usedOneTimeCoupons = new Set();
 
 app.post('/api/coupon', (req, res) => {
   const { code } = req.body;
   if (!code) return res.status(400).json({ error: 'No code provided' });
 
-  const coupon = COUPONS[code.trim().toUpperCase()];
+  const upperCode = code.trim().toUpperCase();
+  const coupon = COUPONS[upperCode];
   if (!coupon) return res.status(400).json({ error: 'Invalid coupon code' });
+
+  // Check if one-time coupon was already used
+  if (coupon.oneTime && usedOneTimeCoupons.has(upperCode)) {
+    return res.status(400).json({ error: 'This coupon has already been used.' });
+  }
 
   res.json(coupon);
 });
