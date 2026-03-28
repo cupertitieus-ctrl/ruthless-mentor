@@ -831,15 +831,18 @@ app.post('/api/create-checkout', async (req, res) => {
     const upperCoupon = couponCode.trim().toUpperCase();
     const coupon = COUPONS[upperCoupon];
     if (coupon) {
-      if (coupon.oneTime && await isOneTimeCouponUsed(upperCoupon)) {
-        return res.status(400).json({ error: 'This coupon has already been used.' });
+      if (coupon.maxUses) {
+        const useCount = await getCouponUseCount(upperCoupon);
+        if (useCount >= coupon.maxUses) {
+          return res.status(400).json({ error: 'This coupon has already been used.' });
+        }
       }
       if (coupon.type === 'free') priceInCents = 0;
       else if (coupon.type === 'percent') priceInCents = Math.max(50, Math.round(priceInCents - (priceInCents * coupon.discount / 100)));
       else if (coupon.type === 'fixed') priceInCents = Math.max(50, priceInCents - (coupon.discount * 100));
       else if (coupon.type === 'fixed_price') priceInCents = coupon.discount * 100;
-      // Mark one-time coupon as permanently used in Supabase
-      if (coupon.oneTime) await markOneTimeCouponUsed(upperCoupon);
+      // Mark limited-use coupon as used in Supabase
+      if (coupon.maxUses) await markCouponUsed(upperCoupon);
     }
   }
   const tierName = GENRE_NAMES[genre] || 'Review';
@@ -998,21 +1001,21 @@ const COUPONS = {
   '50OFFRM': { type: 'percent', discount: 50, message: '50% off applied!' },
   '1DIANE': { type: 'fixed_price', discount: 1, message: 'Special code applied — your review is just $1!' },
   'TRYFOR5': { type: 'fixed_price', discount: 5, message: 'Code applied — your review is just $5!' },
-  'GIFT-9B833C2E': { type: 'free', discount: 100, oneTime: true, message: 'Gift code applied — this review is free!' },
+  'GIFT-9B833C2E': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
+  'TARATEST': { type: 'free', discount: 100, maxUses: 3, message: 'Test code applied — this review is free!' },
 };
 
-// Check if a one-time coupon has already been redeemed (Supabase-backed)
-async function isOneTimeCouponUsed(code) {
-  if (!supabaseAdmin) return false; // no DB = allow (graceful degradation)
+// Check how many times a limited-use coupon has been redeemed (Supabase-backed)
+async function getCouponUseCount(code) {
+  if (!supabaseAdmin) return 0; // no DB = allow (graceful degradation)
   const { data } = await supabaseAdmin
     .from('used_coupons')
     .select('id')
-    .eq('code', code)
-    .limit(1);
-  return data && data.length > 0;
+    .eq('code', code);
+  return data ? data.length : 0;
 }
 
-async function markOneTimeCouponUsed(code) {
+async function markCouponUsed(code) {
   if (!supabaseAdmin) return;
   const { error } = await supabaseAdmin
     .from('used_coupons')
@@ -1028,9 +1031,12 @@ app.post('/api/coupon', async (req, res) => {
   const coupon = COUPONS[upperCode];
   if (!coupon) return res.status(400).json({ error: 'Invalid coupon code' });
 
-  // Check if one-time coupon was already redeemed
-  if (coupon.oneTime && await isOneTimeCouponUsed(upperCode)) {
-    return res.status(400).json({ error: 'This coupon has already been used.' });
+  // Check if limited-use coupon has been exhausted
+  if (coupon.maxUses) {
+    const useCount = await getCouponUseCount(upperCode);
+    if (useCount >= coupon.maxUses) {
+      return res.status(400).json({ error: 'This coupon has already been used.' });
+    }
   }
 
   res.json(coupon);
