@@ -811,15 +811,15 @@ app.post('/api/create-checkout', async (req, res) => {
     const upperCoupon = couponCode.trim().toUpperCase();
     const coupon = COUPONS[upperCoupon];
     if (coupon) {
-      if (coupon.oneTime && usedOneTimeCoupons.has(upperCoupon)) {
+      if (coupon.oneTime && await isOneTimeCouponUsed(upperCoupon)) {
         return res.status(400).json({ error: 'This coupon has already been used.' });
       }
       if (coupon.type === 'free') priceInCents = 0;
       else if (coupon.type === 'percent') priceInCents = Math.max(50, Math.round(priceInCents - (priceInCents * coupon.discount / 100)));
       else if (coupon.type === 'fixed') priceInCents = Math.max(50, priceInCents - (coupon.discount * 100));
       else if (coupon.type === 'fixed_price') priceInCents = coupon.discount * 100;
-      // Mark one-time coupon as used
-      if (coupon.oneTime) usedOneTimeCoupons.add(upperCoupon);
+      // Mark one-time coupon as permanently used in Supabase
+      if (coupon.oneTime) await markOneTimeCouponUsed(upperCoupon);
     }
   }
   const tierName = GENRE_NAMES[genre] || 'Review';
@@ -981,10 +981,26 @@ const COUPONS = {
   'GIFT-9B833C2E': { type: 'free', discount: 100, oneTime: true, message: 'Gift code applied — this review is free!' },
 };
 
-// Track used one-time coupons (persists in memory; resets on server restart)
-const usedOneTimeCoupons = new Set();
+// Check if a one-time coupon has already been redeemed (Supabase-backed)
+async function isOneTimeCouponUsed(code) {
+  if (!supabaseAdmin) return false; // no DB = allow (graceful degradation)
+  const { data } = await supabaseAdmin
+    .from('used_coupons')
+    .select('id')
+    .eq('code', code)
+    .limit(1);
+  return data && data.length > 0;
+}
 
-app.post('/api/coupon', (req, res) => {
+async function markOneTimeCouponUsed(code) {
+  if (!supabaseAdmin) return;
+  const { error } = await supabaseAdmin
+    .from('used_coupons')
+    .insert({ code, used_at: new Date().toISOString() });
+  if (error) console.error('[COUPON] Failed to mark used:', error.message);
+}
+
+app.post('/api/coupon', async (req, res) => {
   const { code } = req.body;
   if (!code) return res.status(400).json({ error: 'No code provided' });
 
@@ -992,8 +1008,8 @@ app.post('/api/coupon', (req, res) => {
   const coupon = COUPONS[upperCode];
   if (!coupon) return res.status(400).json({ error: 'Invalid coupon code' });
 
-  // Check if one-time coupon was already used
-  if (coupon.oneTime && usedOneTimeCoupons.has(upperCode)) {
+  // Check if one-time coupon was already redeemed
+  if (coupon.oneTime && await isOneTimeCouponUsed(upperCode)) {
     return res.status(400).json({ error: 'This coupon has already been used.' });
   }
 
