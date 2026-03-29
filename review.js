@@ -346,7 +346,8 @@ async function runReview(text, manuscriptInfo) {
         const headers = { 'Content-Type': 'application/json' };
         if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
 
-        const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo }) });
+        const pendingEmail = sessionStorage.getItem('rm_pending_email') || '';
+        const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo, email: pendingEmail }) });
         const reviewText = await reviewRes.text();
         let reviewData;
         try { reviewData = JSON.parse(reviewText); } catch (e) {
@@ -407,6 +408,9 @@ if (form) {
             return;
         }
 
+        const email = document.getElementById('q-email') ? document.getElementById('q-email').value.trim() : '';
+        if (!email) { alert('Please enter your email so we can send you the review.'); return; }
+
         const title = document.getElementById('q-title') ? document.getElementById('q-title').value.trim() : '';
         const stage = document.getElementById('q-stage') ? document.getElementById('q-stage').value : '';
         const genre = document.getElementById('q-genre') ? document.getElementById('q-genre').value : '';
@@ -416,9 +420,10 @@ if (form) {
         const fiction = document.getElementById('q-fiction') ? document.getElementById('q-fiction').value : '';
         const manuscriptInfo = { title, stage, genre, pov, bookNumber, rhyming, fiction };
 
-        // Save text to sessionStorage before redirecting to Stripe
+        // Save text and email to sessionStorage before redirecting to Stripe
         sessionStorage.setItem('rm_pending_text', text);
         sessionStorage.setItem('rm_pending_info', JSON.stringify(manuscriptInfo));
+        sessionStorage.setItem('rm_pending_email', email);
 
         const btn = document.getElementById('submit-btn');
         btn.disabled = true;
@@ -448,7 +453,7 @@ if (form) {
             const res = await fetch('/api/create-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ genre: genreVal, manuscriptInfo, couponCode: appliedCoupon ? couponInput.value.trim() : null, text })
+                body: JSON.stringify({ genre: genreVal, manuscriptInfo, couponCode: appliedCoupon ? couponInput.value.trim() : null, text, email })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Payment setup failed');

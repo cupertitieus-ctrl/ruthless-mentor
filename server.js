@@ -511,7 +511,7 @@ THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive
 
 // ===== SUBMIT REVIEW =====
 app.post('/api/review', optionalAuth, async (req, res) => {
-  const { text, manuscriptInfo } = req.body;
+  const { text, manuscriptInfo, email } = req.body;
 
   if (!text || !text.trim()) {
     return res.status(400).json({ error: 'No text provided' });
@@ -574,6 +574,48 @@ Provide your complete review following the structure outlined in your instructio
       } catch (e) {
         console.error('[DB ERROR]', e.message);
       }
+    }
+
+    // Auto-email the PDF review in the background (non-blocking)
+    if (email && resend) {
+      (async () => {
+        try {
+          console.log(`[AUTO-EMAIL] Generating PDF for ${email}...`);
+          const pdfMessage = await client.messages.create({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 16000,
+            messages: [{
+              role: 'user',
+              content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${text}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
+            }],
+            system: PDF_REVIEW_PROMPT
+          });
+          let pdfReviewText = pdfMessage.content[0].text.trim();
+          pdfReviewText = pdfReviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+          const reviewData = JSON.parse(pdfReviewText);
+          reviewData.wordCount = `~${wordCount.toLocaleString()} words`;
+          const pdfBuffer = await generatePdf(reviewData);
+
+          await resend.emails.send({
+            from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
+            to: email,
+            subject: 'Your Ruthless Mentor Review — ' + (reviewData.title || manuscriptInfo?.title || 'Manuscript'),
+            html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+              <h2 style="color:#8b0000">Your review is attached.</h2>
+              <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+              <p>Open the PDF for the full branded report with scores, character grades, line-level fixes, and your final verdict.</p>
+              <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+            </div>`,
+            attachments: [{
+              filename: 'ruthless-mentor-review.pdf',
+              content: pdfBuffer.toString('base64'),
+            }]
+          });
+          console.log(`[AUTO-EMAIL] Sent review PDF to ${email}`);
+        } catch (emailErr) {
+          console.error('[AUTO-EMAIL ERROR]', emailErr.message);
+        }
+      })();
     }
 
     res.json({
@@ -806,7 +848,7 @@ app.post('/api/email-pdf', optionalAuth, async (req, res) => {
 app.post('/api/create-checkout', async (req, res) => {
   if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
 
-  const { genre, manuscriptInfo, couponCode, text } = req.body;
+  const { genre, manuscriptInfo, couponCode, text, email } = req.body;
 
   const GENRE_PRICES = {
     'picture-book': 1500, 'early-reader': 1500,
@@ -878,6 +920,7 @@ app.post('/api/create-checkout', async (req, res) => {
       mode: 'payment',
       success_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/review.html?paid=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/review.html?cancelled=true`,
+      customer_email: email || undefined,
       metadata: {
         genre: genre || '',
         stage: manuscriptInfo?.stage || '',
@@ -887,6 +930,7 @@ app.post('/api/create-checkout', async (req, res) => {
         rhyming: manuscriptInfo?.rhyming || '',
         fiction: manuscriptInfo?.fiction || '',
         pendingId: pendingId || '',
+        customerEmail: email || '',
       },
     });
 
@@ -973,6 +1017,49 @@ app.post('/api/verify-payment', async (req, res) => {
             output_tokens: message.usage.output_tokens,
           });
         } catch (e) { console.error('[DB ERROR]', e.message); }
+      }
+
+      // Auto-email the PDF review in the background
+      const customerEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email;
+      if (customerEmail && resend) {
+        (async () => {
+          try {
+            console.log(`[AUTO-EMAIL] Generating PDF for paid review → ${customerEmail}`);
+            const pdfMessage = await client.messages.create({
+              model: 'claude-haiku-4-5-20251001',
+              max_tokens: 16000,
+              messages: [{
+                role: 'user',
+                content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${savedText}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
+              }],
+              system: PDF_REVIEW_PROMPT
+            });
+            let pdfReviewText = pdfMessage.content[0].text.trim();
+            pdfReviewText = pdfReviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+            const reviewData = JSON.parse(pdfReviewText);
+            reviewData.wordCount = `~${wordCount.toLocaleString()} words`;
+            const pdfBuffer = await generatePdf(reviewData);
+
+            await resend.emails.send({
+              from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
+              to: customerEmail,
+              subject: 'Your Ruthless Mentor Review — ' + (reviewData.title || savedInfo?.title || 'Manuscript'),
+              html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+                <h2 style="color:#8b0000">Your review is attached.</h2>
+                <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+                <p>Open the PDF for the full branded report with scores, character grades, line-level fixes, and your final verdict.</p>
+                <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+              </div>`,
+              attachments: [{
+                filename: 'ruthless-mentor-review.pdf',
+                content: pdfBuffer.toString('base64'),
+              }]
+            });
+            console.log(`[AUTO-EMAIL] Sent paid review PDF to ${customerEmail}`);
+          } catch (emailErr) {
+            console.error('[AUTO-EMAIL ERROR]', emailErr.message);
+          }
+        })();
       }
 
       res.json({
