@@ -1062,6 +1062,7 @@ const COUPONS = {
   'TRYFOR5': { type: 'fixed_price', discount: 5, message: 'Code applied — your review is just $5!' },
   'GIFT-9B833C2E': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
   'TARATEST': { type: 'free', discount: 100, maxUses: 3, message: 'Test code applied — this review is free!' },
+  'GIFT-C9027820': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
 };
 
 // Check how many times a limited-use coupon has been redeemed (Supabase-backed)
