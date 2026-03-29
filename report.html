@@ -191,19 +191,45 @@
   }
 })();
 
-// Read review data from sessionStorage
-const reviewMarkdown = sessionStorage.getItem('rm_review');
-const reviewMeta = JSON.parse(sessionStorage.getItem('rm_meta') || '{}');
+// Load review: from URL ?id= param (shareable link) or sessionStorage
+(async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const reviewId = urlParams.get('id');
 
-if (!reviewMarkdown) {
-  document.getElementById('loading').innerHTML = '<h2>No review found.</h2><p>Go back and submit your manuscript first.</p><a href="/review.html" style="margin-top:12px;color:#8b0000;font-weight:600">Submit work</a>';
-} else {
-  // Set page title to book name for PDF filename
-  if (reviewMeta.title) {
-    document.title = reviewMeta.title + ' — Ruthless Mentor Review';
+  let reviewMarkdown = null;
+  let reviewMeta = {};
+
+  if (reviewId) {
+    // Load from API by ID (shareable link from email)
+    try {
+      const res = await fetch('/api/review/' + encodeURIComponent(reviewId));
+      if (res.ok) {
+        const data = await res.json();
+        reviewMarkdown = data.review_markdown;
+        reviewMeta = {
+          wordCount: data.word_count,
+          tier: data.tier,
+          date: data.created_at,
+        };
+      }
+    } catch (e) {
+      console.error('Failed to load review:', e);
+    }
+  } else {
+    // Fall back to sessionStorage
+    reviewMarkdown = sessionStorage.getItem('rm_review');
+    reviewMeta = JSON.parse(sessionStorage.getItem('rm_meta') || '{}');
   }
-  renderReport(reviewMarkdown, reviewMeta);
-}
+
+  if (!reviewMarkdown) {
+    document.getElementById('loading').innerHTML = '<h2>No review found.</h2><p>Go back and submit your manuscript first.</p><a href="/review.html" style="margin-top:12px;color:#8b0000;font-weight:600">Submit work</a>';
+  } else {
+    if (reviewMeta.title) {
+      document.title = reviewMeta.title + ' — Ruthless Mentor Review';
+    }
+    renderReport(reviewMarkdown, reviewMeta);
+  }
+})();
 
 function renderReport(md, meta) {
   const page = document.getElementById('report-page');

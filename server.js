@@ -410,6 +410,22 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
   }
 });
 
+// ===== GET SINGLE REVIEW BY ID (public, for shareable links) =====
+app.get('/api/review/:id', async (req, res) => {
+  if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('reviews')
+      .select('id, word_count, tier, review_markdown, created_at')
+      .eq('id', req.params.id)
+      .single();
+    if (error || !data) return res.status(404).json({ error: 'Review not found' });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to load review' });
+  }
+});
+
 // ===== MANUSCRIPT INFO LABELS =====
 const STAGE_LABELS = {
   'complete': 'Complete draft (beginning, middle, end)',
@@ -559,63 +575,41 @@ Provide your complete review following the structure outlined in your instructio
 
     const review = message.content[0].text;
 
-    // Store review in Supabase (if available and user is authenticated)
-    if (supabaseAdmin && req.user) {
+    // Store review in Supabase for ALL users (shareable link requires it)
+    let reviewId = null;
+    if (supabaseAdmin) {
       try {
-        await supabaseAdmin.from('reviews').insert({
-          user_id: req.user.id,
+        const { data, error } = await supabaseAdmin.from('reviews').insert({
+          user_id: req.user ? req.user.id : null,
           word_count: wordCount,
           tier: tier.name,
           price: totalCost,
           review_markdown: review,
           input_tokens: message.usage.input_tokens,
           output_tokens: message.usage.output_tokens,
-        });
+        }).select('id').single();
+        if (!error && data) reviewId = data.id;
       } catch (e) {
         console.error('[DB ERROR]', e.message);
       }
     }
 
-    // Auto-email the PDF review in the background (non-blocking)
-    if (email && resend) {
-      (async () => {
-        try {
-          console.log(`[AUTO-EMAIL] Generating PDF for ${email}...`);
-          const pdfMessage = await client.messages.create({
-            model: 'claude-haiku-4-5-20251001',
-            max_tokens: 16000,
-            messages: [{
-              role: 'user',
-              content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${text}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
-            }],
-            system: PDF_REVIEW_PROMPT
-          });
-          let pdfReviewText = pdfMessage.content[0].text.trim();
-          pdfReviewText = pdfReviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
-          const reviewData = JSON.parse(pdfReviewText);
-          reviewData.wordCount = `~${wordCount.toLocaleString()} words`;
-          const pdfBuffer = await generatePdf(reviewData);
-
-          await resend.emails.send({
-            from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
-            to: email,
-            subject: 'Your Ruthless Mentor Review — ' + (reviewData.title || manuscriptInfo?.title || 'Manuscript'),
-            html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-              <h2 style="color:#8b0000">Your review is attached.</h2>
-              <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
-              <p>Open the PDF for the full branded report with scores, character grades, line-level fixes, and your final verdict.</p>
-              <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
-            </div>`,
-            attachments: [{
-              filename: 'ruthless-mentor-review.pdf',
-              content: pdfBuffer.toString('base64'),
-            }]
-          });
-          console.log(`[AUTO-EMAIL] Sent review PDF to ${email}`);
-        } catch (emailErr) {
-          console.error('[AUTO-EMAIL ERROR]', emailErr.message);
-        }
-      })();
+    // Auto-email the review link (no extra AI call needed)
+    if (email && resend && reviewId) {
+      const reviewUrl = `https://ruthlessmentor.com/report.html?id=${reviewId}`;
+      resend.emails.send({
+        from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
+        to: email,
+        subject: 'Your Ruthless Mentor Review — ' + (manuscriptInfo?.title || 'Manuscript'),
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+          <h2 style="color:#8b0000">Your review is ready.</h2>
+          <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+          <p><a href="${reviewUrl}" style="display:inline-block;padding:12px 28px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">View Your Review</a></p>
+          <p style="margin-top:16px;color:#666;font-size:13px;">Or copy this link: ${reviewUrl}</p>
+          <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+        </div>`,
+      }).then(() => console.log(`[AUTO-EMAIL] Sent review link to ${email}`))
+        .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
     }
 
     res.json({
@@ -1005,61 +999,39 @@ app.post('/api/verify-payment', async (req, res) => {
         await supabaseAdmin.from('pending_reviews').update({ status: 'completed' }).eq('id', pendingId);
       }
 
-      // Store in reviews table
+      // Store in reviews table and get ID for shareable link
+      let paidReviewId = null;
       if (supabaseAdmin) {
         try {
-          await supabaseAdmin.from('reviews').insert({
+          const { data, error } = await supabaseAdmin.from('reviews').insert({
             word_count: wordCount,
             tier: tier.name,
             price: session.amount_total / 100,
             review_markdown: review,
             input_tokens: message.usage.input_tokens,
             output_tokens: message.usage.output_tokens,
-          });
+          }).select('id').single();
+          if (!error && data) paidReviewId = data.id;
         } catch (e) { console.error('[DB ERROR]', e.message); }
       }
 
-      // Auto-email the PDF review in the background
+      // Auto-email the review link
       const customerEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email;
-      if (customerEmail && resend) {
-        (async () => {
-          try {
-            console.log(`[AUTO-EMAIL] Generating PDF for paid review → ${customerEmail}`);
-            const pdfMessage = await client.messages.create({
-              model: 'claude-haiku-4-5-20251001',
-              max_tokens: 16000,
-              messages: [{
-                role: 'user',
-                content: `Review this manuscript (${wordCount} words, "${tier.name}" category):\n\n---\n\n${savedText}\n\n---\n\nReturn ONLY a valid JSON object following the exact structure in your instructions.`
-              }],
-              system: PDF_REVIEW_PROMPT
-            });
-            let pdfReviewText = pdfMessage.content[0].text.trim();
-            pdfReviewText = pdfReviewText.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
-            const reviewData = JSON.parse(pdfReviewText);
-            reviewData.wordCount = `~${wordCount.toLocaleString()} words`;
-            const pdfBuffer = await generatePdf(reviewData);
-
-            await resend.emails.send({
-              from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
-              to: customerEmail,
-              subject: 'Your Ruthless Mentor Review — ' + (reviewData.title || savedInfo?.title || 'Manuscript'),
-              html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-                <h2 style="color:#8b0000">Your review is attached.</h2>
-                <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
-                <p>Open the PDF for the full branded report with scores, character grades, line-level fixes, and your final verdict.</p>
-                <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
-              </div>`,
-              attachments: [{
-                filename: 'ruthless-mentor-review.pdf',
-                content: pdfBuffer.toString('base64'),
-              }]
-            });
-            console.log(`[AUTO-EMAIL] Sent paid review PDF to ${customerEmail}`);
-          } catch (emailErr) {
-            console.error('[AUTO-EMAIL ERROR]', emailErr.message);
-          }
-        })();
+      if (customerEmail && resend && paidReviewId) {
+        const reviewUrl = `https://ruthlessmentor.com/report.html?id=${paidReviewId}`;
+        resend.emails.send({
+          from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
+          to: customerEmail,
+          subject: 'Your Ruthless Mentor Review — ' + (savedInfo?.title || session.metadata?.title || 'Manuscript'),
+          html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+            <h2 style="color:#8b0000">Your review is ready.</h2>
+            <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+            <p><a href="${reviewUrl}" style="display:inline-block;padding:12px 28px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">View Your Review</a></p>
+            <p style="margin-top:16px;color:#666;font-size:13px;">Or copy this link: ${reviewUrl}</p>
+            <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+          </div>`,
+        }).then(() => console.log(`[AUTO-EMAIL] Sent paid review link to ${customerEmail}`))
+          .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
       }
 
       res.json({
