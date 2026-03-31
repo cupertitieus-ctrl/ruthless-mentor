@@ -1083,6 +1083,7 @@ const COUPONS = {
   'GIFT-9B833C2E': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
   'TARATEST': { type: 'free', discount: 100, maxUses: 3, message: 'Test code applied — this review is free!' },
   'GIFT-C9027820': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
+  'GIFT-6A739D07': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
 };
 
 // Check how many times a limited-use coupon has been redeemed (Supabase-backed)
