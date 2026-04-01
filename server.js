@@ -620,13 +620,18 @@ Provide your complete review following the structure outlined in your instructio
       resend.emails.send({
         from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
         to: email,
-        subject: 'Your Ruthless Mentor Review — ' + (manuscriptInfo?.title || 'Manuscript'),
-        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-          <h2 style="color:#8b0000">Your review is ready.</h2>
-          <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
-          <p><a href="${reviewUrl}" style="display:inline-block;padding:12px 28px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">View Your Review</a></p>
-          <p style="margin-top:16px;color:#666;font-size:13px;">Or copy this link: ${reviewUrl}</p>
-          <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+        subject: 'Your Ruthless Mentor Review is Ready',
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px 20px">
+          <h2 style="color:#8b0000;margin-bottom:8px">Your review is ready.</h2>
+          <p style="color:#444;margin-bottom:20px">We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+          <p><a href="${reviewUrl}" style="display:inline-block;padding:14px 32px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px">View Your Review</a></p>
+          <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
+          <p style="color:#1a1a1a;font-weight:600;font-size:15px">Every great book started with feedback like this. Now go make yours better.</p>
+          <p style="color:#555;font-size:14px;margin-top:12px">Most writers don't get real feedback until it's too late. If you found this helpful, send us to a fellow writer — they'll thank you later.</p>
+          <p style="margin-top:16px"><a href="https://ruthlessmentor.com" style="display:inline-block;padding:10px 24px;background:#c9a96e;color:#1a1a1a;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px">Share ruthlessmentor.com</a></p>
+          <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
+          <p style="color:#999;font-size:12px">Questions about your review? Just reply to this email.</p>
+          <p style="color:#999;font-size:12px;margin-top:4px">— Ruthless Mentor | ruthlessmentor.com</p>
         </div>`,
       }).then(() => console.log(`[AUTO-EMAIL] Sent review link to ${email}`))
         .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
@@ -1042,13 +1047,18 @@ app.post('/api/verify-payment', async (req, res) => {
         resend.emails.send({
           from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
           to: customerEmail,
-          subject: 'Your Ruthless Mentor Review — ' + (savedInfo?.title || session.metadata?.title || 'Manuscript'),
-          html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
-            <h2 style="color:#8b0000">Your review is ready.</h2>
-            <p>We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
-            <p><a href="${reviewUrl}" style="display:inline-block;padding:12px 28px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;">View Your Review</a></p>
-            <p style="margin-top:16px;color:#666;font-size:13px;">Or copy this link: ${reviewUrl}</p>
-            <p style="color:#888;font-size:12px;margin-top:30px">— Ruthless Mentor | ruthlessmentor.com</p>
+          subject: 'Your Ruthless Mentor Review is Ready',
+          html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px 20px">
+            <h2 style="color:#8b0000;margin-bottom:8px">Your review is ready.</h2>
+            <p style="color:#444;margin-bottom:20px">We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+            <p><a href="${reviewUrl}" style="display:inline-block;padding:14px 32px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px">View Your Review</a></p>
+            <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
+            <p style="color:#1a1a1a;font-weight:600;font-size:15px">Every great book started with feedback like this. Now go make yours better.</p>
+            <p style="color:#555;font-size:14px;margin-top:12px">Most writers don't get real feedback until it's too late. If you found this helpful, send us to a fellow writer — they'll thank you later.</p>
+            <p style="margin-top:16px"><a href="https://ruthlessmentor.com" style="display:inline-block;padding:10px 24px;background:#c9a96e;color:#1a1a1a;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px">Share ruthlessmentor.com</a></p>
+            <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
+            <p style="color:#999;font-size:12px">Questions about your review? Just reply to this email.</p>
+            <p style="color:#999;font-size:12px;margin-top:4px">— Ruthless Mentor | ruthlessmentor.com</p>
           </div>`,
         }).then(() => console.log(`[AUTO-EMAIL] Sent paid review link to ${customerEmail}`))
           .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
