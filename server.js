@@ -415,9 +415,20 @@ app.get('/api/me', requireAuth, async (req, res) => {
   }
 });
 
-// ===== GET PAST REVIEWS =====
+// ===== GET PAST REVIEWS (by user_id OR matching email) =====
 app.get('/api/reviews', requireAuth, async (req, res) => {
   try {
+    // First, claim any unclaimed reviews that match this user's email
+    const userEmail = req.user.email;
+    if (userEmail) {
+      await supabaseAdmin
+        .from('reviews')
+        .update({ user_id: req.user.id })
+        .eq('customer_email', userEmail)
+        .is('user_id', null);
+    }
+
+    // Now fetch all reviews belonging to this user
     const { data, error } = await supabaseAdmin
       .from('reviews')
       .select('id, word_count, tier, price, review_markdown, created_at')
@@ -601,6 +612,7 @@ Provide your complete review following the structure outlined in your instructio
       try {
         const { data, error } = await supabaseAdmin.from('reviews').insert({
           user_id: req.user ? req.user.id : null,
+          customer_email: email || null,
           word_count: wordCount,
           tier: tier.name,
           price: totalCost,
@@ -1028,7 +1040,9 @@ app.post('/api/verify-payment', async (req, res) => {
       let paidReviewId = null;
       if (supabaseAdmin) {
         try {
+          const paidEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email || null;
           const { data, error } = await supabaseAdmin.from('reviews').insert({
+            customer_email: paidEmail,
             word_count: wordCount,
             tier: tier.name,
             price: session.amount_total / 100,
