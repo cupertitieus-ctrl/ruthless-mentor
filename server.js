@@ -134,11 +134,13 @@ Start with "The Core Issue:" — identify the single biggest structural or pacin
 Then immediately give a ruthless fix using this EXACT format:
 [FIX] Your specific actionable fix for the core issue here.
 
-Then include a chapter-by-chapter pacing breakdown using this EXACT format (one per line):
-[BAD] Ch. 1-2: description of what's wrong
-[WARN] Ch. 3-6: description of concern
-[GOOD] Ch. 7-12: description of what works
-[NOTE] Overall: summary
+Then include a chapter-by-chapter pacing breakdown using this EXACT format (one per line). MATCH THE ICON TO THE QUALITY OF THAT SECTION:
+[GOOD] Ch. 1-3: use this when the chapters WORK WELL (green checkmark icon)
+[WARN] Ch. 4-6: use this when there are CONCERNS but it's okay (yellow warning icon)
+[BAD] Ch. 7-9: use this when the chapters have REAL PROBLEMS (red X icon)
+[NOTE] Overall: use this for neutral summary comments (gray arrow icon)
+
+IMPORTANT: [BAD] = red X = this section has problems. [GOOD] = green check = this section works. Do NOT put [BAD] on chapters you're praising. If chapters 1-3 have a strong setup, use [GOOD] not [BAD].
 
 Then cover the rest using ALL CAPS bold subheaders. Follow this EXACT format:
 
