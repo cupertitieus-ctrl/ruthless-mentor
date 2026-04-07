@@ -65,7 +65,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
         if (error) console.error('[WEBHOOK] Subscription upsert error:', error.message);
-        else console.log(`[WEBHOOK] Subscription created: ${plan} for user ${userId} (${credits} credits)`);
+        else console.log(`[WEBHOOK] Subscription created: ${plan} for user ${userId} (${credits} reviews)`);
       }
     }
 
@@ -82,8 +82,8 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
           .single();
 
         if (sub && invoice.billing_reason === 'subscription_cycle') {
-          // Monthly renewal — ADD credits (they stack)
-          const newCredits = sub.credits_remaining + sub.credits_per_month;
+          // Monthly renewal — RESET reviews (no rollover)
+          const newCredits = sub.credits_per_month;
           const stripeSub = await stripe.subscriptions.retrieve(invoice.subscription);
           await db.from('subscriptions').update({
             credits_remaining: newCredits,
@@ -91,7 +91,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
             current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
             updated_at: new Date().toISOString(),
           }).eq('id', sub.id);
-          console.log(`[WEBHOOK] Renewal: ${sub.plan} +${sub.credits_per_month} credits → ${newCredits} total`);
+          console.log(`[WEBHOOK] Renewal: ${sub.plan} reset to ${newCredits} reviews`);
         }
       }
     }
@@ -765,7 +765,7 @@ app.post('/api/review', requireAuth, async (req, res) => {
           .eq('id', sub.id);
         totalCost = 0;
         usedCredit = true;
-        console.log(`[CREDIT] ${req.user.email} used 1 credit (${sub.credits_remaining - 1} remaining)`);
+        console.log(`[REVIEW] ${req.user.email} used 1 review (${sub.credits_remaining - 1} remaining)`);
       }
     } catch (e) { /* no subscription, proceed with normal pricing */ }
   }

@@ -37,7 +37,7 @@ async function loadSubscription() {
             subInfoEl.innerHTML = `
                 <div class="sub-card">
                     <div class="sub-plan">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</div>
-                    <div class="sub-credits">${subscription.credits_remaining} credits remaining</div>
+                    <div class="sub-credits">${subscription.credits_remaining} reviews remaining</div>
                     <div class="sub-next">Next billing: ${nextBill}</div>
                     <button class="btn-outline" id="manage-sub-btn">Manage subscription</button>
                 </div>

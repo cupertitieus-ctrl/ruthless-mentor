@@ -18,7 +18,7 @@ let _subscription = null;
                     // Show credit badge
                     const creditBadge = document.getElementById('credit-badge');
                     if (creditBadge) {
-                        creditBadge.textContent = `${_subscription.credits_remaining} credits remaining`;
+                        creditBadge.textContent = `${_subscription.credits_remaining} reviews remaining`;
                         creditBadge.classList.remove('hidden');
                     }
                 }
@@ -463,12 +463,12 @@ if (form) {
 
         // Use subscription credit if available
         if (_subscription && _subscription.credits_remaining > 0) {
-            btn.textContent = 'Using 1 credit...';
+            btn.textContent = 'Using 1 review...';
             runReview(text, manuscriptInfo);
             // Update local credit count
             _subscription.credits_remaining--;
             const creditBadge = document.getElementById('credit-badge');
-            if (creditBadge) creditBadge.textContent = `${_subscription.credits_remaining} credits remaining`;
+            if (creditBadge) creditBadge.textContent = `${_subscription.credits_remaining} reviews remaining`;
             return;
         }
 
