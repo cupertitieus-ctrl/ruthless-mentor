@@ -523,13 +523,13 @@ app.get('/api/me', requireAuth, async (req, res) => {
 // ===== GET PAST REVIEWS (by user_id OR matching email) =====
 app.get('/api/reviews', requireAuth, async (req, res) => {
   try {
-    // First, claim any unclaimed reviews that match this user's email
+    // First, claim any unclaimed reviews that match this user's email (case-insensitive)
     const userEmail = req.user.email;
     if (userEmail) {
       await supabaseAdmin
         .from('reviews')
         .update({ user_id: req.user.id })
-        .eq('customer_email', userEmail)
+        .ilike('customer_email', userEmail)
         .is('user_id', null);
     }
 
