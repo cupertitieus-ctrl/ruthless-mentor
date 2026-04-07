@@ -87,7 +87,7 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .tag-pill.pop.animate{animation:tagPop .4s cubic-bezier(.16,1,.3,1) forwards;animation-delay:calc(var(--i) * .1s)}
 
 /* PRICING */
-.pricing-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;align-items:start;max-width:800px;margin:0 auto}
+.pricing-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;align-items:start;max-width:1000px;margin:0 auto}
 .price-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.8rem 1.4rem;text-align:center;position:relative;transition:all .3s}
 .price-card:hover{transform:translateY(-3px);border-color:var(--border2)}
 .price-card.popular{border-color:var(--accent-border)}
