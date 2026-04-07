@@ -1,10 +1,29 @@
-// ===== AUTH CHECK (silent — no gate) =====
+// ===== AUTH CHECK =====
 let _session = null;
+let _subscription = null;
 
 (async () => {
     try {
         const { data: { session } } = await sb.auth.getSession();
-        if (session) _session = session;
+        if (session) {
+            _session = session;
+            // Check for subscription credits
+            try {
+                const subRes = await fetch('/api/subscription', {
+                    headers: { 'Authorization': 'Bearer ' + session.access_token }
+                });
+                const subData = await subRes.json();
+                if (subData.subscription && subData.subscription.credits_remaining > 0) {
+                    _subscription = subData.subscription;
+                    // Show credit badge
+                    const creditBadge = document.getElementById('credit-badge');
+                    if (creditBadge) {
+                        creditBadge.textContent = `${_subscription.credits_remaining} credits remaining`;
+                        creditBadge.classList.remove('hidden');
+                    }
+                }
+            } catch (e) {}
+        }
     } catch (e) {}
     updateCost();
 })();
@@ -440,6 +459,17 @@ if (form) {
             else if (appliedCoupon.type === 'percent') finalPrice = Math.max(0, finalPrice - (finalPrice * appliedCoupon.discount / 100));
             else if (appliedCoupon.type === 'fixed') finalPrice = Math.max(0, finalPrice - appliedCoupon.discount);
             else if (appliedCoupon.type === 'fixed_price') finalPrice = appliedCoupon.discount;
+        }
+
+        // Use subscription credit if available
+        if (_subscription && _subscription.credits_remaining > 0) {
+            btn.textContent = 'Using 1 credit...';
+            runReview(text, manuscriptInfo);
+            // Update local credit count
+            _subscription.credits_remaining--;
+            const creditBadge = document.getElementById('credit-badge');
+            if (creditBadge) creditBadge.textContent = `${_subscription.credits_remaining} credits remaining`;
+            return;
         }
 
         if (finalPrice <= 0) {

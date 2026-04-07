@@ -9,6 +9,7 @@ let _session = null;
     }
     _session = session;
     loadReviews();
+    loadSubscription();
 })();
 
 // ===== SIGN OUT =====
@@ -17,6 +18,41 @@ document.getElementById('signout-btn').addEventListener('click', async (e) => {
     await sb.auth.signOut();
     window.location.href = '/';
 });
+
+// ===== LOAD SUBSCRIPTION =====
+async function loadSubscription() {
+    const subInfoEl = document.getElementById('sub-info');
+    if (!subInfoEl) return;
+
+    try {
+        const res = await fetch('/api/subscription', {
+            headers: { 'Authorization': 'Bearer ' + _session.access_token }
+        });
+        const { subscription } = await res.json();
+
+        if (subscription) {
+            const nextBill = subscription.current_period_end
+                ? new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                : 'N/A';
+            subInfoEl.innerHTML = `
+                <div class="sub-card">
+                    <div class="sub-plan">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</div>
+                    <div class="sub-credits">${subscription.credits_remaining} credits remaining</div>
+                    <div class="sub-next">Next billing: ${nextBill}</div>
+                    <button class="btn-outline" id="manage-sub-btn">Manage subscription</button>
+                </div>
+            `;
+            document.getElementById('manage-sub-btn').addEventListener('click', async () => {
+                const portalRes = await fetch('/api/customer-portal', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + _session.access_token, 'Content-Type': 'application/json' }
+                });
+                const { url } = await portalRes.json();
+                if (url) window.location.href = url;
+            });
+        }
+    } catch (e) {}
+}
 
 // ===== LOAD REVIEWS =====
 async function loadReviews() {

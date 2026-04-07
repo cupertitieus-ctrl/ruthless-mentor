@@ -99,6 +99,18 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .period{font-size:.75rem;color:var(--text3);margin-bottom:1.2rem}
 .pricing-addon{text-align:center;margin-top:1.5rem;font-size:.85rem;color:var(--text2)}
 .pricing-addon strong{color:var(--accent)}
+.sub-pricing{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.sub-pricing h3{font-size:1.2rem;margin-bottom:.3rem}
+.sub-plans{justify-content:center}
+.per{font-size:.5em;color:var(--text2);font-weight:400}
+.plan-savings{font-size:.72rem;color:#2e7d32;font-weight:600;margin-top:.3rem}
+.sub-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem}
+.sub-plan{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.sub-credits{font-size:.9rem;color:#2e7d32;font-weight:600;margin-bottom:.3rem}
+.sub-next{font-size:.8rem;color:var(--text2);margin-bottom:1rem}
+.light-body .sub-card{background:#fff;border-color:#e0e0e0}
+.light-body .sub-plan{color:#1a1a1a}
+.light-body .sub-next{color:#888}
 
 /* TIME GRAPH */
 .unfinished-section{padding:4rem 2rem;background:#fff}
@@ -165,6 +177,7 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 .addon-price{margin-left:auto;color:var(--accent);font-weight:600}
 .total-row{display:flex;justify-content:space-between;align-items:center;padding:.8rem .9rem;background:var(--surface2);border-radius:var(--r-sm);margin-bottom:1rem;font-weight:600}
 .total-num{color:var(--accent);font-size:1.2rem;font-weight:800}
+.credit-badge{background:#2e7d32;color:#fff;font-size:.8rem;font-weight:600;padding:.5rem 1rem;border-radius:6px;text-align:center;margin-bottom:.8rem}
 .form-included{font-size:.78rem;color:var(--accent2);margin-bottom:.8rem;padding:.5rem 0}
 .coupon-row{display:flex;gap:.5rem;margin-bottom:.3rem}
 .coupon-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:.45rem .7rem;color:var(--text);font-size:.8rem;font-family:inherit}

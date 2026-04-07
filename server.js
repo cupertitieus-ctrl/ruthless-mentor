@@ -11,6 +11,109 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 
 
 const app = express();
 app.use(cors());
+
+// Stripe webhook needs raw body BEFORE json parser
+app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) return res.status(503).send('Stripe not configured');
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  let event;
+  try {
+    if (webhookSecret) {
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } else {
+      event = JSON.parse(req.body.toString());
+    }
+  } catch (err) {
+    console.error('[WEBHOOK] Signature verification failed:', err.message);
+    return res.status(400).send('Webhook signature failed');
+  }
+
+  console.log(`[WEBHOOK] ${event.type}`);
+
+  // Lazy-load supabaseAdmin (it's initialized below)
+  const getSupabase = () => {
+    if (!supabaseAdmin) return null;
+    return supabaseAdmin;
+  };
+
+  const PLAN_CREDITS = { 'basic': 10, 'pro': 25, 'advanced': 60 };
+
+  try {
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      if (session.mode !== 'subscription') return res.json({ received: true });
+
+      const sub = await stripe.subscriptions.retrieve(session.subscription);
+      const plan = session.metadata?.plan || 'basic';
+      const credits = PLAN_CREDITS[plan] || 10;
+      const userId = session.metadata?.userId;
+      const db = getSupabase();
+
+      if (db && userId) {
+        // Upsert subscription
+        const { error } = await db.from('subscriptions').upsert({
+          user_id: userId,
+          stripe_subscription_id: session.subscription,
+          stripe_customer_id: session.customer,
+          plan,
+          credits_remaining: credits,
+          credits_per_month: credits,
+          status: 'active',
+          current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id' });
+        if (error) console.error('[WEBHOOK] Subscription upsert error:', error.message);
+        else console.log(`[WEBHOOK] Subscription created: ${plan} for user ${userId} (${credits} credits)`);
+      }
+    }
+
+    if (event.type === 'invoice.paid') {
+      const invoice = event.data.object;
+      if (!invoice.subscription) return res.json({ received: true });
+
+      const db = getSupabase();
+      if (db) {
+        // Find subscription by stripe_subscription_id
+        const { data: sub } = await db.from('subscriptions')
+          .select('*')
+          .eq('stripe_subscription_id', invoice.subscription)
+          .single();
+
+        if (sub && invoice.billing_reason === 'subscription_cycle') {
+          // Monthly renewal — ADD credits (they stack)
+          const newCredits = sub.credits_remaining + sub.credits_per_month;
+          const stripeSub = await stripe.subscriptions.retrieve(invoice.subscription);
+          await db.from('subscriptions').update({
+            credits_remaining: newCredits,
+            status: 'active',
+            current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
+            updated_at: new Date().toISOString(),
+          }).eq('id', sub.id);
+          console.log(`[WEBHOOK] Renewal: ${sub.plan} +${sub.credits_per_month} credits → ${newCredits} total`);
+        }
+      }
+    }
+
+    if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object;
+      const db = getSupabase();
+      if (db) {
+        await db.from('subscriptions').update({
+          status: 'cancelled',
+          updated_at: new Date().toISOString(),
+        }).eq('stripe_subscription_id', subscription.id);
+        console.log(`[WEBHOOK] Subscription cancelled: ${subscription.id}`);
+      }
+    }
+  } catch (err) {
+    console.error('[WEBHOOK ERROR]', err.message);
+  }
+
+  res.json({ received: true });
+});
+
 app.use(express.json({ limit: '5mb' }));
 app.use(express.static(path.join(__dirname)));
 
@@ -443,6 +546,77 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
   }
 });
 
+// ===== SUBSCRIPTION ENDPOINTS =====
+const SUBSCRIPTION_PLANS = {
+  'basic': { priceId: 'price_1TJNiUF4oWcY2jpCsIFkZcLR', credits: 10, name: 'Basic', price: 50 },
+  // 'pro': { priceId: 'price_XXXXXXXX', credits: 25, name: 'Pro', price: 100 },
+  // 'advanced': { priceId: 'price_XXXXXXXX', credits: 60, name: 'Advanced', price: 200 },
+};
+
+// Get user's subscription
+app.get('/api/subscription', requireAuth, async (req, res) => {
+  if (!supabaseAdmin) return res.json({ subscription: null });
+  try {
+    const { data } = await supabaseAdmin.from('subscriptions')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .eq('status', 'active')
+      .single();
+    res.json({ subscription: data || null });
+  } catch (e) {
+    res.json({ subscription: null });
+  }
+});
+
+// Create subscription checkout
+app.post('/api/subscribe', requireAuth, async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
+
+  const { plan } = req.body;
+  const planInfo = SUBSCRIPTION_PLANS[plan];
+  if (!planInfo) return res.status(400).json({ error: 'Invalid plan' });
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [{ price: planInfo.priceId, quantity: 1 }],
+      success_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/dashboard.html?subscribed=true`,
+      cancel_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/review.html?cancelled=true`,
+      customer_email: req.user.email,
+      metadata: {
+        plan,
+        userId: req.user.id,
+      },
+    });
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error('[SUBSCRIBE ERROR]', err.message);
+    res.status(500).json({ error: 'Subscription setup failed' });
+  }
+});
+
+// Stripe Customer Portal (manage subscription)
+app.post('/api/customer-portal', requireAuth, async (req, res) => {
+  if (!stripe || !supabaseAdmin) return res.status(503).json({ error: 'Not configured' });
+  try {
+    const { data: sub } = await supabaseAdmin.from('subscriptions')
+      .select('stripe_customer_id')
+      .eq('user_id', req.user.id)
+      .single();
+    if (!sub || !sub.stripe_customer_id) return res.status(404).json({ error: 'No subscription found' });
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: sub.stripe_customer_id,
+      return_url: `${req.headers.origin || 'https://ruthlessmentor.com'}/dashboard.html`,
+    });
+    res.json({ url: portalSession.url });
+  } catch (err) {
+    console.error('[PORTAL ERROR]', err.message);
+    res.status(500).json({ error: 'Could not open billing portal' });
+  }
+});
+
 // ===== GET SINGLE REVIEW BY ID (public, for shareable links) =====
 app.get('/api/review/:id', async (req, res) => {
   if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
@@ -559,7 +733,7 @@ THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive
 }
 
 // ===== SUBMIT REVIEW =====
-app.post('/api/review', optionalAuth, async (req, res) => {
+app.post('/api/review', requireAuth, async (req, res) => {
   const { text, manuscriptInfo, email } = req.body;
 
   if (!text || !text.trim()) {
@@ -573,7 +747,28 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   }
 
   const tier = getTier(wordCount);
-  const totalCost = tier.price;
+  let totalCost = tier.price;
+  let usedCredit = false;
+
+  // Check if user has subscription credits
+  if (req.user && supabaseAdmin) {
+    try {
+      const { data: sub } = await supabaseAdmin.from('subscriptions')
+        .select('*')
+        .eq('user_id', req.user.id)
+        .eq('status', 'active')
+        .single();
+      if (sub && sub.credits_remaining > 0) {
+        // Use a credit instead of charging
+        await supabaseAdmin.from('subscriptions')
+          .update({ credits_remaining: sub.credits_remaining - 1, updated_at: new Date().toISOString() })
+          .eq('id', sub.id);
+        totalCost = 0;
+        usedCredit = true;
+        console.log(`[CREDIT] ${req.user.email} used 1 credit (${sub.credits_remaining - 1} remaining)`);
+      }
+    } catch (e) { /* no subscription, proceed with normal pricing */ }
+  }
   const context = buildManuscriptContext(manuscriptInfo);
 
   console.log(`[REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name} | $${totalCost}`);
@@ -657,6 +852,7 @@ Provide your complete review following the structure outlined in your instructio
       tier: tier.name,
       price: tier.price,
       totalCost,
+      usedCredit,
       usage: {
         inputTokens: message.usage.input_tokens,
         outputTokens: message.usage.output_tokens
