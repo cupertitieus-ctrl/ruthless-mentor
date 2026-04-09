@@ -733,7 +733,7 @@ THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive
 }
 
 // ===== SUBMIT REVIEW =====
-app.post('/api/review', requireAuth, async (req, res) => {
+app.post('/api/review', optionalAuth, async (req, res) => {
   const { text, manuscriptInfo, email } = req.body;
 
   if (!text || !text.trim()) {
