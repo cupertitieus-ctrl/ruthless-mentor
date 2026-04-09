@@ -167,6 +167,17 @@
   </div>
 </div>
 
+<!-- Account signup popup -->
+<div id="signup-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; display:none; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:8px; padding:32px 28px; max-width:420px; width:90%; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.2); position:relative;">
+    <button onclick="document.getElementById('signup-modal').style.display='none'" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:#999;">&times;</button>
+    <h2 style="font-size:1.3rem; margin-bottom:8px; color:#1a1a1a;">Keep all your reviews in one place</h2>
+    <p style="color:#555; font-size:0.95rem; margin-bottom:20px; line-height:1.5;">Create a free account to save this review and any future reviews to your personal dashboard.</p>
+    <a href="/auth.html" style="display:inline-block; background:#8b0000; color:#fff; padding:12px 28px; border-radius:6px; text-decoration:none; font-weight:700; font-size:0.95rem;">Create Free Account</a>
+    <p style="margin-top:12px;"><a href="#" onclick="document.getElementById('signup-modal').style.display='none'; return false;" style="color:#999; font-size:0.85rem; text-decoration:none;">No thanks, maybe later</a></p>
+  </div>
+</div>
+
 <div class="page" id="report-page">
   <div class="loading-screen" id="loading">
     <div class="spinner"></div>
@@ -185,6 +196,11 @@
     const { data: { session } } = await sb.auth.getSession();
     if (!session) {
       document.getElementById('save-account-btn').style.display = '';
+      // Show signup popup after 3 seconds
+      setTimeout(() => {
+        const modal = document.getElementById('signup-modal');
+        modal.style.display = 'flex';
+      }, 3000);
     }
   } catch (e) {
     document.getElementById('save-account-btn').style.display = '';
