@@ -768,13 +768,27 @@ function buildManuscriptContext(manuscriptInfo) {
   if (manuscriptInfo.pov) parts.push(`POV: ${POV_LABELS[manuscriptInfo.pov] || manuscriptInfo.pov}`);
   if (manuscriptInfo.bookNumber) {
     const bn = manuscriptInfo.bookNumber;
-    if (bn == 1 || bn === '1') {
-      parts.push(`Book number: Book 1 of a series. CRITICAL: This is the FIRST book in a series, and the author is planning more books. Evaluate the ending accordingly. Book 1 of a series should resolve its own core arc (the main conflict introduced in this book) while leaving larger threads open for future books. Do NOT penalize the manuscript for leaving some things unresolved — that is a feature of a Book 1, not a bug. Instead, check: Does the Book 1 arc land? Is there a satisfying resolution to what THIS book set up? Are the open threads intentional hooks for Book 2, or sloppy loose ends? Cliffhangers are fine for Book 1 if they feel earned. Call out which open threads feel intentional and which feel accidental. Never say "the ending is incomplete" without context — always frame it as "the Book 1 arc lands / does not land, and here is what is set up for Book 2."`);
-    } else if (bn == 2 || bn === '2' || parseInt(bn) >= 2) {
-      parts.push(`Book number: Book ${bn} of a series. This is a mid-series book. Evaluate it on: (1) does it advance the overall series arc? (2) does it stand on its own for a reader who already read the previous book? (3) does it resolve threads from previous books while setting up future ones? (4) does the pacing match the middle-of-series expectation (character deepening, world expansion, escalating stakes)? Do not expect this book to be fully self-contained like a standalone — expect it to be a strong middle chapter in a bigger story.`);
-    } else {
-      parts.push(`Book number: Book ${bn} in a series`);
-    }
+    const bnInt = parseInt(bn);
+    parts.push(`Book number: Book ${bn} of a series. CRITICAL: This is part of a multi-book series. The author is planning more books after this one. Evaluate the ending accordingly.
+
+This book — Book ${bn} — should resolve its OWN core arc (the main conflict this book set up) while leaving larger threads open for future books. Do NOT penalize the manuscript for leaving some things unresolved — that is a feature of a mid-series book, NOT a bug. Book ${bn} leads into Book ${bnInt + 1}. That is how series work.
+
+This rule applies GLOBALLY across the entire review — not just the Final Verdict. Do not anywhere in the review:
+- Demand the author explain mysteries that are set up to be answered in a later book
+- Call unresolved series arcs "incomplete endings"
+- Suggest the author "wrap up" threads that are clearly intentional hooks
+- Treat cliffhangers as flaws when they feel earned
+- Ask for answers to questions that are clearly the driving mystery of the series
+
+Instead, evaluate:
+1. Does THIS book's core arc land? (The conflict introduced in this specific book should resolve, even if the series arc continues.)
+2. Are the open threads intentional hooks for Book ${bnInt + 1}, or sloppy loose ends with no follow-through?
+3. Do the cliffhangers feel earned, or cheap?
+4. Does Book ${bn} advance the overall series arc in a meaningful way?
+${bnInt >= 2 ? `5. Does Book ${bn} stand on its own for a reader who already read Book ${bnInt - 1}? Does it reward returning readers while still being accessible?
+6. Does the pacing match mid-series expectations (deeper character work, world expansion, escalating stakes)?` : ''}
+
+Frame feedback as "the Book ${bn} arc lands / does not land, and here is what is set up for Book ${bnInt + 1}" — NEVER as "the ending is incomplete" without that series context. Cliffhangers, unresolved mysteries, and open threads are the LIFEBLOOD of a series. Respect them.`);
   }
 
   // Picture book specific context
