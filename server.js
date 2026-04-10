@@ -422,55 +422,76 @@ If the manuscript is unfinished: what problems will get worse? What should the a
 If it's complete: say "This appears to be a complete manuscript."
 
 ### 11. Market Reality Check
-This section is an AUDIENCE SIZE and RELATABILITY assessment for a self-publishing author. Do NOT frame this around traditional publishing (no "query trenches", no "agents and editors", no "submission"). Do NOT give tactical marketing advice (no keywords, no Amazon categories, no ad angles, no cover concepts). Your ONLY job here is to honestly tell the author: **how many people would relate to this book, and how big is the potential audience?**
+This section ALWAYS covers three things for every review: (1) audience size and relatability, (2) positioning risk, and (3) BOTH publishing paths — self-publishing AND traditional submission with a literary agent. The author needs to see what each path looks like for this specific book so they can make an informed choice, regardless of which direction they are leaning.
 
-THE CORE QUESTION: How many readers will see this concept and think "that's me" or "that's my kid" or "I need this"? A broad, universally relatable concept has a huge potential audience. A highly specific or niche concept has a smaller audience — not worse, just smaller.
+TWO CORE QUESTIONS to answer throughout:
+1. **Audience size and relatability** — How many people will see this concept and think "that's me" or "that's my kid" or "I need this"? Is this book broad (huge potential audience) or niche (smaller but passionate audience)?
+2. **Positioning risk** — Does this book take creative risks that make it harder to position? (Horror picture book, uncommon rhyme scheme, blended audiences, dark themes in a typically light genre, unusual format, etc.) Never tell the author to abandon a risky concept — just be honest about the cost.
 
-Evaluate on a BROAD → NICHE spectrum:
+### BROAD vs NICHE SPECTRUM (use this framing):
 
-**BROAD (easier to sell — millions of people can relate):**
-- "A kid who's nervous about the first day of school" — every kid has been there
-- "A funny story about a messy classroom pet" — universal school experience
-- "A picture book about sharing" — every parent deals with this
-- "A middle-grade adventure where the protagonist feels invisible at school" — huge relatable audience
+**BROAD (millions can relate):**
+- "A kid nervous about the first day of school" — universal
+- "A funny story about a messy classroom pet" — every kid has experienced this
+- "A picture book about sharing, friendship, or first sleepovers"
 
-**MODERATE (mid-size audience — specific enough to stand out, broad enough to scale):**
-- "A kid dealing with a new baby sibling" — common but not universal
-- "A story about a blended family" — large but specific group
-- "A shy kid who finds their voice through art" — relatable to a defined subgroup
+**MODERATE (mid-size, specific-enough-to-stand-out):**
+- "A kid dealing with a new baby sibling"
+- "A story about a blended family"
+- "A shy kid who finds their voice through art"
 
 **NICHE (smaller, more specific audience — valid but harder to scale):**
-- "A picture book about a child newly diagnosed with Type 1 diabetes" — this is a beautiful, necessary book, but the built-in audience is children with diabetes and their families. That's a real and valuable audience, but it is MUCH smaller than "kids who are nervous for school."
-- "A middle grade about a kid whose parent is deployed in the military" — specific and meaningful, but the built-in audience is military families.
-- "A chapter book set in a specific religious community" — strong appeal within the community, limited appeal outside it.
-- "A YA novel about a rare medical condition" — the readers who find this book will love it, but they are a small group.
+- "A picture book about a child newly diagnosed with Type 1 diabetes" — beautiful, necessary, but the built-in audience is families living with T1D
+- "A middle grade about a kid whose parent is deployed in the military" — meaningful, but built-in audience is military families
+- "A YA about a rare medical condition" — passionate readers, small pool
 
-HOW TO WRITE THIS SECTION:
+Audience size is not "good" or "bad." Broad books scale faster but have more competition. Niche books grow slower but have loyal, word-of-mouth audiences. Say which one this is, then show both paths.
 
-1. **State where on the broad-niche spectrum this book sits.** Be honest and specific. Don't hedge with "it could appeal to lots of people." Say plainly: "This is a broad, universally relatable concept" OR "This is a niche concept with a small but passionate potential audience."
+### STRUCTURE — USE THESE EXACT SUBHEADERS:
 
-2. **Explain WHO will relate to it.** Describe the reader in terms of age, life situation, interests, and experiences. Think holistically about the audience — consider all the factors that affect who will pick this up and see themselves in it — but do NOT call out gender specifically (never say "boys who..." or "girls who..." — that's not how real readers work). Describe readers by the experience they've lived, the feeling the book captures, or the situation they're in.
+**AUDIENCE SIZE & POSITIONING RISK:**
 
-3. **Be honest about the audience SIZE.** A universally relatable concept has a built-in audience of millions. A niche concept might have a built-in audience of tens of thousands. Both are valid — but the author needs to know the difference so they can plan accordingly.
+One paragraph. Where does this book sit on the broad-to-niche spectrum? Who will see themselves in it? Describe readers by age, life situation, experience, and interests — NEVER by gender (no "boys who..." or "girls who..."). Does this book take a creative or positioning risk (horror picture book, uncommon rhyme scheme, blended audience, dark theme, unusual format, niche subject matter)? If yes, validate the risk — niche and risky bets are often the most memorable books. Never tell the author to abandon the concept.
 
-4. **Validate the niche bet if the book is niche.** A niche book is NOT a bad book — in fact, niche books often have the most loyal, passionate readers because they finally feel SEEN. But niche books require more patience to find their audience, more targeted effort to reach them, and usually more budget to sustain marketing over time. Say that plainly.
+**SELF-PUBLISHING PATH:**
 
-5. **Be honest about the "sea of sameness" problem.** If the concept is broad AND unoriginal (another first-day-of-school book that doesn't bring anything new), say so — broad audience alone doesn't make a book sell, it still has to stand out. The best books are either "broad with a fresh angle" or "niche with deep resonance."
+Two paragraphs. As a self-published author, the author is responsible for finding and reaching readers directly. Cover:
+- What the self-pub reality looks like for this book based on its audience size and positioning risk
+- For broad books: the discoverability is easier but the shelf is crowded; the execution has to stand out
+- For niche books: the discoverability is harder but the audience is passionate; community-building matters more than ads (e.g., for a T1D book, reach out to diabetes parent groups, pediatric endocrinology offices, Type 1 support communities)
+- Self-publishing IS the realm where risky and niche bets can thrive — no publisher has to say yes, you just have to reach the right readers
+- Honest framing of what the author is signing up for: more control, more direct work, longer runway for niche books, faster feedback loops
 
-EXAMPLE OF A GOOD MARKET REALITY CHECK (niche book):
-"This book sits in a niche audience lane. Children newly diagnosed with Type 1 diabetes and their families will relate to this story deeply — because they are living it, and there are very few picture books that tell their story honestly. That is the strength. That is also the scale problem: the built-in audience for this book is much smaller than a book about universal kid experiences like first day of school or sibling rivalry. You are not competing against every parent looking for a bedtime story — you are trying to reach the specific families who need exactly this book. That means more patient, sustained effort finding diabetes parent communities, pediatric endocrinology offices, Type 1 support groups, and related parenting spaces. Books like this often succeed through word-of-mouth within the community — one family tells another, and it spreads. Plan for a longer timeline and a focused effort. This is a book that will resonate forever with the families who find it. The tradeoff is that fewer families will find it on their own — you will need to go to them."
+FORBIDDEN here: tactical marketing advice (keywords, Amazon categories, ad angles, cover concepts, BookTok pitches).
 
-EXAMPLE OF A GOOD MARKET REALITY CHECK (broad book):
-"This is a broadly relatable concept. Almost every kid between ages 5-8 has experienced the feeling of being nervous about something new — first day of school, first sleepover, first time at a big event. That universality is the book's biggest asset. The potential audience is millions of families looking for a reassuring read-aloud. The flip side is that the shelf is crowded — there are already hundreds of books about first-day jitters. Your edge has to come from execution: the voice, the specific emotional beat, the humor, the visual potential of the illustrations. A broad concept with a fresh angle sells. A broad concept that just restates what other books have said won't stand out. Your job is to make sure this book says something that the other ones don't."
+**TRADITIONAL PUBLISHING PATH:**
 
-FORBIDDEN in this section:
-- Keywords, Amazon categories, ad angles, cover concepts, BookTok pitches (wrong tool — this is audience size analysis, not marketing tactics)
-- "Query trenches", "agents and editors", "bookstore buyers"
-- "Mostly appeals to boys/girls" or any gendered audience framing. Consider audience holistically but never call out gender explicitly.
-- Abandoning the niche — never tell an author to make their niche book more "universal" if the niche is the entire point
-- Vague praise like "this will appeal to many readers" — be specific about HOW many and WHO
+Two paragraphs. If the author chooses to submit to literary agents and editors, cover:
+- Traditional publishing is more risk-averse than self-publishing because agents and editors are betting whether a publisher can earn out the advance
+- Broad, universally relatable concepts are easier to sell to agents because the math works
+- Niche concepts are harder to sell traditionally because the audience is smaller and the sales projections are tighter — not impossible, just harder
+- Creative and positioning risks (horror picture book, uncommon rhyme scheme, etc.) make an agent's job harder in a pitch meeting; the execution has to be airtight because agents pass on "almost" more often than on "bad"
+- Honest framing of what the query process is like: thousands of submissions per year per agent, long wait times, the vast majority get rejected, the books that break through are either "instantly pitchable with clear comp titles" or "so brilliantly executed that the agent can't put it down even if it's unusual"
+- Which lane this manuscript is in (instantly pitchable, or execution-dependent)
 
-Format as 2-3 honest paragraphs. Lead with where the book sits on the broad-to-niche spectrum. Explain who will see themselves in it. Be honest about audience size. Validate niche bets. End with a practical-but-honest framing of what the author is really signing up for.
+FORBIDDEN here: tactical self-pub advice (Amazon categories, KDP, ad budget, BookTok).
+
+**WHICH PATH IS A BETTER FIT?**
+
+One short paragraph (2-3 sentences) honestly recommending which path this specific book is better suited for, based on audience size and positioning risk, while respecting that the choice belongs to the author. Example framings:
+- "Based on the niche audience and the positioning risk this book takes, self-publishing is likely the smoother path — you will reach the readers who need this book directly, without needing a publisher's permission."
+- "This is a broad, cleanly-positioned concept with strong commercial appeal, which makes it a strong candidate for traditional submission if you have the patience for the query process."
+- "Both paths are viable here. Self-publishing will give you faster results and full control; traditional publishing will give you distribution reach if an agent bites."
+
+=== UNIVERSAL RULES ===
+
+- ALWAYS include all four subheaders (AUDIENCE SIZE & POSITIONING RISK, SELF-PUBLISHING PATH, TRADITIONAL PUBLISHING PATH, WHICH PATH IS A BETTER FIT?).
+- NEVER discourage the author. The point is honesty, not crushing hope.
+- Validate niche and risky bets — they are often the best books.
+- Never gender the audience explicitly. Describe readers holistically by age, life situation, and experience.
+- Be specific about audience size, not vague. "This will appeal to many readers" is banned.
+- Never tell the author to abandon their concept to make it more "universal."
+- Do not give tactical marketing advice (keywords, categories, ad angles, cover concepts, BookTok pitches).
 
 ### 12. Final Verdict
 2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
