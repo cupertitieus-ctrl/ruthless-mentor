@@ -1461,6 +1461,124 @@ app.post('/api/create-checkout', async (req, res) => {
 });
 
 // Verify payment and auto-run review from server-saved text
+// Helper: run a paid review from saved pending_reviews data. Idempotent — if already completed,
+// returns the existing review. Safe to retry after a failed Claude call or deploy interruption.
+async function runPaidReviewFromPending(pendingId, session) {
+  if (!supabaseAdmin) throw new Error('Database not configured');
+
+  // 1. Load the pending review
+  const { data: pending, error: loadErr } = await supabaseAdmin
+    .from('pending_reviews')
+    .select('manuscript_text, manuscript_info, status')
+    .eq('id', pendingId)
+    .single();
+  if (loadErr || !pending) throw new Error('Pending review not found');
+
+  const savedText = pending.manuscript_text;
+  const savedInfo = pending.manuscript_info || {};
+
+  // 2. If already completed, find the existing review and return it (idempotent recovery)
+  if (pending.status === 'completed') {
+    const paidEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email || null;
+    // Find the most recent review for this customer (best-effort match since we don't store pending_id on reviews)
+    if (paidEmail) {
+      const { data: existing } = await supabaseAdmin
+        .from('reviews')
+        .select('id, review_markdown, word_count, tier')
+        .eq('customer_email', paidEmail)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      if (existing) {
+        console.log(`[PAID REVIEW] Idempotent return for pending ${pendingId} — existing review ${existing.id}`);
+        return {
+          review: existing.review_markdown,
+          wordCount: existing.word_count,
+          tier: existing.tier,
+          reviewId: existing.id,
+          alreadyProcessed: true,
+        };
+      }
+    }
+    // Pending marked completed but no matching review found — force re-run to recover
+    console.warn(`[PAID REVIEW] Pending ${pendingId} marked completed but no review found — re-running`);
+  }
+
+  // 3. Generate the review (the risky step)
+  const wordCount = countWords(savedText);
+  const tier = getTier(wordCount);
+  const genre = session.metadata?.genre || '';
+
+  console.log(`[PAID REVIEW] Generating review for pending ${pendingId} (${wordCount} words)`);
+
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 16000,
+    messages: [{
+      role: 'user',
+      content: `Review this manuscript (${wordCount} words, "${tier.name}" category, genre: "${genre}", stage: "${savedInfo.stage || 'unknown'}", POV: "${savedInfo.pov || 'unknown'}"):\n\n---\n\n${savedText}\n\n---\n\nProvide your complete review following the structure in your instructions.`
+    }],
+    system: REVIEW_PROMPT
+  });
+
+  const review = message.content[0].text;
+
+  // 4. Store in reviews table FIRST (so we have the review saved even if later steps fail)
+  let paidReviewId = null;
+  const paidEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email || null;
+  try {
+    const { data, error } = await supabaseAdmin.from('reviews').insert({
+      customer_email: paidEmail,
+      word_count: wordCount,
+      tier: tier.name,
+      price: session.amount_total / 100,
+      review_markdown: review,
+      input_tokens: message.usage.input_tokens,
+      output_tokens: message.usage.output_tokens,
+      title: savedInfo.title || null,
+      payment_type: 'paid',
+      manuscript_info: savedInfo,
+    }).select('id').single();
+    if (!error && data) paidReviewId = data.id;
+  } catch (e) { console.error('[DB ERROR]', e.message); }
+
+  // 5. Only mark pending as completed AFTER the review is safely saved
+  if (paidReviewId) {
+    await supabaseAdmin.from('pending_reviews').update({ status: 'completed' }).eq('id', pendingId);
+  }
+
+  // 6. Auto-email the review link (non-blocking, don't fail the request if email fails)
+  if (paidEmail && resend && paidReviewId) {
+    const reviewUrl = `https://ruthlessmentor.com/report.html?id=${paidReviewId}`;
+    resend.emails.send({
+      from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
+      to: paidEmail,
+      subject: 'Your Ruthless Mentor Review is Ready',
+      html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px 20px">
+        <h2 style="color:#8b0000;margin-bottom:8px">Your review is ready.</h2>
+        <p style="color:#444;margin-bottom:20px">We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
+        <p><a href="${reviewUrl}" style="display:inline-block;padding:14px 32px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px">View Your Review</a></p>
+        <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
+        <p style="color:#1a1a1a;font-weight:600;font-size:15px">Every great book started with feedback like this. Now go make yours better.</p>
+        <p style="color:#555;font-size:14px;margin-top:12px">Most writers don't get real feedback until it's too late. If you found this helpful, send us to a fellow writer — they'll thank you later.</p>
+        <p style="margin-top:16px"><a href="https://ruthlessmentor.com" style="display:inline-block;padding:10px 24px;background:#c9a96e;color:#1a1a1a;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px">Share ruthlessmentor.com</a></p>
+        <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
+        <p style="color:#999;font-size:12px">Questions about your review? Just reply to this email.</p>
+        <p style="color:#999;font-size:12px;margin-top:4px">— Ruthless Mentor | ruthlessmentor.com</p>
+      </div>`,
+    }).then(() => console.log(`[AUTO-EMAIL] Sent paid review link to ${paidEmail}`))
+      .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
+  }
+
+  return {
+    review,
+    wordCount,
+    tier: tier.name,
+    reviewId: paidReviewId,
+    alreadyProcessed: false,
+  };
+}
+
 app.post('/api/verify-payment', async (req, res) => {
   if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
 
@@ -1474,108 +1592,95 @@ app.post('/api/verify-payment', async (req, res) => {
     }
 
     const pendingId = session.metadata?.pendingId;
-
-    // Try to get text from server-side storage
-    let savedText = null;
-    let savedInfo = {};
-    if (pendingId && supabaseAdmin) {
-      const { data, error } = await supabaseAdmin
-        .from('pending_reviews')
-        .select('manuscript_text, manuscript_info, status')
-        .eq('id', pendingId)
-        .single();
-      if (!error && data) {
-        // Don't re-run if already processed
-        if (data.status === 'completed') {
-          return res.json({ paid: true, alreadyProcessed: true, metadata: session.metadata });
-        }
-        savedText = data.manuscript_text;
-        savedInfo = data.manuscript_info || {};
-      }
+    if (!pendingId || !supabaseAdmin) {
+      return res.json({ paid: true, autoReview: false, metadata: session.metadata });
     }
 
-    if (savedText) {
-      // Auto-run the review
-      console.log(`[PAID REVIEW] Running review for pending ${pendingId} (${countWords(savedText)} words)`);
-
-      const wordCount = countWords(savedText);
-      const tier = getTier(wordCount);
-      const genre = session.metadata?.genre || '';
-
-      const message = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 16000,
-        messages: [{
-          role: 'user',
-          content: `Review this manuscript (${wordCount} words, "${tier.name}" category, genre: "${genre}", stage: "${savedInfo.stage || 'unknown'}", POV: "${savedInfo.pov || 'unknown'}"):\n\n---\n\n${savedText}\n\n---\n\nProvide your complete review following the structure in your instructions.`
-        }],
-        system: REVIEW_PROMPT
-      });
-
-      const review = message.content[0].text;
-
-      // Mark as completed
-      if (supabaseAdmin) {
-        await supabaseAdmin.from('pending_reviews').update({ status: 'completed' }).eq('id', pendingId);
-      }
-
-      // Store in reviews table and get ID for shareable link
-      let paidReviewId = null;
-      if (supabaseAdmin) {
-        try {
-          const paidEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email || null;
-          const { data, error } = await supabaseAdmin.from('reviews').insert({
-            customer_email: paidEmail,
-            word_count: wordCount,
-            tier: tier.name,
-            price: session.amount_total / 100,
-            review_markdown: review,
-            input_tokens: message.usage.input_tokens,
-            output_tokens: message.usage.output_tokens,
-          }).select('id').single();
-          if (!error && data) paidReviewId = data.id;
-        } catch (e) { console.error('[DB ERROR]', e.message); }
-      }
-
-      // Auto-email the review link
-      const customerEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email;
-      if (customerEmail && resend && paidReviewId) {
-        const reviewUrl = `https://ruthlessmentor.com/report.html?id=${paidReviewId}`;
-        resend.emails.send({
-          from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
-          to: customerEmail,
-          subject: 'Your Ruthless Mentor Review is Ready',
-          html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:30px 20px">
-            <h2 style="color:#8b0000;margin-bottom:8px">Your review is ready.</h2>
-            <p style="color:#444;margin-bottom:20px">We reviewed your ${tier.name} manuscript (~${wordCount.toLocaleString()} words).</p>
-            <p><a href="${reviewUrl}" style="display:inline-block;padding:14px 32px;background:#8b0000;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px">View Your Review</a></p>
-            <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
-            <p style="color:#1a1a1a;font-weight:600;font-size:15px">Every great book started with feedback like this. Now go make yours better.</p>
-            <p style="color:#555;font-size:14px;margin-top:12px">Most writers don't get real feedback until it's too late. If you found this helpful, send us to a fellow writer — they'll thank you later.</p>
-            <p style="margin-top:16px"><a href="https://ruthlessmentor.com" style="display:inline-block;padding:10px 24px;background:#c9a96e;color:#1a1a1a;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px">Share ruthlessmentor.com</a></p>
-            <hr style="border:none;border-top:1px solid #e0e0e0;margin:28px 0">
-            <p style="color:#999;font-size:12px">Questions about your review? Just reply to this email.</p>
-            <p style="color:#999;font-size:12px;margin-top:4px">— Ruthless Mentor | ruthlessmentor.com</p>
-          </div>`,
-        }).then(() => console.log(`[AUTO-EMAIL] Sent paid review link to ${customerEmail}`))
-          .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
-      }
-
-      res.json({
-        paid: true,
-        autoReview: true,
-        review,
-        wordCount,
-        tier: tier.name,
-        metadata: session.metadata
-      });
-    } else {
-      // No server-saved text — client needs to provide it
-      res.json({ paid: true, autoReview: false, metadata: session.metadata });
-    }
+    const result = await runPaidReviewFromPending(pendingId, session);
+    res.json({
+      paid: true,
+      autoReview: true,
+      review: result.review,
+      wordCount: result.wordCount,
+      tier: result.tier,
+      reviewId: result.reviewId,
+      alreadyProcessed: result.alreadyProcessed,
+      metadata: session.metadata
+    });
   } catch (err) {
     console.error('[VERIFY ERROR]', err.message);
-    res.status(500).json({ error: 'Could not verify payment' });
+    // Return a retryable error — client can call verify-payment again
+    res.status(500).json({
+      error: 'Could not generate review',
+      details: err.message,
+      retryable: true,
+    });
+  }
+});
+
+// ===== ADMIN RECOVERY ENDPOINT =====
+// Use this to manually retry a failed review for a customer who paid but got an error.
+// Protected by ADMIN_KEY env var. Usage:
+//   curl -X POST https://ruthlessmentor.com/api/admin/retry-review \
+//        -H "x-admin-key: YOUR_KEY" \
+//        -H "Content-Type: application/json" \
+//        -d '{"sessionId":"cs_live_..."}'
+// OR pass pendingId directly: -d '{"pendingId":"uuid-here"}'
+app.post('/api/admin/retry-review', async (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey) return res.status(503).json({ error: 'Admin key not configured. Set ADMIN_KEY env var on Render.' });
+  if (req.headers['x-admin-key'] !== adminKey) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { sessionId, pendingId: directPendingId } = req.body;
+  if (!sessionId && !directPendingId) return res.status(400).json({ error: 'Provide sessionId or pendingId' });
+
+  try {
+    let session;
+    let pendingId = directPendingId;
+
+    if (sessionId) {
+      if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+      session = await stripe.checkout.sessions.retrieve(sessionId);
+      pendingId = pendingId || session.metadata?.pendingId;
+    } else {
+      // Fabricate a minimal session-like object from pending_reviews for direct pendingId recovery
+      if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
+      const { data: pending } = await supabaseAdmin
+        .from('pending_reviews')
+        .select('manuscript_info, stripe_session_id, price_cents')
+        .eq('id', pendingId)
+        .single();
+      if (!pending) return res.status(404).json({ error: 'Pending review not found' });
+
+      if (pending.stripe_session_id && stripe) {
+        session = await stripe.checkout.sessions.retrieve(pending.stripe_session_id);
+      } else {
+        // Minimal fallback if no stripe session available
+        session = {
+          amount_total: pending.price_cents || 0,
+          metadata: pending.manuscript_info || {},
+          customer_email: null,
+          customer_details: { email: null },
+        };
+      }
+    }
+
+    if (!pendingId) return res.status(400).json({ error: 'Could not resolve pendingId' });
+
+    // Force re-run by resetting status to pending first (so the idempotent path doesn't short-circuit with a bad match)
+    await supabaseAdmin.from('pending_reviews').update({ status: 'pending' }).eq('id', pendingId);
+
+    const result = await runPaidReviewFromPending(pendingId, session);
+    res.json({
+      success: true,
+      reviewId: result.reviewId,
+      wordCount: result.wordCount,
+      tier: result.tier,
+      reviewUrl: result.reviewId ? `https://ruthlessmentor.com/report.html?id=${result.reviewId}` : null,
+    });
+  } catch (err) {
+    console.error('[ADMIN RETRY ERROR]', err.message);
+    res.status(500).json({ error: 'Retry failed', details: err.message });
   }
 });
 

@@ -350,7 +350,7 @@ async function runReview(text, manuscriptInfo) {
     progressWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
     const steps = [
-        { pct: 5, text: 'Uploading your work...' },
+        { pct: 5, text: 'Uploading your work... (this usually takes 60-90 seconds)' },
         { pct: 10, text: 'Reading through every page...' },
         { pct: 16, text: 'Getting into the story...' },
         { pct: 22, text: 'Evaluating the writing voice...' },
@@ -367,9 +367,10 @@ async function runReview(text, manuscriptInfo) {
         { pct: 83, text: 'Putting the report together...' },
         { pct: 87, text: 'Writing the final verdict...' },
         { pct: 91, text: 'Polishing the report...' },
-        { pct: 94, text: 'Adding the finishing touches...' },
-        { pct: 96, text: 'Almost there...' },
-        { pct: 98, text: 'Just a few more seconds...' },
+        { pct: 94, text: 'Still generating your review — this usually takes 60-90 seconds...' },
+        { pct: 95, text: 'Hang tight, the review is still being written...' },
+        { pct: 96, text: 'Your review is being generated — this takes 60-90 seconds total...' },
+        { pct: 97, text: 'Almost done — don\'t refresh, the review is still coming...' },
     ];
 
     // Force thank you bar styling
