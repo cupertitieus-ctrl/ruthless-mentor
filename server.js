@@ -463,18 +463,42 @@ Examples of BAD openings (FORBIDDEN):
 
 The opening should feel like a real writing teacher talking to a real writer. Ruthless, honest, warm, direct. Plain English. Like the rest of the review.
 
-Then produce SEVEN named sub-sections, each as a bolded label followed by substantive analysis (3-6 sentences each). Use these exact bolded labels:
+Then produce 3-5 bolded sub-section labels that are ACTUALLY RELEVANT to THIS specific manuscript. Do not use a fixed template. The labels should adapt based on what's actually interesting about the book's audience and market position. Always include a section about WHO will relate and a section about the AUDIENCE SIZE — but pick the other labels based on what this specific book needs.
 
-**Who will relate:** Name specific audience segments in human terms — the experiences, life situations, and interests that will draw readers in. Be specific and layered (e.g., "kids aged 6-10 who like silly low-stakes mysteries, kids who've had classroom pets, kids who enjoy absurdist humor, observant kids who feel slightly paranoid"). Give an estimated built-in audience scale — large, medium, small, niche — and justify it with a specific observation about the concept. NEVER gender the audience explicitly (no "boys who..." or "girls who...") — describe by lived experience and interest instead.
+**ADAPTIVE SUBSECTIONS** — pick the 3-5 most relevant from this list (or invent new ones that fit the book better):
 
-**The size calculation:** Is this a broad, moderate, or niche concept? WHY? What does this concept resemble in the existing market? Is the angle specific enough to feel fresh, or so niche that only a tiny group will care? Be honest about potential audience size in concrete terms (millions, hundreds of thousands, tens of thousands).
+- **Who will relate:** ALWAYS include this, and use this exact label. Name specific audience segments in human terms — the experiences, life situations, and interests. Layered and specific. Never gendered.
 
-**The sea-of-sameness problem:** Every book has one version of this. For broad books: how crowded is the shelf, and how does this book need to stand out through execution (voice, humor, pacing, hook)? For niche books: the opposite problem — how to actually reach the small audience that needs it. Be specific about what this manuscript is doing well and where it needs to sharpen to break through. Name the specific craft elements (voice, pacing, humor, premise freshness) that will determine whether it stands out.
+- **The size calculation:** ALWAYS include this, and use this exact label. Be honest about whether this is a massive universal concept or a tiny specific one, and justify it with a specific observation about the book.
+
+- **The sea-of-sameness problem:** Use this for BROAD books where the concept is common and the book has to stand out through execution. Name the specific craft elements (voice, humor, pacing, premise freshness) that will determine whether it breaks through. Skip this label for truly niche or original concepts.
+
+- **The niche discovery problem:** Use this for NICHE books where the opposite problem applies — the audience is small and passionate, but they have to find the book. Discuss word-of-mouth, community building, the specific micro-audiences that would champion it. Skip for broad books.
+
+- **The genre expectation trap:** Use this when the book takes a positioning risk that fights against genre expectations (horror picture book, dark MG, literary YA in a commercial slot, uncommon rhyme scheme). Discuss what readers expect from this genre and how this book subverts or pays off that expectation.
+
+- **The relatability vs novelty tradeoff:** Use this when the book is doing something genuinely unique or unusual. Discuss how originality helps the book stand out but can also make it harder for readers to "get" at first glance.
+
+- **The cross-audience appeal:** Use this when the book could reach multiple distinct reader groups (e.g., a picture book that appeals to adults too, a middle grade with crossover YA potential).
+
+- **The emotional hook:** Use this when the audience will be drawn in primarily by an emotional pull (grief, first love, fear, joy) rather than a premise. Discuss which emotional beat is doing the work and whether it lands.
+
+- **The concept clarity problem:** Use this when the book is hard to describe in one sentence — muddled genre, unclear protagonist goal, blended audiences. Discuss specifically why the concept isn't clicking and what would sharpen it.
+
+- **The voice-driven appeal:** Use this when the book's strongest commercial asset is the voice itself, not the premise. Discuss how voice will be what pulls readers in and what the voice needs to sustain.
+
+- **OTHER labels:** If none of these fit the manuscript perfectly, invent a label that does. The goal is real substance, not a template.
+
+HOW TO PICK: Read the manuscript and ask "what is actually going on with this book's audience and market position?" Then pick the 3-5 subsections that most honestly capture the answer. Don't force labels that don't fit. Don't use the same labels for every book.
+
+Each subsection gets 3-6 sentences of specific analysis referencing THIS manuscript (character names, scenes, specific craft elements, wordcount). Never generic.
 
 === UNIVERSAL RULES FOR SECTION 11 ===
 
-- ALWAYS produce all three named subsections above (Who will relate, The size calculation, The sea-of-sameness problem). This section should be 3-5 paragraphs long. Shallow one-paragraph answers are BANNED.
-- DO NOT include any publishing path discussion — no self-publishing vs. traditional publishing, no "how to get this book to readers," no query-letter advice, no marketing tactics. This section is about AUDIENCE and the sea-of-sameness problem ONLY. Publishing path is not part of this review.
+- ALWAYS include "Who will relate" and "The size calculation" as the first two subsections (use those exact labels every time).
+- The OTHER 1-3 subsections are PICKED based on what's actually relevant to this specific book. Don't use the same adaptive labels for every review.
+- Section 11 should be 3-5 paragraphs total (opening + 3-5 bolded subsections). Shallow one-paragraph answers are BANNED.
+- DO NOT include any publishing path discussion — no self-publishing vs. traditional publishing, no query-letter advice, no marketing tactics. This section is about AUDIENCE and market position ONLY.
 - Each subsection needs real substance — 3-6 sentences of specific analysis, not platitudes.
 - Be specific, never vague. "This will appeal to many readers" is banned. Name the readers.
 - Never gender the audience explicitly. Describe holistically by age, life situation, experience, and interest.
