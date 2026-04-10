@@ -359,6 +359,8 @@ Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, coun
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
 
 ### 7. Main Character Report Card
+CRITICAL: Letter grades (A+, A, B, C, etc.) ONLY appear in Section 7 and Section 8 (the character report cards). DO NOT use letter grades anywhere else in the review. Prose quality uses a 10-point score. Depth uses Shallow/Surface/Adequate/Deep/Unflinching. Everything else is prose analysis. Letter grades are ONLY for characters.
+
 Focus on the protagonist (main character) only. Use this format:
 
 **Character Name** — Grade: X
@@ -418,22 +420,65 @@ CRITICAL TONE RULES:
 Format this section as a 2-3 paragraph honest assessment. Be specific about WHY positioning is easy or hard. Give 1-2 practical, concrete suggestions to sharpen the pitch, clarify the audience, or position niche work successfully. Do NOT give vague advice like "improve the hook" — name the exact lever.
 
 ### 12. Comparable Books
-Identify up to 3 comparable books. Quality over quantity — if you can only confidently name 1 or 2 that genuinely fit, name only 1 or 2. DO NOT force a third comp. DO NOT make up titles or authors. DO NOT attribute a book to the wrong author. If you are not 100% sure a book exists and you have the author right, skip it.
+Start this section with a one-sentence disclaimer to the author: "*Note: I only compare against well-known bestsellers — books readers, editors, and agents would recognize instantly. Obscure or niche comps don't help you position the book.*"
 
-STRICT RULES:
+Then identify up to 3 comparable books. Quality over quantity — if you can only confidently name 1 or 2 that genuinely fit, name only 1 or 2. DO NOT force a third comp. DO NOT make up titles or authors. DO NOT attribute a book to the wrong author. If you are not 100% sure a book exists and you have the author right, skip it.
+
+ONLY CITE KNOWN BESTSELLERS. A "bestseller" here means: NYT list, major award winner (Newbery, Caldecott, Printz), 1M+ copies sold, or instantly recognizable to anyone who works in the children's / YA / adult book industry. If the average agent would not know the book by title alone, DO NOT cite it.
+
+STEP 1 — IDENTIFY THE MANUSCRIPT ON MULTIPLE AXES BEFORE PICKING COMPS:
+Before you name a single comp, identify the manuscript on ALL of these axes:
+- **Format / audience:** picture book, early reader, chapter book, middle grade, YA, adult (and word count band)
+- **Tone:** humor, earnest, dark, quiet, heartwarming, spooky, suspenseful, literary, commercial
+- **Story engine:** what drives the plot forward? Mystery-solving? Adventure/quest? Friendship? Fish-out-of-water? Survival? Coming-of-age? School life? Family drama?
+- **Voice style:** first-person confessional, omniscient narrator, diary/journal format, illustrated, deadpan, zany
+- **Protagonist type:** relatable everykid, reluctant hero, anti-hero, detective, outsider, chosen one
+
+A good comp matches the manuscript on AT LEAST TWO of: tone, story engine, and voice style. Format/audience match alone is NOT enough. Format + genre-label alone is NOT enough.
+
+STEP 2 — BAD vs GOOD COMPS (lazy matching is the #1 failure of this section):
+
+BAD comp example for a humor-driven mystery chapter book about a kid investigating a missing nacho:
+- "Magic Tree House" — BAD. Yes, it's a chapter book. But it's an earnest time-travel adventure series with almost no humor and no mystery engine. The only thing it shares with the manuscript is "chapter book." Do NOT make this comp.
+- "Junie B. Jones" — BAD. Chapter book, kid voice, some humor — but no mystery engine, it's episodic school life.
+
+GOOD comps for the same manuscript:
+- "Cam Jansen" (David Adler) — GOOD. Chapter book, kid detective solving small mysteries, age-matched, pacing similar. Differs: less humor. Honest delta.
+- "Encyclopedia Brown" (Donald Sobol) — GOOD. Kid detective, mystery engine, episodic, classic comp.
+- "The Princess in Black" (Shannon Hale / LeUyen Pham) — maybe, if the tone is zany. Humor + action match even though the story engine differs.
+
+For a quiet heartwarming picture book about grief:
+- BAD: "The Day the Crayons Quit" (funny letters concept, wrong tone entirely).
+- GOOD: "The Rabbit Listened" by Cori Doerrfeld. "Ida, Always" by Caron Levis.
+
+For a horror picture book:
+- BAD: "Dragons Love Tacos" (wrong tone).
+- GOOD: "Creepy Carrots" by Aaron Reynolds. "The Dark" by Lemony Snicket. "The Ghost-Eye Tree" by Bill Martin Jr.
+
+See the pattern? Match TONE and STORY ENGINE, not just "both are chapter books" or "both are picture books."
+
+STEP 3 — SAFE LIST OF HOUSEHOLD-NAME BOOKS (use these when they genuinely fit the tone/engine, not as defaults):
+- **Picture books:** Don't Let the Pigeon Drive the Bus (Mo Willems, funny), The Day the Crayons Quit (Drew Daywalt, funny), Dragons Love Tacos (Adam Rubin, funny), Creepy Carrots (Aaron Reynolds, spooky), The Dark (Lemony Snicket, spooky), The Rabbit Listened (Cori Doerrfeld, quiet/grief), Where the Wild Things Are (Maurice Sendak, adventurous/emotional), The Very Hungry Caterpillar (Eric Carle, concept/counting), Ida Always (Caron Levis, grief), Last Stop on Market Street (Matt de la Peña, quiet/literary), Stuck (Oliver Jeffers, funny/absurd), The Book With No Pictures (B.J. Novak, meta/funny).
+- **Chapter books:** Magic Tree House (Mary Pope Osborne, earnest adventure), Junie B. Jones (Barbara Park, funny school life), Mercy Watson (Kate DiCamillo, funny/zany), Cam Jansen (David Adler, mystery), Encyclopedia Brown (Donald Sobol, mystery), The Princess in Black (Shannon Hale, funny action), Stink (Megan McDonald, funny), Judy Moody (Megan McDonald, funny), The Notebook of Doom (Troy Cummings, spooky humor), Dory Fantasmagory (Abby Hanlon, funny imagination).
+- **Middle grade:** Diary of a Wimpy Kid (Jeff Kinney, funny diary), Dog Man (Dav Pilkey, funny — GRAPHIC NOVEL, only comp for graphic novels), Captain Underpants (Dav Pilkey, funny — graphic novel/chapter book hybrid), Percy Jackson (Rick Riordan, adventure/humor), Wonder (R.J. Palacio, earnest/emotional), Holes (Louis Sachar, mystery/adventure), The One and Only Ivan (Katherine Applegate, quiet emotional), A Wrinkle in Time (Madeleine L'Engle, sci-fi), The Westing Game (Ellen Raskin, mystery), From the Mixed-Up Files of Mrs. Basil E. Frankweiler (E.L. Konigsburg, mystery/adventure).
+- **YA:** The Hunger Games (Suzanne Collins, dystopian action), The Fault in Our Stars (John Green, contemporary romance/emotional), Six of Crows (Leigh Bardugo, fantasy heist), We Were Liars (E. Lockhart, mystery thriller), Eleanor & Park (Rainbow Rowell, romance).
+- **Adult:** stick to unambiguous bestsellers in the matching subgenre. If you are not sure, skip it.
+
+STRICT RULES (non-negotiable):
 - Only cite books you are genuinely certain about. When in doubt, leave it out.
-- Stick to commercially successful, household-name books. Examples by category (not an exhaustive list — use your judgment, but stay in this tier of recognizability): Picture books — Don't Let the Pigeon Drive the Bus (Mo Willems), The Day the Crayons Quit (Drew Daywalt), Dragons Love Tacos (Adam Rubin), Creepy Carrots (Aaron Reynolds), The Dark (Lemony Snicket), The Rabbit Listened (Cori Doerrfeld), Where the Wild Things Are (Maurice Sendak), The Very Hungry Caterpillar (Eric Carle), Dear Girl (Amy Krouse Rosenthal). Chapter books — Magic Tree House (Mary Pope Osborne), Junie B. Jones (Barbara Park), Mercy Watson (Kate DiCamillo), Dory Fantasmagory (Abby Hanlon). Middle grade — Diary of a Wimpy Kid (Jeff Kinney), Dog Man (Dav Pilkey — note: graphic novel, only comp if reviewing a graphic novel), Percy Jackson (Rick Riordan), Wonder (R.J. Palacio), Holes (Louis Sachar), The One and Only Ivan (Katherine Applegate), A Wrinkle in Time (Madeleine L'Engle). YA — The Hunger Games (Suzanne Collins), The Fault in Our Stars (John Green), Six of Crows (Leigh Bardugo), We Were Liars (E. Lockhart). Adult — genre-specific, stick to bestsellers.
-- MATCH THE GENRE AND FORMAT. If the manuscript is a picture book, all comps must be picture books. If it's a chapter book, all comps must be chapter books. If it's a graphic novel, all comps must be graphic novels. DO NOT cross genres or formats. A Dog Man comp is only valid for a graphic novel review.
-- Compare based on TONE, AUDIENCE, PACING, STRUCTURE, and FORMAT. Not just "it's also fantasy."
+- MATCH THE FORMAT AND AUDIENCE. Picture book → picture book. Chapter book → chapter book. MG → MG. Graphic novel → graphic novel. No exceptions.
+- MATCH AT LEAST TWO OF: tone, story engine, voice style. Format alone is never enough.
+- If the best comp you can think of only matches on format (e.g. "it's also a chapter book"), that is NOT a valid comp. Skip it.
+- DO NOT treat the safe list above as a menu to pick from at random. Only pick a book if it genuinely fits the manuscript's tone AND story engine.
 
 For each comp, provide:
 **Title** by Author Name
-- **Why it fits:** Specific craft comparison — tone, structure, audience, pacing, voice. Not "they are both MG adventures."
+- **Why it fits:** Specific craft comparison hitting AT LEAST TWO of tone, story engine, voice style. Example: "Same deadpan first-person kid humor, same episodic mystery structure, same age-band (6-10)." NOT: "Also a chapter book for kids."
 - **Why it differs:** What's different, and whether that difference HELPS or HURTS the manuscript's marketability. Be honest.
 
-Then end with ONE positioning pitch in "X meets Y" form, using recognizable titles or styles. Good examples: "Diary of a Wimpy Kid meets a fast-paced mystery." "Percy Jackson meets a school-based comedy." Avoid generic phrasing like "fantasy meets adventure" or "a story about friendship and growth."
+Then end with ONE positioning pitch in "X meets Y" form, using recognizable titles. The pitch should combine TWO axes: usually a tone comp + a story-engine comp. Good examples: "Diary of a Wimpy Kid meets Encyclopedia Brown" (funny voice + mystery engine). "Junie B. Jones meets The Notebook of Doom" (chaotic kid voice + spooky mystery). Avoid generic phrasing like "fantasy meets adventure" or "a story about friendship and growth."
 
-If you genuinely cannot find strong comps in the same genre/format, say so honestly: "I can only confidently name [one/two] comp[s] that genuinely fit this manuscript's tone and audience. Better to give you one strong comparison than force three weak ones."
+If you genuinely cannot find strong comps in the same format/audience that also match on tone and story engine, say so honestly: "I can only confidently name [one/two] comp[s] that genuinely fit this manuscript's tone and story engine. Better to give you one strong comparison than force three weak ones."
 
 ### 13. Final Verdict
 2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
