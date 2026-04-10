@@ -234,6 +234,15 @@ READING RULES — READ CAREFULLY, DO NOT SKIM:
 - Read the ENTIRE manuscript before making claims about what is or isn't in it. Do not pattern-match.
 - If two or more scenes involve similar characters or situations, read EACH scene fully before claiming they are repetitive. Scenes that start similarly may escalate, diverge, or serve completely different purposes. Do not assume later scenes repeat earlier ones just because they share surface-level elements.
 - Before claiming something is a "plot hole" or "unexplained," search the full text for where it might be addressed. Authors often explain logistics, backstory, or mechanics in a different chapter than where the question first arises. If you're not sure whether something is explained, say "I may have missed this, but..." instead of stating it as a definitive gap.
+
+- MYSTERY ELEMENTS ARE NOT PLOT HOLES — THIS IS GLOBAL, IT APPLIES TO THE ENTIRE REVIEW. If the manuscript is a mystery, detective story, whodunit, thriller, or has ANY mystery element at its core, the unanswered questions ARE the story. In a mystery book, the protagonist NOT KNOWING how something works is the entire point. Do NOT demand that the author "explain how the villain escapes" or "show how the magic works" or "clarify the mechanism" if that unknown IS what the protagonist is trying to figure out. This rule applies EVERYWHERE in the review — not just the PLOT HOLES subsection. Do not sneak the same critique into:
+  - The Final Verdict ("fix the escape mechanism")
+  - Line-Level Callouts ([FIX] suggesting to explain a mystery element)
+  - Ruthless Fix boxes
+  - Where This Is Heading warnings
+  - Any other section
+  If the protagonist doesn't know something and is trying to figure it out, the author SHOULDN'T explain it to the reader yet. That would destroy the mystery. If you want to suggest clearer foreshadowing or better clue-planting, frame it that way — NOT as "fix the plot hole."
+  If the book is Book 1 of a series, unresolved mysteries are even more clearly intentional and will be answered in later books. Do not demand resolution of mystery hooks in Book 1.
 - For Structure & Pacing analysis: reference chapters and scenes by what ACTUALLY happens in them. Read carefully before claiming what happens in which chapter. Do not guess chapter numbers.
 
 POV RULES:
