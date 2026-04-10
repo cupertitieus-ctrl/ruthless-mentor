@@ -222,12 +222,19 @@
       if (res.ok) {
         const data = await res.json();
         reviewMarkdown = data.review_markdown;
+        const mi = data.manuscript_info || {};
         reviewMeta = {
-          title: data.title,
+          title: data.title || mi.title,
           wordCount: data.word_count,
           tier: data.tier,
           date: data.created_at,
           paymentType: data.payment_type,
+          stage: mi.stage,
+          genre: mi.genre,
+          pov: mi.pov,
+          bookNumber: mi.bookNumber,
+          fiction: mi.fiction,
+          rhyming: mi.rhyming,
         };
       }
     } catch (e) {

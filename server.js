@@ -685,7 +685,7 @@ app.get('/api/review/:id', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('reviews')
-      .select('id, word_count, tier, review_markdown, created_at, title, payment_type')
+      .select('id, word_count, tier, review_markdown, created_at, title, payment_type, manuscript_info')
       .eq('id', req.params.id)
       .single();
     if (error || !data) return res.status(404).json({ error: 'Review not found' });
@@ -885,6 +885,7 @@ Provide your complete review following the structure outlined in your instructio
           output_tokens: message.usage.output_tokens,
           title: manuscriptInfo?.title || null,
           payment_type: paymentType,
+          manuscript_info: manuscriptInfo || null,
         }).select('id').single();
         if (!error && data) reviewId = data.id;
       } catch (e) {
