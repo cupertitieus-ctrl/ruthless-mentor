@@ -281,48 +281,39 @@ Then cover the rest using ALL CAPS bold subheaders. Follow this EXACT format:
 
 **PLOT HOLES:**
 
-CRITICAL: The label for this subsection CHANGES based on the type of manuscript.
+ALWAYS use the header **PLOT HOLES:** regardless of whether this is a standalone or series book. The author needs real, substantive analysis of every unresolved element, consistency issue, and logical question in the manuscript. This subsection must be DETAILED. A numbered list of 3-5 specific observations is expected. "None that I can identify" is almost never the right answer — if you can't find any issues, you are not looking hard enough.
 
-- For a STANDALONE book (no series, not marked as Book N): Use the header **PLOT HOLES:** and list actual plot holes — contradictions, logical impossibilities, things that don't add up within the story itself.
-- For a SERIES book (marked as Book 1, Book 2, etc.) or any manuscript with a clear mystery engine: Use the header **OPEN THREADS & MYSTERY HOOKS:** instead of PLOT HOLES. In series books, the unanswered questions ARE the point — they pull readers to the next book. But the author still needs specific, detailed feedback about whether each thread is working.
-- For a mystery/thriller/detective story (any format): Also use **OPEN THREADS & MYSTERY HOOKS:**.
+What to list under PLOT HOLES:
+- Unresolved story elements readers will wonder about
+- Character behavior that's inconsistent or undermotivated
+- Missing scenes that would anchor key plot moments
+- Worldbuilding or logic gaps
+- Subplots that get introduced and then disappear
+- Questions the narrative raises but doesn't address
 
-EITHER WAY, this subsection should be DETAILED and SPECIFIC. Do not just say "None that I can identify" and move on. The author paid for real analysis. Give them a numbered list of specific observations about each open thread, plot point, or potential issue — but frame each one correctly.
+For each numbered item:
+- Give it a specific, descriptive title (e.g., "How Does Mr. Whiskers Escape?" not "Plot Issue 1")
+- Describe what the manuscript shows and what it leaves out
+- Explain why it matters — what the reader is going to wonder about
+- For SERIES books: if the issue is clearly the central mystery the author is saving for a later book, note that and suggest a single craft move (like "a line earlier that says 'I'd figure out later how he escaped' would anchor this intentionally for the reader"). Don't demand the author resolve it in this book, but DO point out where the reader is going to feel the gap.
+- For STANDALONE books: suggest a specific fix — the scene that's missing, the line that needs to be added, the subplot that needs to be committed to or cut.
+- For every item: the verdict is either "fix it" (standalone) or "plant a single breadcrumb so the reader knows you meant it" (series).
 
-For each numbered item in a SERIES or MYSTERY book:
-- Name the thread (e.g., "1. How Does Mr. Whiskers Escape?")
-- Describe what the manuscript shows and doesn't show
-- Say whether this thread feels intentional (a Book 2 hook that's working) or accidental (a dangling thread with no setup)
-- If it feels intentional, validate it — "This is a smart Book 2 hook, the breadcrumbs are there"
-- If it feels accidental, say so — "This thread gets introduced and then vanishes. Either commit to it or drop it earlier"
-- Suggest one small craft move if applicable — "A single line earlier like 'I'd figure out how he escaped later' would anchor this for the reader"
+EXAMPLE of the right output format — match this exact style and depth:
 
-For a STANDALONE book with REAL plot holes:
-- Name the contradiction
-- Describe exactly why it breaks logic
-- Suggest a specific fix
+**PLOT HOLES:**
 
-RULE: In a SERIES book, never say "this is a plot hole" about a mystery element. But DO list the open threads and give detailed observations about each one. The user wants the SUBSTANCE of a thorough review — just with the correct framing. "None that I can identify" is almost always the wrong answer. Give specific thread-by-thread analysis.
+**1. How Does Mr. Whiskers Escape?** The manuscript never explains how he breaks out of the cage. James suspects the cracked wall, mentions his cousin's hamster, but we never see him chew through or escape. In Chapter 13, he's suddenly out and in the nacho container. A hamster escaping its cage is a huge plot point — this needs a scene, not a head-canon theory. For a Book 1, you could plant a single line like "I'd figure out how he escaped later" to make the withhold feel intentional — but right now, readers will wonder if they missed a page.
 
-EXAMPLE of the right tone for a Book 1 of a series (what the author actually wants to see):
+**2. The Accomplice Subplot.** Chapter 6 spends significant time building suspects (Kevin, Mia, Tyler, Mrs. Fairy). James eliminates them in Chapter 7 when they all look shocked. But the accomplice theory just disappears. Either commit to it (someone really is helping) or drop it earlier so it doesn't feel like a dangling thread.
 
-**OPEN THREADS & MYSTERY HOOKS:**
+**3. What Happened to the Nachos?** We see one chip disappear from the window (Chapter 11), and one chip taken after the nacho bath (Chapter 13). But what about the full trays that vanished in the cafeteria? If Mr. Whiskers is working alone, where are all those nachos? Hidden in the cage? Eaten? This disconnect makes the final reveal feel incomplete.
 
-**1. How Does Mr. Whiskers Escape?** The manuscript never shows us the mechanism. James suspects the cracked wall, mentions his cousin's hamster theory, but we never see him chew through or actually escape. For Book 1, this works — it's the central mystery, and withholding the answer is what pulls readers to Book 2. Just make sure Book 2 actually delivers the reveal in a scene, not just a throwaway line. One small craft move for this book: a single line like "I'd figure out how he escaped later" would anchor the reader in the unresolved nature intentionally.
+**4. Cage Security.** If Mr. Whiskers can break out whenever he wants, why doesn't he escape more often? Why only when nachos are available? The hamster's behavior isn't consistent enough to feel like a real creature with motives — he only moves the plot when the story needs him to.
 
-**2. The Accomplice Subplot.** Chapter 6 spends real time building suspects (Kevin, Mia, Tyler, Mrs. Fairy). James eliminates them in Chapter 7 when they all look shocked. Then the accomplice theory just disappears. This one feels accidental rather than intentional — if someone IS helping Mr. Whiskers, you need one more breadcrumb in a later chapter to keep the thread alive. If no one is helping him, cut the elimination scene entirely so it doesn't feel like a dangling thread.
+Notice: each point is specific (named the exact problem), detailed (describes what the manuscript shows and doesn't show), concrete (references chapters), and actionable (suggests a fix or craft move). That's the bar. Do not produce anything less substantive than this.
 
-**3. What Happened to the Nachos?** We see one chip disappear from the window (Chapter 11), and one chip taken after the nacho bath (Chapter 13). But what about the full trays that vanished in the cafeteria? Is Mr. Whiskers hoarding them somewhere? This disconnect makes the final reveal feel incomplete. Either show a stash in Book 1 or plant a line about it for Book 2 to pay off.
-
-**4. Cage Security.** If Mr. Whiskers can break out whenever he wants, why doesn't he escape more often? He only moves the plot when nachos are available. This reads more like a character consistency issue than a mystery hook — is he motivated by nachos specifically, or is that a coincidence? One line of hamster logic ("He only bothered when the smell hit his cage") would lock this in.
-
-Notice: each point is detailed, specific, and constructive. None of them are framed as "plot holes" — they are framed as observations about open threads, each with a verdict (working / needs one more beat / feels accidental).
-
-STANDALONE EXAMPLE format (when plot holes are real):
-
-**1. The First Issue Title:** Description of the plot hole and why it matters. Specific suggestion for a fix.
-
-**2. The Second Issue Title:** Description...
+CRITICAL GLOBAL RULE: Do NOT say "this is fine because it's Book 1 of a series" and skip the detailed analysis. Series books STILL need substantive plot hole / open thread analysis — the author still benefits from knowing exactly where readers will get confused or feel the gap. The difference is the SUGGESTED FIX: for standalone books, fix the hole; for series books, plant a breadcrumb that signals the withhold is intentional.
 
 **SETTING ACCURACY:**
 
