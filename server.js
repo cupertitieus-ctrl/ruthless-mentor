@@ -451,7 +451,21 @@ Audience size is not "good" or "bad." Broad books scale faster but have more com
 
 **AUDIENCE SIZE & POSITIONING RISK:**
 
-One paragraph. Where does this book sit on the broad-to-niche spectrum? Who will see themselves in it? Describe readers by age, life situation, experience, and interests — NEVER by gender (no "boys who..." or "girls who..."). Does this book take a creative or positioning risk (horror picture book, uncommon rhyme scheme, blended audience, dark theme, unusual format, niche subject matter)? If yes, validate the risk — niche and risky bets are often the most memorable books. Never tell the author to abandon the concept.
+One paragraph. PICK EXACTLY ONE of these three buckets for this book: **BROAD**, **MODERATE**, or **NICHE**. Commit to it. Do not hedge. Do not invent hybrid labels like "broad-to-moderate" or "moderate leaning niche" or "broad but somewhat niche." Pick ONE label and state it plainly.
+
+FORBIDDEN hedge phrases:
+- "This book sits on the broad-to-moderate spectrum"
+- "Leaning toward broad / moderate / niche"
+- "Somewhere between broad and niche"
+- "Broad but with niche elements"
+- Any phrase that combines two buckets into one
+
+REQUIRED format: Start the paragraph with one of these exact openings:
+- "This is a BROAD concept." (then explain why, and who will relate)
+- "This is a MODERATE concept." (then explain why, and who will relate)
+- "This is a NICHE concept." (then explain why, and who will relate)
+
+After picking the bucket, explain WHO will see themselves in this book. Describe readers by age, life situation, experience, and interests — NEVER by gender (no "boys who..." or "girls who..."). Then address positioning risk: does this book take a creative risk (horror picture book, uncommon rhyme scheme, blended audience, dark theme, unusual format, niche subject matter)? If yes, validate the risk — niche and risky bets are often the most memorable books. Never tell the author to abandon the concept.
 
 **SELF-PUBLISHING PATH:**
 
