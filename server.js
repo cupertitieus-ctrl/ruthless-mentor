@@ -245,6 +245,40 @@ function countWords(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+// Stop-word list for word frequency analysis — common function words we ignore
+const WORD_FREQ_STOP_WORDS = new Set([
+  'the', 'a', 'an', 'and', 'or', 'but', 'if', 'then', 'so', 'as', 'at', 'by', 'in', 'on', 'to', 'of', 'for', 'with', 'from', 'into', 'onto', 'up', 'down', 'out', 'off', 'over', 'under', 'again', 'once',
+  'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'done',
+  'i', 'me', 'my', 'mine', 'myself', 'you', 'your', 'yours', 'yourself', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'we', 'us', 'our', 'ours', 'ourselves', 'they', 'them', 'their', 'theirs', 'themselves',
+  'this', 'that', 'these', 'those', 'here', 'there', 'where', 'when', 'who', 'whom', 'whose', 'which', 'what', 'why', 'how',
+  'not', 'no', 'nor', 'only', 'own', 'same', 'too', 'very', 's', 't', 'can', 'will', 'would', 'should', 'could', 'may', 'might', 'must', 'shall', 'ought',
+  'about', 'above', 'after', 'against', 'all', 'any', 'because', 'before', 'below', 'between', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'than', 'through', 'during', 'until', 'while', 'since',
+  'am', 'just', 'also', 'even', 'still', 'ever', 'never', 'now', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+  'said', 'says', 'say', 'saying', 'got', 'get', 'getting', 'go', 'going', 'goes', 'went', 'come', 'coming', 'came', 'comes',
+  'yes', 'yeah', 'okay', 'ok', 'oh', 'um', 'uh', 'like', 'know', 'knew', 'think', 'thought', 'see', 'saw', 'look', 'looked', 'looking',
+]);
+
+// Count word frequencies in manuscript text — returns sorted list of word:count pairs
+// (excluding stop words and words that appear fewer than minCount times)
+function getWordFrequencies(text, minCount = 5, maxResults = 40) {
+  const words = text.toLowerCase()
+    .replace(/[^a-z\s']/g, ' ')  // keep only letters, spaces, apostrophes
+    .split(/\s+/)
+    .filter(Boolean);
+  const counts = {};
+  for (const word of words) {
+    // Strip leading/trailing apostrophes (e.g. 'word')
+    const cleaned = word.replace(/^'|'$/g, '');
+    if (cleaned.length < 3) continue;  // skip 1-2 letter words
+    if (WORD_FREQ_STOP_WORDS.has(cleaned)) continue;
+    counts[cleaned] = (counts[cleaned] || 0) + 1;
+  }
+  return Object.entries(counts)
+    .filter(([, count]) => count >= minCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, maxResults);
+}
+
 // ===== REVIEW PROMPT =====
 const REVIEW_PROMPT = `You are Ruthless Mentor — a brutally honest manuscript reviewer that detects AI slop, evaluates character development, and provides unflinching feedback on manuscripts.
 
@@ -419,7 +453,11 @@ Rate the writing quality from 1 to 10. Do NOT list overused words here — that'
 For every problem you find, quote the exact passage and explain what's wrong with it in plain language.
 
 ### 5. Repeat Word Report
-List every word that's used too much. Use this EXACT format for each word (one per line, no tables, no pipes, no dashes):
+CRITICAL: The author-provided context at the top of this review contains a section called "ACTUAL WORD FREQUENCIES" with pre-counted word frequencies from the manuscript. These counts are computed by code, not estimated. USE THESE EXACT NUMBERS. DO NOT estimate word counts yourself — you will get them wrong. DO NOT invent new counts. DO NOT round the numbers. Copy the exact counts provided.
+
+Pick the 5-12 most interesting overused words from the ACTUAL WORD FREQUENCIES list — prioritizing words that are genuinely being used as crutch words (not just words that naturally repeat like character names). Skip character names, proper nouns, and words whose repetition makes sense given the subject matter (e.g. "hamster" in a book about a hamster isn't overuse — it's the subject).
+
+Use this EXACT format for each word (one per line, no tables, no pipes, no dashes):
 
 **"word"** (Xx) — brief description of how it's used
 
@@ -427,7 +465,12 @@ Example:
 **"just"** (19x) — filler throughout: "I just put them down," "just for a split second," weakens prose
 **"staring"** (13x) — used repeatedly for the hamster: "staring straight at me," "just staring"
 
-Do NOT use markdown tables. Do NOT use | or --- characters. Just bold word, count in parentheses, dash, description.
+RULES:
+- Only use counts from the ACTUAL WORD FREQUENCIES list. If a word isn't on the list, do NOT mention it with a count.
+- If the ACTUAL WORD FREQUENCIES list is empty or missing, say "No words appeared frequently enough to flag as overused."
+- Do NOT list words that appear fewer than 5 times.
+- Do NOT include character names or proper nouns even if they're on the list (unless they're being used as something other than a name).
+- Do NOT use markdown tables. Do NOT use | or --- characters.
 
 ### 6. Depth Check
 Does the story actually deal with its themes or just skim the surface? Rate it: Shallow / Surface / Adequate / Deep / Unflinching. Explain why.
@@ -1175,6 +1218,13 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   }
   const context = buildManuscriptContext(manuscriptInfo);
 
+  // Pre-compute word frequencies so Claude doesn't have to estimate (and get them wrong)
+  const wordFreqs = getWordFrequencies(text, 5, 40);
+  const freqContext = wordFreqs.length > 0
+    ? '\n\nACTUAL WORD FREQUENCIES (pre-counted from the manuscript — use these exact counts in the Repeat Word Report, do not estimate):\n' +
+      wordFreqs.map(([word, count]) => `- "${word}": ${count}`).join('\n')
+    : '\n\nACTUAL WORD FREQUENCIES: No words (excluding character names and common function words) appeared 5 or more times.';
+
   console.log(`[REVIEW] ${req.user ? req.user.email : 'anonymous'} | ${wordCount} words | ${tier.name} | $${totalCost}`);
   try {
     const message = await client.messages.create({
@@ -1183,7 +1233,7 @@ app.post('/api/review', optionalAuth, async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Please review the following manuscript/text. It is ${wordCount} words long and categorized as "${tier.name}".${context}
+          content: `Please review the following manuscript/text. It is ${wordCount} words long and categorized as "${tier.name}".${context}${freqContext}
 
 IMPORTANT: Adjust your critique standards to match the genre and age group.
 
@@ -1636,6 +1686,13 @@ async function runPaidReviewFromPending(pendingId, session) {
   const tier = getTier(wordCount);
   const genre = session.metadata?.genre || '';
 
+  // Pre-compute word frequencies so Claude uses real counts in the Repeat Word Report
+  const paidWordFreqs = getWordFrequencies(savedText, 5, 40);
+  const paidFreqContext = paidWordFreqs.length > 0
+    ? '\n\nACTUAL WORD FREQUENCIES (pre-counted from the manuscript — use these exact counts in the Repeat Word Report, do not estimate):\n' +
+      paidWordFreqs.map(([word, count]) => `- "${word}": ${count}`).join('\n')
+    : '\n\nACTUAL WORD FREQUENCIES: No words (excluding character names and common function words) appeared 5 or more times.';
+
   console.log(`[PAID REVIEW] Generating review for pending ${pendingId} (${wordCount} words)`);
 
   const message = await client.messages.create({
@@ -1643,7 +1700,7 @@ async function runPaidReviewFromPending(pendingId, session) {
     max_tokens: 16000,
     messages: [{
       role: 'user',
-      content: `Review this manuscript (${wordCount} words, "${tier.name}" category, genre: "${genre}", stage: "${savedInfo.stage || 'unknown'}", POV: "${savedInfo.pov || 'unknown'}"):\n\n---\n\n${savedText}\n\n---\n\nProvide your complete review following the structure in your instructions.`
+      content: `Review this manuscript (${wordCount} words, "${tier.name}" category, genre: "${genre}", stage: "${savedInfo.stage || 'unknown'}", POV: "${savedInfo.pov || 'unknown'}"):${paidFreqContext}\n\n---\n\n${savedText}\n\n---\n\nProvide your complete review following the structure in your instructions.`
     }],
     system: REVIEW_PROMPT
   });
