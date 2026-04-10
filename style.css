@@ -151,7 +151,7 @@ h3{font-size:.92rem;font-weight:600;margin-bottom:.3rem}
 @media(max-width:600px){.time-label{width:80px;font-size:.75rem}.time-fill{font-size:.7rem}}
 
 /* TESTIMONIALS */
-#testimonials{padding:4rem 2rem;max-width:1200px;margin:0 auto}
+#testimonials{padding:1.5rem 2rem 4rem;max-width:1200px;margin:0 auto}
 .testimonials-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
 .testimonial-card{background:#fff;border:1px solid #e8e3dc;border-radius:12px;padding:2rem;position:relative}
 .testimonial-stars{color:#f57c00;font-size:1.1rem;margin-bottom:.8rem;letter-spacing:2px}
