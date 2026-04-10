@@ -685,7 +685,7 @@ app.get('/api/review/:id', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
       .from('reviews')
-      .select('id, word_count, tier, review_markdown, created_at')
+      .select('id, word_count, tier, review_markdown, created_at, title, payment_type')
       .eq('id', req.params.id)
       .single();
     if (error || !data) return res.status(404).json({ error: 'Review not found' });

@@ -223,9 +223,11 @@
         const data = await res.json();
         reviewMarkdown = data.review_markdown;
         reviewMeta = {
+          title: data.title,
           wordCount: data.word_count,
           tier: data.tier,
           date: data.created_at,
+          paymentType: data.payment_type,
         };
       }
     } catch (e) {
@@ -266,8 +268,9 @@ function renderReport(md, meta) {
   }
   metaRows += `<tr><td>Review Date:</td><td>${date}</td></tr>`;
   if (meta.stage) metaRows += `<tr><td>Status:</td><td>${esc(stageLabels[meta.stage] || meta.stage)}</td></tr>`;
-  metaRows += `<tr><td>Word Count:</td><td>~${(meta.wordCount || 0).toLocaleString()} words</td></tr>`;
+  if (meta.wordCount) metaRows += `<tr><td>Word Count:</td><td>~${(meta.wordCount || 0).toLocaleString()} words</td></tr>`;
   if (meta.genre) metaRows += `<tr><td>Target Age:</td><td>${esc(genreLabels[meta.genre] || meta.genre)}</td></tr>`;
+  else if (meta.tier) metaRows += `<tr><td>Type:</td><td>${esc(meta.tier)}</td></tr>`;
 
   // Parse markdown into HTML with special rendering
   const reviewHtml = parseReviewMarkdown(md);
