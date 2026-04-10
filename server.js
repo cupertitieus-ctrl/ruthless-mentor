@@ -559,7 +559,7 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
     // Now fetch all reviews belonging to this user
     const { data, error } = await supabaseAdmin
       .from('reviews')
-      .select('id, word_count, tier, price, review_markdown, created_at, title, payment_type')
+      .select('id, word_count, tier, price, review_markdown, created_at, title, payment_type, manuscript_info')
       .eq('user_id', req.user.id)
       .order('created_at', { ascending: false });
     if (error) return res.status(500).json({ error: 'Failed to load reviews' });

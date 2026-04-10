@@ -209,13 +209,19 @@ async function loadReviews() {
 // ===== OPEN REPORT PAGE =====
 function openReport(r) {
     sessionStorage.setItem('rm_review', r.review_markdown);
+    const mi = r.manuscript_info || {};
     sessionStorage.setItem('rm_meta', JSON.stringify({
         wordCount: r.word_count,
         tier: r.tier,
-        stage: '',
-        genre: '',
-        pov: '',
-        date: r.created_at
+        date: r.created_at,
+        paymentType: r.payment_type,
+        title: r.title || mi.title || '',
+        stage: mi.stage || '',
+        genre: mi.genre || '',
+        pov: mi.pov || '',
+        bookNumber: mi.bookNumber || '',
+        fiction: mi.fiction || '',
+        rhyming: mi.rhyming || ''
     }));
     window.location.href = '/report.html';
 }
