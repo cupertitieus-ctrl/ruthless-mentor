@@ -7,6 +7,9 @@ let _subscription = null;
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
             _session = session;
+            // Show dashboard link in nav
+            const dashLink = document.getElementById('dashboard-nav-link');
+            if (dashLink) dashLink.style.display = '';
             // Hide email field — we already have the user's email from their account
             const emailField = document.getElementById('email-field-group');
             const emailInput = document.getElementById('q-email');
