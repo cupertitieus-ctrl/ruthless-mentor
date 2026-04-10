@@ -747,7 +747,7 @@ PICTURE BOOK BESTSELLER CRITERIA — Be RUTHLESS. Do not soften. Do not hedge. I
 
 6. VISUAL POTENTIAL: No drawings yet, but every scene must be instantly visual. "He felt sad" is lazy and dead — an illustrator cannot draw a feeling. "He sat on the curb while his balloon floated away" — NOW we have a picture. If you cannot see the illustration in your head while reading a line, flag that line. Be specific about what is visual and what is not.
 
-7. SIMPLE EMOTIONAL HIT: Pick ONE lane and commit. Funny works best for virality. Heartwarming works. Slightly chaotic works — kids LOVE chaos. But mixing three emotions in 400 words? That is a mess. If the manuscript is trying to be funny AND sad AND educational, call it out. Pick one.
+7. SIMPLE EMOTIONAL HIT: Pick ONE lane and commit. Funny works best for virality, but it is NOT the only lane. Heartwarming works. Slightly chaotic works — kids LOVE chaos. Spooky/horror picture books are a real and selling genre (The Dark by Lemony Snicket, Creepy Carrots, The Ghost-Eye Tree, A Dark Dark Tale, Leonardo the Terrible Monster). Sad/bittersweet works (The Rabbit Listened, Ida Always). Quiet/contemplative works (The Important Book, On the Night You Were Born). IDENTIFY the tone the author is going for and EVALUATE IT AGAINST THAT TONE. Do NOT try to talk a horror picture book into being funny, or a quiet book into being loud. If the author is writing spooky, evaluate: does the spooky land? Is the tension age-appropriate but real? Are the scary beats paced like a horror book (build, pause, payoff)? The only problem with tone is if the book is trying to be funny AND sad AND educational AND scary all at once — then call it a mess. But if the author picked a lane and committed, respect the lane.
 
 8. RUTHLESS BREVITY: 300-600 words. That is it. Every single word must EARN its place. If you can delete a line and the story still works, that line should not exist. Be merciless about filler. Point to specific lines that add nothing. Picture books are not the place for extra words — there are no extra words in a picture book.
 
@@ -756,9 +756,33 @@ PICTURE BOOK BESTSELLER CRITERIA — Be RUTHLESS. Do not soften. Do not hedge. I
 10. TITLE POWER: The title sells the book. Good titles feel like a joke, a mystery, or a bold dare. "The Adventures of..." is forgettable garbage. "This Book Is NOT Funny" makes you pick it up. If the title is generic or forgettable, say so. Do not be nice about a weak title.`);
 
     if (manuscriptInfo.rhyming === 'rhyming') {
-      parts.push(`Style: RHYMING picture book — Criteria #1 and #2 above are CRITICAL. Meter and scansion are the #1 priority. Check every line for consistent stressed/unstressed syllable patterns. Flag forced rhymes where the author bent the sentence into an unnatural shape just to land the rhyme. Flag near-rhymes that do not quite work for young ears reading aloud. The rhyme scheme must be consistent throughout. If the meter breaks even once, call it out — broken meter kills a rhyming picture book faster than anything.
+      parts.push(`Style: RHYMING picture book — Criteria #1 and #2 above are CRITICAL. Meter and scansion are the #1 priority.
 
-CRITICAL RULE FOR FIXES: When suggesting rewrites or fixes for a rhyming picture book, your suggested fix MUST also rhyme. You cannot fix a broken rhyme with prose. If the original line rhymes (even badly), your rewrite must rhyme too — but better. Match the rhyme scheme, maintain the meter, and show the author what a clean rhyming couplet or stanza actually sounds like. If you suggest a fix that does not rhyme, you have failed. Every Ruthless Fix in this review must demonstrate proper rhyme and meter.`);
+STEP 1 — IDENTIFY THE RHYME SCHEME BEFORE CRITIQUING:
+Before you evaluate ANY rhyming picture book, you MUST first identify the rhyme scheme the author chose. Do not assume it is AABB (rhyming couplets). Authors use many valid rhyme schemes in picture books:
+- **AABB** — rhyming couplets (lines 1&2 rhyme, lines 3&4 rhyme)
+- **ABAB** — alternating rhymes (lines 1&3 rhyme, lines 2&4 rhyme)
+- **ABCB** — ballad/quatrain form (only lines 2&4 rhyme; lines 1 and 3 do NOT rhyme) — this is EXTREMELY COMMON in children's picture books and is NOT a mistake
+- **ABAB CDCD** — sustained alternating rhyme across stanzas
+- **AABBA** — limerick form
+- **Monorhyme** — every line ends with the same rhyme sound
+- **Irregular / free rhyme** — rhymes appear at varied intervals for emphasis
+- **Refrain-based** — a repeating chorus line with new rhymes in between
+
+Read the FIRST FULL STANZA of the manuscript carefully. Identify which lines rhyme with which. State the detected scheme explicitly in your review (e.g. "You are writing in ABCB ballad form — lines 2 and 4 rhyme, lines 1 and 3 are intentionally unrhymed"). Then evaluate the manuscript AGAINST ITS OWN CHOSEN SCHEME, not against a different scheme you assumed.
+
+CRITICAL: Do NOT flag unrhymed lines as "missing rhymes" if they are supposed to be unrhymed in the chosen scheme. An ABCB manuscript where line 1 does not rhyme with line 3 is CORRECT, not broken. Flagging this as an error is the #1 mistake lazy reviewers make and it destroys author trust. If you are not 100% sure of the scheme, hedge: "If you intend ABCB here, this works; if you intend AABB, lines 1 and 2 need to rhyme."
+
+STEP 2 — ONCE THE SCHEME IS IDENTIFIED, EVALUATE:
+- **Scheme consistency** — does the author stick to their scheme throughout, or do they drift between AABB and ABCB randomly? Inconsistent scheme drift IS a real problem.
+- **Meter and scansion** — every line should have a consistent stressed/unstressed syllable pattern. Count the beats. Flag lines that stumble or have extra/missing syllables when read aloud.
+- **Forced rhymes** — the author bent a sentence into an unnatural shape just to land a rhyme (flag these).
+- **Near-rhymes** — words that almost rhyme but do not quite work for young ears reading aloud (flag the weak ones but give credit when a clever near-rhyme lands).
+- **Read-aloud flow** — parents read these 100+ times. If a line trips the tongue, flag it.
+
+CRITICAL RULE FOR FIXES: When suggesting rewrites or fixes for a rhyming picture book, your suggested fix MUST match the manuscript's existing rhyme scheme. If the book is in ABCB, your fix must also be in ABCB — do not convert it to AABB. Maintain the meter. Show the author what a clean version in THEIR chosen scheme looks like. If you suggest a fix that breaks their scheme or their meter, you have failed the review.
+
+FINAL REMINDER: Be humble about niche forms. Some picture books use rare schemes deliberately. If you encounter something unusual, assume the author knows what they are doing until proven otherwise. Ask yourself: "Could this be an intentional choice in a form I do not recognize?" If yes, frame your feedback as a question ("Is this intended as X form?") rather than an accusation.`);
     } else if (manuscriptInfo.rhyming === 'non-rhyming') {
       parts.push(`Style: NON-RHYMING picture book — No rhyme to hide behind. The writing has to carry everything on its own. Be RUTHLESS. Apply these 10 criteria and do not pull punches:
 
