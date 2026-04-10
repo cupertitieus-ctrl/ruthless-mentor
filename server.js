@@ -463,7 +463,7 @@ Examples of BAD openings (FORBIDDEN):
 
 The opening should feel like a real writing teacher talking to a real writer. Ruthless, honest, warm, direct. Plain English. Like the rest of the review.
 
-Then produce EXACTLY SEVEN bolded subsections, in this fixed order, using these exact labels every single review (no variation, no adaptive picks, no renaming):
+Then produce EXACTLY EIGHT bolded subsections, in this fixed order, using these exact labels every single review (no variation, no adaptive picks, no renaming):
 
 **The first page test:** Would a reader stop scrolling and actually open this book based on the first page alone? Be brutally honest. The first page is what sells the book — at a bookstore, on Amazon's "Look Inside," in a library, in a sample download. A reader decides in 30 seconds whether to keep reading. Look at THIS specific manuscript's actual opening: does it hook? Does the first line pull the reader in? Does the first paragraph earn the second paragraph? Is the voice immediately alive, or does the opening warm up for half a page before the story starts? Name the exact strength or weakness of the opening. If the first page doesn't work, say specifically what needs to change — a sharper first line, cutting the first two paragraphs, starting in-scene instead of summary, leading with voice instead of setup. 3-6 sentences.
 
@@ -473,6 +473,16 @@ Then produce EXACTLY SEVEN bolded subsections, in this fixed order, using these 
 
 **What makes this book stand out:** The honest look at the book's differentiator. What is the specific thing about this manuscript that could make a reader pick it up over another book in the same space — OR the specific gap where there isn't enough differentiation yet. Name the exact craft elements (voice, humor, concept, premise freshness, character specificity) doing the work or failing to do the work. For books that stand out well, celebrate specifically what's working. For books that don't yet, be specific about what needs to sharpen. No book title references — describe characteristics in craft terms only. 3-6 sentences.
 
+**The 3-sentence pitch test:** Can this book be summarized in a 3-sentence pitch? This is a concept-clarity test. If a book is well-positioned, it can be described cleanly in three sentences: one sentence for the setup, one for the conflict/hook, and one for the stakes or tone. If it can't, that's a sign the concept is muddled — too many plotlines, unclear protagonist goal, blended genres that confuse the pitch, or the book is trying to do too much at once.
+
+Do one of two things (pick the one that's honest):
+
+(a) **WRITE the actual 3-sentence pitch for this manuscript.** Start with "Here's the pitch:" and then write three real sentences that summarize the book cleanly. Example format: "Here's the pitch: [Setup sentence — who the protagonist is and what their world looks like.] [Conflict sentence — what happens that disrupts the world and what the protagonist has to do about it.] [Hook sentence — what makes it funny/scary/heartbreaking/urgent, or what's at stake.]"
+
+(b) **HONESTLY say you can't.** If the concept is too muddled, too sprawling, or trying to be too many things at once, say so directly: "Honestly? I can't write a clean 3-sentence pitch for this book yet — and that's a problem. Here's why: [specific reason — e.g., the protagonist's goal shifts three times, the genre blends in a way that loses both audiences, there are three parallel plotlines competing for attention]. Here's what would need to happen to make this pitchable: [specific craft move — e.g., commit to the mystery engine and drop the friendship subplot, pick one emotional throughline, clarify whose story this really is]."
+
+Do not fake-succeed. If the book is genuinely muddled, failing this test honestly is more valuable feedback than writing a pitch that doesn't really capture it. 4-8 sentences (longer because you're writing an actual pitch or explaining why you can't).
+
 **What will readers feel:** What is the book actually trying to make the reader FEEL — and does it land? Use plain-English feeling words like "laugh out loud," "worry about the character," "miss someone," "feel seen," "want to solve the mystery with them," "feel scared in a fun way." Never use vague industry jargon like "emotional resonance" or "emotional stakes" or "tonal depth" — those phrases are BANNED, they don't mean anything to a real person. Say exactly what the feeling is and whether the manuscript actually delivers it. If it doesn't land yet, say specifically which scenes or moments should be landing harder and why they aren't. 3-6 sentences.
 
 **The reread factor:** Will a reader come back to this book — or is it one-and-done? For picture books and chapter books this matters most: parents read bedtime books 100+ times, kids reread their favorites until the covers fall off. For middle grade and YA, the reread factor means "would a reader come back for more." Be honest: does this manuscript have the rewatchable/rereadable quality, or is it a single-sitting book that won't survive the shelf? Name the specific craft elements that create reread value: a repeating joke that lands better on the second read, a mystery whose clues pay off differently on reread, a voice so specific you want to hear it again, characters so alive you miss them when the book ends. For books that don't have reread value yet, say specifically what's missing — usually it's voice specificity, a memorable phrase or running joke, or a character that leaves an impression. 3-6 sentences.
@@ -481,9 +491,9 @@ Then produce EXACTLY SEVEN bolded subsections, in this fixed order, using these 
 
 === UNIVERSAL RULES FOR SECTION 11 ===
 
-- ALWAYS produce exactly seven subsections in this fixed order, with these exact labels: "The first page test", "Who will relate", "The size calculation", "What makes this book stand out", "What will readers feel", "The reread factor", "The word-of-mouth factor." Do not add adaptive subsections. Do not rename them. Do not skip any.
-- Section 11 should be the opening (1-2 sentences) + seven bolded subsections. Shallow one-paragraph answers are BANNED.
-- DO NOT include any publishing path discussion — no self-publishing vs. traditional publishing, no query-letter advice, no marketing tactics. This section is about AUDIENCE, differentiation, reader feelings, opening, reread value, and word-of-mouth ONLY.
+- ALWAYS produce exactly eight subsections in this fixed order, with these exact labels: "The first page test", "Who will relate", "The size calculation", "What makes this book stand out", "The 3-sentence pitch test", "What will readers feel", "The reread factor", "The word-of-mouth factor." Do not add adaptive subsections. Do not rename them. Do not skip any.
+- Section 11 should be the opening (1-2 sentences) + eight bolded subsections. Shallow one-paragraph answers are BANNED.
+- DO NOT include any publishing path discussion — no self-publishing vs. traditional publishing, no query-letter advice, no marketing tactics. This section is about AUDIENCE, differentiation, reader feelings, opening, reread value, pitchability, and word-of-mouth ONLY.
 - NEVER use vague industry jargon. Banned phrases include: "emotional resonance", "emotional stakes", "tonal depth", "thematic weight", "narrative gravity", "visceral impact." Real people don't talk like that. Use plain English. Say exactly what the feeling is and whether it works.
 
 - ABSOLUTELY FORBIDDEN: specific sales number predictions. You do NOT know what any book will sell. NEVER say things like:
