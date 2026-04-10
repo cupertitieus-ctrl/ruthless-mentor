@@ -259,22 +259,55 @@ const WORD_FREQ_STOP_WORDS = new Set([
 ]);
 
 // Count word frequencies in manuscript text — returns sorted list of word:count pairs
-// (excluding stop words and words that appear fewer than minCount times)
+// (excluding stop words, proper nouns, and words that appear fewer than minCount times)
 function getWordFrequencies(text, minCount = 5, maxResults = 40) {
-  const words = text.toLowerCase()
-    .replace(/[^a-z\s']/g, ' ')  // keep only letters, spaces, apostrophes
-    .split(/\s+/)
-    .filter(Boolean);
-  const counts = {};
-  for (const word of words) {
-    // Strip leading/trailing apostrophes (e.g. 'word')
-    const cleaned = word.replace(/^'|'$/g, '');
-    if (cleaned.length < 3) continue;  // skip 1-2 letter words
-    if (WORD_FREQ_STOP_WORDS.has(cleaned)) continue;
-    counts[cleaned] = (counts[cleaned] || 0) + 1;
+  // First pass: track both lowercase and capitalized counts for each word
+  // to detect proper nouns (character names, place names, etc.)
+  const totalCounts = {};
+  const capitalizedCounts = {};
+
+  // Tokenize while preserving case and tracking sentence boundaries
+  // A word is "sentence-start-capitalized" if it's the first word after a period/!/?/newline
+  const lines = text.split(/\n/);
+  for (const line of lines) {
+    // Split line into sentences so we know which positions are sentence-initial
+    const sentences = line.split(/(?<=[.!?])\s+/);
+    for (const sentence of sentences) {
+      const tokens = sentence.split(/\s+/).filter(Boolean);
+      tokens.forEach((token, idx) => {
+        // Strip punctuation from edges
+        const cleaned = token.replace(/^[^\w']+|[^\w']+$/g, '');
+        if (!cleaned) return;
+        const lower = cleaned.toLowerCase();
+        if (lower.length < 3) return;
+        if (WORD_FREQ_STOP_WORDS.has(lower)) return;
+        if (!/^[a-zA-Z']+$/.test(cleaned)) return; // skip tokens with digits/symbols
+
+        totalCounts[lower] = (totalCounts[lower] || 0) + 1;
+
+        // Check if the token is capitalized (first letter uppercase)
+        const isCapitalized = /^[A-Z]/.test(cleaned);
+        // Don't count capitalization if this is the first word of the sentence
+        // (because "Hamster" at sentence start doesn't prove it's a proper noun)
+        if (isCapitalized && idx > 0) {
+          capitalizedCounts[lower] = (capitalizedCounts[lower] || 0) + 1;
+        }
+      });
+    }
   }
-  return Object.entries(counts)
-    .filter(([, count]) => count >= minCount)
+
+  // Filter out proper nouns: if a word appears capitalized in the middle of sentences
+  // at least 40% as often as it appears total, it's probably a proper noun
+  const filtered = [];
+  for (const [word, count] of Object.entries(totalCounts)) {
+    if (count < minCount) continue;
+    const capCount = capitalizedCounts[word] || 0;
+    // If the word is capitalized in 40%+ of mid-sentence appearances, skip it
+    if (capCount >= count * 0.4) continue;
+    filtered.push([word, count]);
+  }
+
+  return filtered
     .sort((a, b) => b[1] - a[1])
     .slice(0, maxResults);
 }
