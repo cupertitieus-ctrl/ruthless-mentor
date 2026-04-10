@@ -7,6 +7,14 @@ let _subscription = null;
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
             _session = session;
+            // Hide email field — we already have the user's email from their account
+            const emailField = document.getElementById('email-field-group');
+            const emailInput = document.getElementById('q-email');
+            if (emailField) emailField.style.display = 'none';
+            if (emailInput) {
+                emailInput.value = session.user.email;
+                emailInput.removeAttribute('required');
+            }
             // Check for subscription credits
             try {
                 const subRes = await fetch('/api/subscription', {
