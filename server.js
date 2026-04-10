@@ -194,13 +194,48 @@ async function requireAuth(req, res, next) {
   }
 }
 
-// ===== TIERS =====
+// ===== TIERS (legacy word-count tiers — used for display names only) =====
 const TIERS = [
-  { name: "Children's / Picture Book", max: 5000, price: 5 },
-  { name: 'Chapter Book', max: 25000, price: 10 },
-  { name: 'Middle Grade / Young Adult', max: 100000, price: 15 },
-  { name: 'Adult', max: Infinity, price: 20 },
+  { name: "Children's / Picture Book", max: 5000, price: 15 },
+  { name: 'Chapter Book', max: 25000, price: 15 },
+  { name: 'Middle Grade / Young Adult', max: 100000, price: 20 },
+  { name: 'Adult', max: Infinity, price: 25 },
 ];
+
+// ===== GENRE PRICING (authoritative — used everywhere) =====
+// Prices in cents. Must match review.js GENRE_PRICES (in dollars).
+const GENRE_PRICES_CENTS = {
+  'picture-book': 1500,
+  'early-reader': 1500,
+  'chapter-book': 1500,
+  'middle-grade': 2000,
+  'young-adult': 2000,
+  'literary-fiction': 2500,
+  'genre-fiction': 2500,
+  'memoir': 2500,
+  'screenplay': 2500,
+};
+
+const GENRE_NAMES_MAP = {
+  'picture-book': "Children's / Picture Book",
+  'early-reader': 'Early Reader',
+  'chapter-book': 'Chapter Book',
+  'middle-grade': 'Middle Grade',
+  'young-adult': 'Young Adult',
+  'literary-fiction': 'Literary Fiction',
+  'genre-fiction': 'Genre Fiction',
+  'memoir': 'Memoir',
+  'screenplay': 'Screenplay',
+};
+
+// Get the dollar price for a given genre (falls back to word-count tier if no genre)
+function getGenrePriceDollars(genre, wordCount) {
+  const cents = GENRE_PRICES_CENTS[genre];
+  if (cents !== undefined) return cents / 100;
+  // Fallback: use word-count tier
+  const tier = getTier(wordCount);
+  return tier ? tier.price : 15;
+}
 
 function getTier(wordCount) {
   return TIERS.find(t => wordCount <= t.max);
@@ -1036,7 +1071,7 @@ THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive
 
 // ===== SUBMIT REVIEW =====
 app.post('/api/review', optionalAuth, async (req, res) => {
-  const { text, manuscriptInfo, email } = req.body;
+  const { text, manuscriptInfo, email, couponCode } = req.body;
 
   if (!text || !text.trim()) {
     return res.status(400).json({ error: 'No text provided' });
@@ -1049,10 +1084,36 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   }
 
   const tier = getTier(wordCount);
-  let totalCost = tier.price;
+  // Use GENRE-based pricing (the authoritative source), not the old word-count tier price
+  const genre = manuscriptInfo?.genre;
+  let totalCost = getGenrePriceDollars(genre, wordCount);
   let usedCredit = false;
+  let couponApplied = null;
 
-  // Check if user has subscription credits
+  // Apply coupon if provided — server-side validation and price calculation
+  if (couponCode) {
+    const upperCoupon = couponCode.trim().toUpperCase();
+    const coupon = COUPONS[upperCoupon];
+    if (coupon) {
+      // Check usage limits for limited-use coupons
+      let usable = true;
+      if (coupon.maxUses) {
+        const useCount = await getCouponUseCount(upperCoupon);
+        if (useCount >= coupon.maxUses) usable = false;
+      }
+      if (usable) {
+        if (coupon.type === 'free') totalCost = 0;
+        else if (coupon.type === 'percent') totalCost = Math.max(0, totalCost - (totalCost * coupon.discount / 100));
+        else if (coupon.type === 'fixed') totalCost = Math.max(0, totalCost - coupon.discount);
+        else if (coupon.type === 'fixed_price') totalCost = coupon.discount;
+        couponApplied = upperCoupon;
+        // Mark limited-use coupon as used
+        if (coupon.maxUses) await markCouponUsed(upperCoupon);
+      }
+    }
+  }
+
+  // Check if user has subscription credits (overrides any pricing)
   if (req.user && supabaseAdmin) {
     try {
       const { data: sub } = await supabaseAdmin.from('subscriptions')

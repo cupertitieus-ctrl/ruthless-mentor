@@ -405,7 +405,9 @@ async function runReview(text, manuscriptInfo) {
         if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
 
         const pendingEmail = sessionStorage.getItem('rm_pending_email') || '';
-        const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo, email: pendingEmail }) });
+        // Pass the applied coupon code so the server can correctly set the stored price
+        const pendingCoupon = appliedCoupon && couponInput ? couponInput.value.trim() : null;
+        const reviewRes = await fetch('/api/review', { method: 'POST', headers, body: JSON.stringify({ text, manuscriptInfo, email: pendingEmail, couponCode: pendingCoupon }) });
         const reviewText = await reviewRes.text();
         let reviewData;
         try { reviewData = JSON.parse(reviewText); } catch (e) {
