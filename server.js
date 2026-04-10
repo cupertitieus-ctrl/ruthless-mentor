@@ -363,7 +363,7 @@ Focus on the protagonist (main character) only. Use this format:
 
 **Character Name** — Grade: X
 
-Give the main character a letter grade (A through F) and do a DEEP dive:
+Give the main character a letter grade. VALID GRADES ARE ONLY: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F. There is NO grade of "E" — traditional letter grading skips E and goes from D to F. Do not invent grades. Do DEEP dive:
 - What's working (with specific examples from the text)
 - What's not working (with specific examples)
 - Motivation: Does the character want something specific and believable?
@@ -379,7 +379,7 @@ Brief summary for each supporting character. Use this format for each:
 
 **Character Name** — Grade: X
 
-Keep it to 2-3 sentences per supporting character. Hit the key points: what they add to the story, whether they feel like a real person or just a plot device, and one thing to improve. Don't do the full deep dive — just the essentials.
+VALID GRADES ARE ONLY: A+, A, A-, B+, B, B-, C+, C, C-, D+, D, D-, F. There is NO grade of "E". Keep it to 2-3 sentences per supporting character. Hit the key points: what they add to the story, whether they feel like a real person or just a plot device, and one thing to improve. Don't do the full deep dive — just the essentials.
 
 ### 9. Line-Level Callouts
 Pull at least 5-10 specific passages. For each one, use this exact format:
@@ -848,6 +848,24 @@ THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive
     if (manuscriptInfo.fiction === 'non-fiction') {
       parts.push(`Non-fiction picture book criteria: Evaluate accuracy of information for the age group, whether facts are presented in an engaging narrative way, whether the text sparks curiosity, and whether complex concepts are simplified without being dumbed down. Non-fiction picture books still need a strong narrative thread and must still hit criteria #3-#9 above. Facts alone are not enough.`);
     }
+  }
+
+  // Screenplay-specific overrides for Market Reality Check and Comparable Books
+  if (manuscriptInfo.genre === 'screenplay') {
+    parts.push(`SCREENPLAY OVERRIDE for Section 11 (Market Reality Check): Do NOT use book industry language like "query trenches", "agents and editors", "bookstore shelf", or "readers". This is a screenplay. Use screenplay industry framing:
+
+- The market is producers, managers, production companies, studios, streamers, and festival programmers — NOT agents and editors.
+- Positioning risk for a screenplay includes: genre budget (horror and thrillers are cheap; sci-fi, period, and fantasy are expensive and harder to greenlight from an unknown writer); format risk (limited series vs feature vs short); log line clarity (can you pitch this in one sentence in a room?); IP availability (is this based on something the writer owns or is it a derivative that needs rights?); commercial vs festival positioning (is this aimed at a Sundance slot or a wide theatrical release?).
+- The "marketing budget" line from the book version should become: "You will need a sharper log line, a stronger calling-card writing sample, and likely a producer or manager willing to take this out to the town. For expensive-to-produce concepts, expect a longer road to greenlight."
+- Validate the risk. Never tell them to abandon a spec that is hard to sell. Many of the best specs are the risky ones. Just be honest about the cost of entry.
+
+SCREENPLAY OVERRIDE for Section 12: Rename the section to "### 12. Comparable Films & Shows" (NOT "Comparable Books"). DO NOT cite books as comps for a screenplay. Only cite films and television shows. Follow the same rules: household-name only, never fabricate, never force three, same format (feature film comps for feature scripts, TV comps for pilots, limited series comps for limited).
+
+Safe screenplay comp list — stick to instantly recognizable titles you are certain about. Examples (not exhaustive): Features — Get Out, A Quiet Place, Whiplash, Little Miss Sunshine, Knives Out, Parasite, The Social Network, Juno, Lady Bird, Good Will Hunting, The Dark Knight, Mad Max: Fury Road, Everything Everywhere All At Once, CODA, Moonlight, Nomadland. TV — Breaking Bad, Succession, Ted Lasso, The Bear, Fleabag, Severance, Stranger Things, Game of Thrones, The Office, Schitt's Creek, Ozark, Yellowjackets.
+
+For each comp provide: **Title** (year, Director or Creator) — Why it fits (tone/structure/audience/format), Why it differs (helps or hurts the spec).
+
+End with ONE log line style pitch in "X meets Y" form using recognizable films or shows. This is the most important output of the screenplay version — producers ACTUALLY use "X meets Y" pitches in rooms. Good: "Get Out meets A Quiet Place." "Succession meets Ted Lasso." Bad: "thriller meets drama" (too vague). "An obscure French film meets an indie nobody has seen" (too niche).`);
   }
 
   return parts.length ? '\n\nAuthor-provided context:\n' + parts.join('\n') : '';
