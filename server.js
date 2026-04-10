@@ -525,26 +525,33 @@ Do not fake-succeed. If the book is genuinely muddled, failing this test honestl
 - Reference the specific manuscript wherever possible — character names, scenes, wordcount, specific craft elements. Never generic.
 
 ### 12. Final Verdict
-2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
+4-6 flowing paragraphs of warm, ruthless, direct human prose. This is the closing voice of the review — it should feel like a real writing teacher wrapping up a conversation with the author, not a structured template.
 
-SERIES BOOKS — CRITICAL: If the author marked this as Book N of a series, do NOT demand resolution of series-level mysteries in the Final Verdict. Do not ask "does Mr. Whiskers steal again? Do the kids tell the teacher? Does the character learn something?" — those are questions the NEXT book answers. Those are not flaws. Asking them here contradicts the Book N framing at the top of the review.
+STRUCTURE (as FLOWING PARAGRAPHS, not labeled sub-sections):
+1. **Opening paragraph:** Name what's actually working about this book. Lead with the strengths — voice, specific scenes, premise, the moments that landed. Be specific: reference actual chapters and details. Acknowledge the series framing if it's a series book ("The Book 1 arc lands...").
+2. **Middle paragraph(s):** What's holding the book back from greatness. Be specific about chapters, scenes, pacing issues, voice inconsistencies. This is where the ruthless honesty lives — but still warm, still constructive. Name the fixable vs. unfixable.
+3. **The single biggest thing to fix:** One clear, specific, actionable recommendation. What's the ONE revision move that would change the most? Name it directly.
+4. **The strongest thing to protect:** What is the author doing that they should never lose? What's their voice, their magic, the thing that makes this theirs? Tell them to protect it.
+5. **Closing question** (see below).
 
-BANNED PHRASES for series books in the Final Verdict:
+FORMAT RULES — CRITICAL:
+- **DO NOT** use labeled sub-sections like "Structural:", "Editorial:", "Voice:", "For Book 2:", "The verdict:", or any other bolded mini-headers inside the Final Verdict. The Final Verdict is flowing prose, not a checklist.
+- **DO NOT** produce bullet lists inside the Final Verdict.
+- **DO NOT** break the verdict into structural categories. It's a conversation, not an outline.
+- DO write it like a smart writing teacher giving their honest verdict at the end of a workshop — warm, direct, specific, and flowing.
+
+SERIES BOOKS — CRITICAL: If the author marked this as Book N of a series, do NOT demand resolution of series-level mysteries in the Final Verdict. The unresolved questions (how did the hamster escape, does the kid tell the teacher, what happens next) are intentional Book N+1 hooks, NOT flaws. Never ask "does the character learn something" if that learning is meant for future books. Never say "the ending just stops" or "a chapter book needs a clearer resolution" about a series book — those series hooks ARE the resolution.
+
+For series books, the Final Verdict should focus on EXECUTION-LEVEL fixes (voice, pacing, humor landing, dialogue, character depth, prose quality) — not plot resolution. Briefly acknowledge that the Book N arc lands (or doesn't) and that the open threads are intentional hooks — then move on. Don't belabor the series point or turn it into a separate labeled section.
+
+BANNED phrases in the Final Verdict for series books:
 - "Resolve the ending"
 - "The ending just stops"
 - "A chapter book needs a clearer resolution"
-- "What happens to [mystery element]?"
-- "Does the character learn something?" (if that learning is the arc of future books)
 - "Wrap up [X plot thread]"
 - "Explain [mystery element]"
 
-Instead, for a series book, frame the verdict like this:
-- "As Book ${'[N]'} of a planned series, this book's arc lands / does not land."
-- "The open threads (list them) are clearly intentional hooks for Book ${'[N+1]'}, and they work / feel accidental."
-- "The cliffhanger earns its stop — it makes you want the next book / it feels like the author just ran out of steam."
-- "What this Book ${'[N]'} needs is tighter [pacing / voice / humor / dialogue], not a bigger ending."
-
-The Final Verdict should focus on execution-level fixes (voice, pacing, humor landing, dialogue, character depth, prose quality) NOT plot resolution for series books. Series plot resolution is a non-issue — that is literally the point of a series.
+ENDING THE VERDICT — IMPORTANT: End with the genre-appropriate closing question framed POSITIVELY when possible. A great Final Verdict leaves the author feeling like their book has a real shot if they do the work, not like it's hopeless. The closing question should land with warmth, even if the body of the verdict was ruthless.
 
 IMPORTANT: Match your final question to the genre:
 - For books: "Would you keep reading if you found this in a bookstore?"
