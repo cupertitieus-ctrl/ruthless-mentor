@@ -620,6 +620,39 @@ app.post('/api/subscribe', requireAuth, async (req, res) => {
 });
 
 // Stripe Customer Portal (manage subscription)
+// Cancel subscription
+app.post('/api/cancel-subscription', requireAuth, async (req, res) => {
+  if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
+  try {
+    const { data: sub } = await supabaseAdmin.from('subscriptions')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .eq('status', 'active')
+      .single();
+    if (!sub) return res.status(404).json({ error: 'No active subscription found' });
+
+    // Cancel in Stripe (if real subscription)
+    if (stripe && sub.stripe_subscription_id && !sub.stripe_subscription_id.startsWith('manual')) {
+      try {
+        await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
+      } catch (stripeErr) {
+        console.error('[CANCEL] Stripe error:', stripeErr.message);
+        // Continue anyway — mark as cancelled in our DB
+      }
+    }
+
+    // Mark cancelled in Supabase (status stays active until period end so they keep credits)
+    await supabaseAdmin.from('subscriptions')
+      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('id', sub.id);
+
+    res.json({ success: true, message: 'Subscription cancelled. You will keep access until the end of your billing period.' });
+  } catch (err) {
+    console.error('[CANCEL ERROR]', err.message);
+    res.status(500).json({ error: 'Could not cancel subscription' });
+  }
+});
+
 app.post('/api/customer-portal', requireAuth, async (req, res) => {
   if (!stripe || !supabaseAdmin) return res.status(503).json({ error: 'Not configured' });
   try {

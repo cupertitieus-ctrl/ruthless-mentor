@@ -66,8 +66,8 @@ async function loadSubscription() {
                             <div style="color: #999; font-size: 0.85rem;">Next billing: ${nextBill}</div>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px; align-items: stretch;">
-                            <button class="btn-outline" id="manage-sub-btn" style="background: transparent; color: #c9a96e; border: 1px solid #c9a96e; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">Manage subscription</button>
                             <a href="/review.html" style="background: #c9a96e; color: #0d0b09; padding: 10px 20px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 0.85rem; display: inline-block; text-align: center;">+ Submit Review</a>
+                            <button class="btn-outline" id="cancel-sub-btn" style="background: transparent; color: #999; border: 1px solid #444; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 0.8rem;">Cancel subscription</button>
                         </div>
                     </div>
                     <div style="margin-top: 18px;">
@@ -81,26 +81,27 @@ async function loadSubscription() {
                     </div>
                 </div>
             `;
-            document.getElementById('manage-sub-btn').addEventListener('click', async () => {
-                const btn = document.getElementById('manage-sub-btn');
-                const original = btn.textContent;
-                btn.textContent = 'Loading...';
+            document.getElementById('cancel-sub-btn').addEventListener('click', async () => {
+                if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your current billing period.')) return;
+                const btn = document.getElementById('cancel-sub-btn');
+                btn.textContent = 'Cancelling...';
                 btn.disabled = true;
                 try {
-                    const portalRes = await fetch('/api/customer-portal', {
+                    const cancelRes = await fetch('/api/cancel-subscription', {
                         method: 'POST',
                         headers: { 'Authorization': 'Bearer ' + _session.access_token, 'Content-Type': 'application/json' }
                     });
-                    const data = await portalRes.json();
-                    if (data.url) {
-                        window.location.href = data.url;
+                    const data = await cancelRes.json();
+                    if (data.success) {
+                        alert(data.message || 'Subscription cancelled.');
+                        window.location.reload();
                     } else {
-                        btn.textContent = original;
+                        btn.textContent = 'Cancel subscription';
                         btn.disabled = false;
-                        alert('Could not open billing portal: ' + (data.error || 'Unknown error') + '\n\nIf you just subscribed, please email support@ruthlessmentor.com to manage your subscription.');
+                        alert('Could not cancel: ' + (data.error || 'Unknown error'));
                     }
                 } catch (err) {
-                    btn.textContent = original;
+                    btn.textContent = 'Cancel subscription';
                     btn.disabled = false;
                     alert('Error: ' + err.message);
                 }
