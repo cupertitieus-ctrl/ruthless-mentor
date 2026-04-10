@@ -32,6 +32,9 @@ let _subscription = null;
                         creditBadge.textContent = `${_subscription.credits_remaining} reviews remaining`;
                         creditBadge.classList.remove('hidden');
                     }
+                    // Update sidebar to show "Subscription" instead of price
+                    if (typeof updateSidebarPrice === 'function') updateSidebarPrice();
+                    if (typeof updateCost === 'function') updateCost();
                 }
             } catch (e) {}
         }
@@ -96,8 +99,8 @@ function updateCost() {
 
     if (estTierEl) estTierEl.textContent = words === 0 && !genreInfo ? '--' : tierName;
     if (_subscription && _subscription.credits_remaining > 0) {
-        if (estCostEl) estCostEl.textContent = 'Included';
-        if (totalEl) totalEl.textContent = 'Included';
+        if (estCostEl) estCostEl.textContent = 'Subscription';
+        if (totalEl) totalEl.textContent = 'Subscription';
     } else {
         if (estCostEl) estCostEl.textContent = basePrice === 0 ? '--' : '$' + basePrice;
         if (totalEl) totalEl.textContent = basePrice === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
@@ -126,6 +129,15 @@ const sidebarPriceAmount = document.getElementById('sidebar-price-amount');
 function updateSidebarPrice() {
     const val = genreSelect ? genreSelect.value : '';
     const info = GENRE_PRICES[val];
+    // Subscribers see "Subscription" instead of price
+    if (_subscription && _subscription.credits_remaining > 0) {
+        if (sidebarGenreName) sidebarGenreName.textContent = info ? info.name : 'Your Plan';
+        if (sidebarPriceAmount) {
+            sidebarPriceAmount.textContent = 'Subscription';
+            sidebarPriceAmount.style.fontSize = '1.4rem';
+        }
+        return;
+    }
     if (info && sidebarGenreName && sidebarPriceAmount) {
         sidebarGenreName.textContent = info.name;
         sidebarPriceAmount.textContent = '$' + info.price;
