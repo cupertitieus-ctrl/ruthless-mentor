@@ -45,14 +45,35 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       const session = event.data.object;
       if (session.mode !== 'subscription') return res.json({ received: true });
 
+      console.log(`[WEBHOOK] checkout.session.completed — subscription: ${session.subscription}, customer: ${session.customer}, email: ${session.customer_email || session.customer_details?.email}`);
+
       const sub = await stripe.subscriptions.retrieve(session.subscription);
       const plan = session.metadata?.plan || 'basic';
       const credits = PLAN_CREDITS[plan] || 10;
-      const userId = session.metadata?.userId;
+      let userId = session.metadata?.userId;
       const db = getSupabase();
 
+      // Fallback: if userId missing from metadata, look up user by email
+      if (!userId && db) {
+        const email = session.customer_email || session.customer_details?.email;
+        if (email) {
+          const { data: { users } } = await db.auth.admin.listUsers();
+          const matched = users.find(u => u.email === email);
+          if (matched) {
+            userId = matched.id;
+            console.log(`[WEBHOOK] Resolved userId from email ${email}: ${userId}`);
+          } else {
+            console.error(`[WEBHOOK] No user found for email ${email}`);
+          }
+        }
+      }
+
       if (db && userId) {
-        // Upsert subscription
+        // Safely get current_period_end
+        const periodEnd = sub.current_period_end
+          ? new Date(sub.current_period_end * 1000).toISOString()
+          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
         const { error } = await db.from('subscriptions').upsert({
           user_id: userId,
           stripe_subscription_id: session.subscription,
@@ -61,11 +82,13 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
           credits_remaining: credits,
           credits_per_month: credits,
           status: 'active',
-          current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+          current_period_end: periodEnd,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
-        if (error) console.error('[WEBHOOK] Subscription upsert error:', error.message);
+        if (error) console.error('[WEBHOOK] Subscription upsert error:', error.message, error.details || '', error.hint || '');
         else console.log(`[WEBHOOK] Subscription created: ${plan} for user ${userId} (${credits} reviews)`);
+      } else {
+        console.error(`[WEBHOOK] Cannot save subscription — db:${!!db} userId:${userId}`);
       }
     }
 

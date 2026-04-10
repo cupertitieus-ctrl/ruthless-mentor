@@ -8,9 +8,26 @@ let _session = null;
         return;
     }
     _session = session;
+    // Populate account menu
+    const emailEl = document.getElementById('account-email');
+    if (emailEl) emailEl.textContent = session.user.email;
     loadReviews();
     loadSubscription();
 })();
+
+// Account menu toggle
+document.getElementById('account-menu-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const dd = document.getElementById('account-dropdown');
+    dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+});
+document.addEventListener('click', (e) => {
+    const dd = document.getElementById('account-dropdown');
+    const btn = document.getElementById('account-menu-btn');
+    if (dd && btn && !btn.contains(e.target) && !dd.contains(e.target)) {
+        dd.style.display = 'none';
+    }
+});
 
 // ===== SIGN OUT =====
 document.getElementById('signout-btn').addEventListener('click', async (e) => {
@@ -38,6 +55,9 @@ async function loadSubscription() {
             const remaining = subscription.credits_remaining || 0;
             const used = total - remaining;
             const pct = total > 0 ? (remaining / total) * 100 : 0;
+            // Populate account dropdown plan
+            const planEl = document.getElementById('account-plan');
+            if (planEl) planEl.textContent = subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + ' Plan · ' + remaining + ' left';
             subInfoEl.innerHTML = `
                 <div class="sub-card" style="background: linear-gradient(135deg, #1a1816 0%, #0d0b09 100%); border: 1px solid #c9a96e; border-radius: 10px; padding: 24px 28px; margin-bottom: 32px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
@@ -45,7 +65,10 @@ async function loadSubscription() {
                             <div style="color: #c9a96e; font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</div>
                             <div style="color: #999; font-size: 0.85rem;">Next billing: ${nextBill}</div>
                         </div>
-                        <button class="btn-outline" id="manage-sub-btn" style="background: transparent; color: #c9a96e; border: 1px solid #c9a96e; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">Manage subscription</button>
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: stretch;">
+                            <button class="btn-outline" id="manage-sub-btn" style="background: transparent; color: #c9a96e; border: 1px solid #c9a96e; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">Manage subscription</button>
+                            <a href="/review.html" style="background: #c9a96e; color: #0d0b09; padding: 10px 20px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 0.85rem; display: inline-block; text-align: center;">+ Submit Review</a>
+                        </div>
                     </div>
                     <div style="margin-top: 18px;">
                         <div style="display: flex; justify-content: space-between; color: #ccc; font-size: 0.9rem; margin-bottom: 8px;">
