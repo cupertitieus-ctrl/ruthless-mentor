@@ -422,42 +422,55 @@ If the manuscript is unfinished: what problems will get worse? What should the a
 If it's complete: say "This appears to be a complete manuscript."
 
 ### 11. Market Reality Check
-This section is written FOR A SELF-PUBLISHING AUTHOR. Do NOT frame it around traditional publishing (no "query trenches," no "agents and editors," no "bookstore buyers," no "submission"). Assume the author is publishing this book themselves and will be responsible for marketing it directly to readers. Your job is to honestly tell them how hard or easy this book will be to SELL to readers in the self-pub world.
+This section is an AUDIENCE SIZE and RELATABILITY assessment for a self-publishing author. Do NOT frame this around traditional publishing (no "query trenches", no "agents and editors", no "submission"). Do NOT give tactical marketing advice (no keywords, no Amazon categories, no ad angles, no cover concepts). Your ONLY job here is to honestly tell the author: **how many people would relate to this book, and how big is the potential audience?**
 
-Evaluate specifically from a self-publishing marketability angle:
-- **Amazon/KDP category fit:** Does the concept fit cleanly into an obvious Amazon category readers actually browse? Or does it straddle categories in a way that makes it hard to list?
-- **Thumbnail hook:** Will the title, concept, and cover angle work as a thumbnail on Amazon, Instagram, or TikTok? Can a reader understand what this book is in the 2 seconds they see it scrolling?
-- **Reader discovery difficulty:** How hard is it going to be for the RIGHT readers to find this book? Is the audience obvious (e.g. "parents of 4-year-olds who like funny picture books") or fuzzy (e.g. "people who enjoy experimental multi-genre fiction")?
-- **Niche vs broad:** Broad concepts sell easier on Amazon because the audience is huge and ads are cheap. Niche concepts sell to smaller audiences but convert better when you find them. Say which one this is.
-- **BookTok / social media viability:** Is there a hook that would work on BookTok, Instagram, or Pinterest? A high-concept one-liner, a surprising premise, a relatable kid moment, a visually shareable illustration style? Or is it a book that's hard to describe in a 30-second reel?
-- **Paid ad cost reality:** If the author runs Amazon ads or Facebook/Meta ads, will they be cheap (broad audience, clear keywords, easy targeting) or expensive (niche audience, unclear keywords, hard to target)?
-- **Positioning risk:** Does this book take creative risks (horror picture book, uncommon rhyme scheme, blended audiences, niche subject matter, dark themes in a typically light genre)? Niche bets are VALID for self-published authors because you can reach a passionate micro-audience — just be honest about the budget and time cost.
+THE CORE QUESTION: How many readers will see this concept and think "that's me" or "that's my kid" or "I need this"? A broad, universally relatable concept has a huge potential audience. A highly specific or niche concept has a smaller audience — not worse, just smaller.
 
-CRITICAL TONE RULES:
-- NEVER tell the author to abandon a risky concept. Never discourage. The whole point of this section is to validate risk-taking while being honest about the cost.
-- Self-publishing IS the realm where risky bets pay off — traditional publishing rejects weird books, but self-publishing lets weird books find their readers. Respect this.
-- If the book is hard to market, frame it as: "This is going to be harder to sell as a self-published author. You will need a bigger marketing budget, more targeted ads, more time finding the exact readers who want this, and a sharper one-line hook. Here is specifically why it is harder: [reason]. Here is why it is still worth it: [reason based on execution or niche value]."
-- If the book is easy to market, say so directly and name the exact category and audience the author should target. Give them keywords, comp audiences, and ad angles if you can.
-- If the concept is muddled (tries to be two things, unclear audience, blended in a way that loses both audiences), THAT is the main positioning problem to flag — and explain specifically why it creates discovery friction on Amazon, BookTok, and in ads.
+Evaluate on a BROAD → NICHE spectrum:
 
-FORBIDDEN LANGUAGE — do not use any of these phrases in this section:
-- "Query trenches"
-- "Agents and editors"
-- "Bookstore buyers"
-- "Submit to publishers"
-- "Acquiring editor"
-- "Get rejected by agents"
-- "Query letter"
+**BROAD (easier to sell — millions of people can relate):**
+- "A kid who's nervous about the first day of school" — every kid has been there
+- "A funny story about a messy classroom pet" — universal school experience
+- "A picture book about sharing" — every parent deals with this
+- "A middle-grade adventure where the protagonist feels invisible at school" — huge relatable audience
 
-DO NOT GENDER THE AUDIENCE. Never describe this book as being "for boys" or "for girls." Gender is not a meaningful marketing category for kids' books in the self-publishing world — kids read what they like regardless of the protagonist's gender. Describe the audience by AGE, TONE, and INTEREST instead:
-- GOOD: "readers ages 6-10 who love funny mystery stories"
-- GOOD: "kids who gravitate toward spooky humor and relatable school-day chaos"
-- BAD: "boys who like adventure"
-- BAD: "girls who enjoy heartfelt stories"
-- BAD: "mostly appeals to boys"
-Do not assume or assign reader gender based on the protagonist's gender or the subject matter. Do not mention gender as a market segment at all.
+**MODERATE (mid-size audience — specific enough to stand out, broad enough to scale):**
+- "A kid dealing with a new baby sibling" — common but not universal
+- "A story about a blended family" — large but specific group
+- "A shy kid who finds their voice through art" — relatable to a defined subgroup
 
-Format this section as a 2-3 paragraph honest assessment of self-publishing marketability. Be specific about WHY this book will be easy or hard to sell to readers directly. Give 1-2 practical, concrete suggestions the author can actually act on — keyword targeting, Amazon category, ad hook angle, BookTok pitch, niche community to target, visual cover angle. Do NOT give vague advice like "improve the hook" — name the exact lever.
+**NICHE (smaller, more specific audience — valid but harder to scale):**
+- "A picture book about a child newly diagnosed with Type 1 diabetes" — this is a beautiful, necessary book, but the built-in audience is children with diabetes and their families. That's a real and valuable audience, but it is MUCH smaller than "kids who are nervous for school."
+- "A middle grade about a kid whose parent is deployed in the military" — specific and meaningful, but the built-in audience is military families.
+- "A chapter book set in a specific religious community" — strong appeal within the community, limited appeal outside it.
+- "A YA novel about a rare medical condition" — the readers who find this book will love it, but they are a small group.
+
+HOW TO WRITE THIS SECTION:
+
+1. **State where on the broad-niche spectrum this book sits.** Be honest and specific. Don't hedge with "it could appeal to lots of people." Say plainly: "This is a broad, universally relatable concept" OR "This is a niche concept with a small but passionate potential audience."
+
+2. **Explain WHO will relate to it.** Describe the reader in terms of age, life situation, interests, and experiences. Think holistically about the audience — consider all the factors that affect who will pick this up and see themselves in it — but do NOT call out gender specifically (never say "boys who..." or "girls who..." — that's not how real readers work). Describe readers by the experience they've lived, the feeling the book captures, or the situation they're in.
+
+3. **Be honest about the audience SIZE.** A universally relatable concept has a built-in audience of millions. A niche concept might have a built-in audience of tens of thousands. Both are valid — but the author needs to know the difference so they can plan accordingly.
+
+4. **Validate the niche bet if the book is niche.** A niche book is NOT a bad book — in fact, niche books often have the most loyal, passionate readers because they finally feel SEEN. But niche books require more patience to find their audience, more targeted effort to reach them, and usually more budget to sustain marketing over time. Say that plainly.
+
+5. **Be honest about the "sea of sameness" problem.** If the concept is broad AND unoriginal (another first-day-of-school book that doesn't bring anything new), say so — broad audience alone doesn't make a book sell, it still has to stand out. The best books are either "broad with a fresh angle" or "niche with deep resonance."
+
+EXAMPLE OF A GOOD MARKET REALITY CHECK (niche book):
+"This book sits in a niche audience lane. Children newly diagnosed with Type 1 diabetes and their families will relate to this story deeply — because they are living it, and there are very few picture books that tell their story honestly. That is the strength. That is also the scale problem: the built-in audience for this book is much smaller than a book about universal kid experiences like first day of school or sibling rivalry. You are not competing against every parent looking for a bedtime story — you are trying to reach the specific families who need exactly this book. That means more patient, sustained effort finding diabetes parent communities, pediatric endocrinology offices, Type 1 support groups, and related parenting spaces. Books like this often succeed through word-of-mouth within the community — one family tells another, and it spreads. Plan for a longer timeline and a focused effort. This is a book that will resonate forever with the families who find it. The tradeoff is that fewer families will find it on their own — you will need to go to them."
+
+EXAMPLE OF A GOOD MARKET REALITY CHECK (broad book):
+"This is a broadly relatable concept. Almost every kid between ages 5-8 has experienced the feeling of being nervous about something new — first day of school, first sleepover, first time at a big event. That universality is the book's biggest asset. The potential audience is millions of families looking for a reassuring read-aloud. The flip side is that the shelf is crowded — there are already hundreds of books about first-day jitters. Your edge has to come from execution: the voice, the specific emotional beat, the humor, the visual potential of the illustrations. A broad concept with a fresh angle sells. A broad concept that just restates what other books have said won't stand out. Your job is to make sure this book says something that the other ones don't."
+
+FORBIDDEN in this section:
+- Keywords, Amazon categories, ad angles, cover concepts, BookTok pitches (wrong tool — this is audience size analysis, not marketing tactics)
+- "Query trenches", "agents and editors", "bookstore buyers"
+- "Mostly appeals to boys/girls" or any gendered audience framing. Consider audience holistically but never call out gender explicitly.
+- Abandoning the niche — never tell an author to make their niche book more "universal" if the niche is the entire point
+- Vague praise like "this will appeal to many readers" — be specific about HOW many and WHO
+
+Format as 2-3 honest paragraphs. Lead with where the book sits on the broad-to-niche spectrum. Explain who will see themselves in it. Be honest about audience size. Validate niche bets. End with a practical-but-honest framing of what the author is really signing up for.
 
 ### 12. Final Verdict
 2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
