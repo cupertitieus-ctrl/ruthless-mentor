@@ -78,6 +78,12 @@ function updateCost() {
     let tierName = genreInfo ? genreInfo.name : (tier ? tier.name : '--');
     let total = basePrice;
 
+    // Subscribers with credits get reviews covered by their plan
+    if (_subscription && _subscription.credits_remaining > 0) {
+        total = 0;
+        basePrice = 0;
+    }
+
     if (appliedCoupon && total > 0) {
         if (appliedCoupon.type === 'percent') total = Math.max(0, total - (total * appliedCoupon.discount / 100));
         else if (appliedCoupon.type === 'fixed') total = Math.max(0, total - appliedCoupon.discount);
@@ -86,8 +92,13 @@ function updateCost() {
     }
 
     if (estTierEl) estTierEl.textContent = words === 0 && !genreInfo ? '--' : tierName;
-    if (estCostEl) estCostEl.textContent = basePrice === 0 ? '--' : '$' + basePrice;
-    if (totalEl) totalEl.textContent = basePrice === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
+    if (_subscription && _subscription.credits_remaining > 0) {
+        if (estCostEl) estCostEl.textContent = 'Included';
+        if (totalEl) totalEl.textContent = 'Included';
+    } else {
+        if (estCostEl) estCostEl.textContent = basePrice === 0 ? '--' : '$' + basePrice;
+        if (totalEl) totalEl.textContent = basePrice === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
+    }
 }
 
 if (textarea) textarea.addEventListener('input', updateCost);
