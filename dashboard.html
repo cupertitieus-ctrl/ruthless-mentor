@@ -31,6 +31,15 @@
     <section class="dash-page">
         <div id="sub-info"></div>
 
+        <!-- Subscribe prompt (shown only for non-subscribers) -->
+        <div id="subscribe-prompt" style="display:none; background: linear-gradient(135deg, #1a1816 0%, #0d0b09 100%); border: 1px solid #c9a96e; border-radius: 10px; padding: 24px 28px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 240px;">
+                <h3 style="color: #c9a96e; font-size: 1.15rem; margin: 0 0 6px; font-weight: 700;">Basic Plan — $50/month</h3>
+                <p style="color: #ccc; font-size: 0.9rem; margin: 0; line-height: 1.5;">10 reviews per month. Perfect for active writers working through multiple revisions.</p>
+            </div>
+            <button id="subscribe-btn" style="background: #c9a96e; color: #0d0b09; border: none; padding: 12px 28px; border-radius: 6px; font-weight: 700; font-size: 0.95rem; cursor: pointer; white-space: nowrap;">Subscribe Now</button>
+        </div>
+
         <div class="dash-header">
             <h1>Your Reviews</h1>
             <p class="sub" id="dash-sub">Loading...</p>

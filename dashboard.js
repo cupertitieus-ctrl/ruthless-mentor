@@ -50,6 +50,38 @@ async function loadSubscription() {
                 const { url } = await portalRes.json();
                 if (url) window.location.href = url;
             });
+        } else {
+            // No subscription — show subscribe prompt
+            const promptEl = document.getElementById('subscribe-prompt');
+            if (promptEl) {
+                promptEl.style.display = 'flex';
+                document.getElementById('subscribe-btn').addEventListener('click', async () => {
+                    const btn = document.getElementById('subscribe-btn');
+                    btn.textContent = 'Loading...';
+                    btn.disabled = true;
+                    try {
+                        const subRes = await fetch('/api/subscribe', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + _session.access_token,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ plan: 'basic' })
+                        });
+                        const { url } = await subRes.json();
+                        if (url) window.location.href = url;
+                        else {
+                            btn.textContent = 'Subscribe Now';
+                            btn.disabled = false;
+                            alert('Could not start subscription. Please try again.');
+                        }
+                    } catch (err) {
+                        btn.textContent = 'Subscribe Now';
+                        btn.disabled = false;
+                        alert('Error starting subscription: ' + err.message);
+                    }
+                });
+            }
         }
     } catch (e) {}
 }
