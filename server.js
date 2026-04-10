@@ -441,6 +441,25 @@ Format this section as a 2-3 paragraph honest assessment. Be specific about WHY 
 ### 12. Final Verdict
 2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
 
+SERIES BOOKS — CRITICAL: If the author marked this as Book N of a series, do NOT demand resolution of series-level mysteries in the Final Verdict. Do not ask "does Mr. Whiskers steal again? Do the kids tell the teacher? Does the character learn something?" — those are questions the NEXT book answers. Those are not flaws. Asking them here contradicts the Book N framing at the top of the review.
+
+BANNED PHRASES for series books in the Final Verdict:
+- "Resolve the ending"
+- "The ending just stops"
+- "A chapter book needs a clearer resolution"
+- "What happens to [mystery element]?"
+- "Does the character learn something?" (if that learning is the arc of future books)
+- "Wrap up [X plot thread]"
+- "Explain [mystery element]"
+
+Instead, for a series book, frame the verdict like this:
+- "As Book ${'[N]'} of a planned series, this book's arc lands / does not land."
+- "The open threads (list them) are clearly intentional hooks for Book ${'[N+1]'}, and they work / feel accidental."
+- "The cliffhanger earns its stop — it makes you want the next book / it feels like the author just ran out of steam."
+- "What this Book ${'[N]'} needs is tighter [pacing / voice / humor / dialogue], not a bigger ending."
+
+The Final Verdict should focus on execution-level fixes (voice, pacing, humor landing, dialogue, character depth, prose quality) NOT plot resolution for series books. Series plot resolution is a non-issue — that is literally the point of a series.
+
 IMPORTANT: Match your final question to the genre:
 - For books: "Would you keep reading if you found this in a bookstore?"
 - For screenplays: "Would you greenlight this? Would audiences stay in their seats?" Do NOT mention bookstores, picking up books, or reading for screenplays.
