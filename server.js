@@ -592,7 +592,7 @@ REQUIRED STRUCTURE (in this order):
 
 4. **REQUIRED labeled callout — "What to protect:"** — Write this as a bolded inline label followed by the answer. The ONE thing the author is doing right that they should never lose in revision. Their voice, their specificity, their weird magic, their commitment to the premise — whatever makes this book specifically theirs. Example format: "**What to protect:** Your willingness to take the absurd seriously. James doesn't wink at the reader about how silly the hamster-thief theory is — he treats it like a real investigation. That earnestness is what makes the humor work. Don't lose it in pursuit of a 'bigger' plot or higher stakes."
 
-5. **Closing question AND answer:** Ask the genre-appropriate closing question AND ANSWER IT. Do NOT ask the question and stop. The question is rhetorical — you are wrapping up the verdict with your own honest take. Write both the question and your answer together as the closing beat.
+5. **Closing question AND answer:** Ask the genre-appropriate closing question AND ANSWER IT. Do NOT ask the question and stop. The question is rhetorical — you are wrapping up the verdict with your own honest take. Write both the question and your answer together as the closing beat. The closing QUESTION must be wrapped in bold markdown (**question goes here?**) so it stands out visually on the page. The answer that follows should NOT be bolded — it flows as normal prose right after the bolded question.
 
 FORMAT RULES:
 - The two REQUIRED labeled callouts ("The single biggest thing to fix:" and "What to protect:") are the ONLY bolded labels allowed in the Final Verdict. Every other label is banned.
@@ -603,10 +603,10 @@ FORMAT RULES:
 
 CLOSING QUESTION — CRITICAL RULE: You must ASK the closing question AND ANSWER it. Never leave a dangling question mark at the end of the review. The reviewer gives their honest answer as the last beat of the review.
 
-Closing questions by genre (ask + answer format):
-- **Books:** "Would you keep reading if you found this in a bookstore? [ANSWER]" — Your answer should be a real, specific, honest take. Example: "Would you keep reading if you found this in a bookstore? Yes — through Chapter 1, absolutely. Whether you'd finish depends on how patient you are with the middle, and most readers won't be patient enough in the current draft. Fix the pacing and the answer becomes an unqualified yes." Or: "Would you keep reading if you found this in a bookstore? Honestly, yes. The voice alone would carry me through. You've got the hardest thing nailed already — now tighten the rest to match."
-- **Screenplays:** "Would you greenlight this? Would audiences stay in their seats? [ANSWER]" — Give a real answer. Do NOT mention bookstores or reading.
-- **Memoir:** "Does this story earn the reader's trust? [ANSWER]" — Give a real answer.
+Closing questions by genre — format is ALWAYS: **question in bold** followed by an unbolded answer on the same beat:
+- **Books:** "**Would you keep reading if you found this in a bookstore?** [ANSWER]" — Your answer should be a real, specific, honest take. Example: "**Would you keep reading if you found this in a bookstore?** Yes — through Chapter 1, absolutely. Whether you'd finish depends on how patient you are with the middle, and most readers won't be patient enough in the current draft. Fix the pacing and the answer becomes an unqualified yes." Or: "**Would you keep reading if you found this in a bookstore?** Honestly, yes. The voice alone would carry me through. You've got the hardest thing nailed already — now tighten the rest to match."
+- **Screenplays:** "**Would you greenlight this? Would audiences stay in their seats?** [ANSWER]" — Give a real answer. Do NOT mention bookstores or reading.
+- **Memoir:** "**Does this story earn the reader's trust?** [ANSWER]" — Give a real answer.
 
 FORBIDDEN — do NOT end with an unanswered question. "Would you keep reading if you found this in a bookstore?" with no answer after it is BANNED. Always answer your own question.
 
