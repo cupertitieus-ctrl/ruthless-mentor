@@ -576,15 +576,21 @@ const SUBSCRIPTION_PLANS = {
   // 'advanced': { priceId: 'price_XXXXXXXX', credits: 60, name: 'Advanced', price: 200 },
 };
 
-// Get user's subscription
+// Get user's subscription (active or cancelled — cancelled still has access until period end)
 app.get('/api/subscription', requireAuth, async (req, res) => {
   if (!supabaseAdmin) return res.json({ subscription: null });
   try {
     const { data } = await supabaseAdmin.from('subscriptions')
       .select('*')
       .eq('user_id', req.user.id)
-      .eq('status', 'active')
+      .in('status', ['active', 'cancelled'])
+      .order('updated_at', { ascending: false })
+      .limit(1)
       .single();
+    // If cancelled and past period end, treat as no subscription
+    if (data && data.status === 'cancelled' && data.current_period_end && new Date(data.current_period_end) < new Date()) {
+      return res.json({ subscription: null });
+    }
     res.json({ subscription: data || null });
   } catch (e) {
     res.json({ subscription: null });

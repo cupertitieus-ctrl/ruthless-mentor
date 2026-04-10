@@ -58,16 +58,23 @@ async function loadSubscription() {
             // Populate account dropdown plan
             const planEl = document.getElementById('account-plan');
             if (planEl) planEl.textContent = subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + ' Plan · ' + remaining + ' left';
+            const isCancelled = subscription.status === 'cancelled';
+            const cancelBtnHtml = isCancelled ? '' : '<button class="btn-outline" id="cancel-sub-btn" style="background: transparent; color: #999; border: 1px solid #444; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 0.8rem;">Cancel subscription</button>';
+            const cancelledTag = isCancelled ? ' <span style="color:#999;font-size:0.75rem;font-weight:500;">(cancelled)</span>' : '';
+            const dateLabel = isCancelled ? 'Access until: ' : 'Next renewal: ';
+            const rolloverNote = isCancelled
+                ? "Your subscription is cancelled and won't renew."
+                : 'Your reviews refresh on ' + nextBill + '.';
             subInfoEl.innerHTML = `
                 <div class="sub-card" style="background: linear-gradient(135deg, #1a1816 0%, #0d0b09 100%); border: 1px solid #c9a96e; border-radius: 10px; padding: 24px 28px; margin-bottom: 32px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
                         <div style="flex: 1; min-width: 240px;">
-                            <div style="color: #c9a96e; font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</div>
-                            <div style="color: #999; font-size: 0.85rem;">Next billing: ${nextBill}</div>
+                            <div style="color: #c9a96e; font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan${cancelledTag}</div>
+                            <div style="color: #999; font-size: 0.85rem;">${dateLabel}${nextBill}</div>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px; align-items: stretch;">
                             <a href="/review.html" style="background: #c9a96e; color: #0d0b09; padding: 10px 20px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 0.85rem; display: inline-block; text-align: center;">+ Submit Review</a>
-                            <button class="btn-outline" id="cancel-sub-btn" style="background: transparent; color: #999; border: 1px solid #444; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; font-size: 0.8rem;">Cancel subscription</button>
+                            ${cancelBtnHtml}
                         </div>
                     </div>
                     <div style="margin-top: 18px;">
@@ -78,10 +85,12 @@ async function loadSubscription() {
                         <div style="background: #2a2622; border-radius: 999px; height: 10px; overflow: hidden;">
                             <div style="background: #c9a96e; height: 100%; width: ${pct}%; border-radius: 999px; transition: width 0.3s;"></div>
                         </div>
+                        <p style="color: #777; font-size: 0.75rem; margin-top: 10px; font-style: italic;">Unused reviews don't roll over. ${rolloverNote}</p>
                     </div>
                 </div>
             `;
-            document.getElementById('cancel-sub-btn').addEventListener('click', async () => {
+            const cancelBtn = document.getElementById('cancel-sub-btn');
+            if (cancelBtn) cancelBtn.addEventListener('click', async () => {
                 if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your current billing period.')) return;
                 const btn = document.getElementById('cancel-sub-btn');
                 btn.textContent = 'Cancelling...';
