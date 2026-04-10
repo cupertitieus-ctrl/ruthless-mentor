@@ -482,9 +482,8 @@ if (form) {
         const btn = document.getElementById('submit-btn');
         btn.disabled = true;
         btn.style.opacity = '.6';
-        btn.textContent = 'Setting up payment...';
 
-        // Check if coupon makes it free
+        // Check if coupon makes it free FIRST, before setting button text
         const genreVal = genreSelect ? genreSelect.value : '';
         const genreInfo = GENRE_PRICES[genreVal];
         let finalPrice = genreInfo ? genreInfo.price : 5;
@@ -498,22 +497,38 @@ if (form) {
 
         // Use subscription credit if available
         if (_subscription && _subscription.credits_remaining > 0) {
-            btn.textContent = 'Using 1 review...';
-            runReview(text, manuscriptInfo);
-            // Update local credit count
-            _subscription.credits_remaining--;
-            const creditBadge = document.getElementById('credit-badge');
-            if (creditBadge) creditBadge.textContent = `${_subscription.credits_remaining} reviews remaining`;
+            btn.textContent = 'Starting your review...';
+            try {
+                runReview(text, manuscriptInfo);
+                // Update local credit count
+                _subscription.credits_remaining--;
+                const creditBadge = document.getElementById('credit-badge');
+                if (creditBadge) creditBadge.textContent = `${_subscription.credits_remaining} reviews remaining`;
+            } catch (err) {
+                alert('Error starting review: ' + err.message);
+                btn.textContent = 'Submit for review';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
             return;
         }
 
         if (finalPrice <= 0) {
-            // Free — skip payment, go straight to review
-            runReview(text, manuscriptInfo);
+            // Free (coupon) — skip payment, go straight to review
+            btn.textContent = 'Starting your review...';
+            try {
+                runReview(text, manuscriptInfo);
+            } catch (err) {
+                alert('Error starting review: ' + err.message);
+                btn.textContent = 'Submit for review';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
             return;
         }
 
-        // Redirect to Stripe Checkout
+        // Paid — redirect to Stripe Checkout
+        btn.textContent = 'Setting up payment...';
         try {
             const res = await fetch('/api/create-checkout', {
                 method: 'POST',
