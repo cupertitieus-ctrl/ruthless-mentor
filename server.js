@@ -747,7 +747,16 @@ function buildManuscriptContext(manuscriptInfo) {
   if (manuscriptInfo.genre) parts.push(`Genre: ${GENRE_LABELS[manuscriptInfo.genre] || manuscriptInfo.genre}`);
   if (manuscriptInfo.fiction) parts.push(`Type: ${manuscriptInfo.fiction === 'fiction' ? 'Fiction' : 'Non-Fiction'}`);
   if (manuscriptInfo.pov) parts.push(`POV: ${POV_LABELS[manuscriptInfo.pov] || manuscriptInfo.pov}`);
-  if (manuscriptInfo.bookNumber) parts.push(`Book number: Book ${manuscriptInfo.bookNumber} in a series`);
+  if (manuscriptInfo.bookNumber) {
+    const bn = manuscriptInfo.bookNumber;
+    if (bn == 1 || bn === '1') {
+      parts.push(`Book number: Book 1 of a series. CRITICAL: This is the FIRST book in a series, and the author is planning more books. Evaluate the ending accordingly. Book 1 of a series should resolve its own core arc (the main conflict introduced in this book) while leaving larger threads open for future books. Do NOT penalize the manuscript for leaving some things unresolved — that is a feature of a Book 1, not a bug. Instead, check: Does the Book 1 arc land? Is there a satisfying resolution to what THIS book set up? Are the open threads intentional hooks for Book 2, or sloppy loose ends? Cliffhangers are fine for Book 1 if they feel earned. Call out which open threads feel intentional and which feel accidental. Never say "the ending is incomplete" without context — always frame it as "the Book 1 arc lands / does not land, and here is what is set up for Book 2."`);
+    } else if (bn == 2 || bn === '2' || parseInt(bn) >= 2) {
+      parts.push(`Book number: Book ${bn} of a series. This is a mid-series book. Evaluate it on: (1) does it advance the overall series arc? (2) does it stand on its own for a reader who already read the previous book? (3) does it resolve threads from previous books while setting up future ones? (4) does the pacing match the middle-of-series expectation (character deepening, world expansion, escalating stakes)? Do not expect this book to be fully self-contained like a standalone — expect it to be a strong middle chapter in a bigger story.`);
+    } else {
+      parts.push(`Book number: Book ${bn} in a series`);
+    }
+  }
 
   // Picture book specific context
   if (manuscriptInfo.genre === 'picture-book') {
