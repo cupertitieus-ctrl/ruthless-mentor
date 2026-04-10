@@ -44,7 +44,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .hero-btns{display:flex;gap:.6rem;flex-wrap:wrap}
 
 /* SPLIT SECTION — image + text */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;max-width:1000px;margin:0 auto;padding:1.5rem 2rem}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;max-width:1000px;margin:0 auto;padding:3rem 2rem}
 .split-img img{width:100%;border-radius:var(--r);display:block}
 .split-text h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:1rem}
 .split-text p{color:var(--text2);font-size:.92rem;line-height:1.75;margin-bottom:1rem}
