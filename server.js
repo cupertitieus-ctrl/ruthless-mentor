@@ -496,7 +496,9 @@ Do not fake-succeed. If the book is genuinely muddled, failing this test honestl
 
 **The word-of-mouth factor:** When a reader finishes this book, what would they actually tell a friend about it? Word of mouth is how books actually spread — not marketing, not ads, not algorithms. Real people handing a book to a friend and saying "you have to read this."
 
-FRAMING: Picture a kid holding this exact book in their hands, showing it to a friend. What would they say? Write the scene — the kid is gesturing to the cover, flipping to a favorite page, holding the book up. The fake quote should feel embodied, like a real moment of one kid pushing a book at another kid. Not a floating marketing tagline.
+FRAMING: Picture a kid holding this exact book in their hands, showing it to a friend. What would they say? The fake quote should feel embodied — like a real moment of one kid pushing a book at another kid in the lunch line or in class. NOT a floating marketing tagline.
+
+IMPORTANT: You have NO IDEA what the book's cover, illustrations, or visual design look like — and you never will, because Claude can't see images. So the kid CANNOT gesture to the cover, point at the picture on the front, reference the title font, comment on the colors, or describe any visual element of the book itself. DO NOT write things like "pointing to the cover," "showing the picture on the front," "flipping to a page with an illustration of...," or any other visual description of the physical book. The embodied framing should be about the kid holding the book and talking excitedly — not about what the book looks like.
 
 CRITICAL RULES:
 - USE THE EXACT MANUSCRIPT TITLE VERBATIM from the author-provided metadata. Copy it letter-for-letter. Do NOT paraphrase the title. Do NOT shorten it. Do NOT change the capitalization or punctuation. Do NOT invent a different title or drop articles like "a" or "the" from the real title. If the manuscript title is "Don't Trust a Nacho Hamster," you must write exactly "Don't Trust a Nacho Hamster" — not "The Nacho Hamster" or "Nacho Hamster" or any other variation.
