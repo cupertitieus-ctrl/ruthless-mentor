@@ -82,12 +82,28 @@ async function loadSubscription() {
                 </div>
             `;
             document.getElementById('manage-sub-btn').addEventListener('click', async () => {
-                const portalRes = await fetch('/api/customer-portal', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + _session.access_token, 'Content-Type': 'application/json' }
-                });
-                const { url } = await portalRes.json();
-                if (url) window.location.href = url;
+                const btn = document.getElementById('manage-sub-btn');
+                const original = btn.textContent;
+                btn.textContent = 'Loading...';
+                btn.disabled = true;
+                try {
+                    const portalRes = await fetch('/api/customer-portal', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + _session.access_token, 'Content-Type': 'application/json' }
+                    });
+                    const data = await portalRes.json();
+                    if (data.url) {
+                        window.location.href = data.url;
+                    } else {
+                        btn.textContent = original;
+                        btn.disabled = false;
+                        alert('Could not open billing portal: ' + (data.error || 'Unknown error') + '\n\nIf you just subscribed, please email support@ruthlessmentor.com to manage your subscription.');
+                    }
+                } catch (err) {
+                    btn.textContent = original;
+                    btn.disabled = false;
+                    alert('Error: ' + err.message);
+                }
             });
         } else {
             // No subscription — show subscribe prompt

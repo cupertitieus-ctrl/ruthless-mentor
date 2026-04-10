@@ -129,7 +129,7 @@ const sidebarPriceAmount = document.getElementById('sidebar-price-amount');
 function updateSidebarPrice() {
     const val = genreSelect ? genreSelect.value : '';
     const info = GENRE_PRICES[val];
-    // Subscribers see "Subscription" instead of price
+    // Subscribers see "Subscription" in the Your Review sidebar
     if (_subscription && _subscription.credits_remaining > 0) {
         if (sidebarGenreName) sidebarGenreName.textContent = info ? info.name : 'Your Plan';
         if (sidebarPriceAmount) {
