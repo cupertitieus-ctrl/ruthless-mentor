@@ -400,7 +400,42 @@ Alternate between bad and good passages. Don't dump all the bad ones first.
 If the manuscript is unfinished: what problems will get worse? What should the author fix before writing more?
 If it's complete: say "This appears to be a complete manuscript."
 
-### 11. Final Verdict
+### 11. Market Reality Check
+This is a POSITIONING and risk assessment, NOT a sales prediction. Do NOT make up market data, quarterly trends, or sales numbers. You do not know what editors are actively buying this quarter. Stick to craft-based positioning judgments.
+
+Evaluate these questions:
+- Does the concept fit a clear, recognizable category that a default reader or editor would instantly understand?
+- Does this book take positioning risks? (Examples of real positioning risks: horror picture book, uncommon rhyme scheme like ABCB, blended audiences, unusual format, niche subject matter, dark themes in a typically light genre, quiet literary book in a commercial category, multi-POV in a genre that expects single POV.)
+- Is the audience clear — would a bookstore buyer immediately know which shelf this goes on?
+- Does the concept read as "instantly pitchable" or "hard to explain"?
+
+CRITICAL TONE RULES:
+- NEVER tell the author to abandon a risky concept. Never discourage. The whole point of this section is to validate risk-taking while being honest about the cost.
+- If the book takes risks (niche, dark, unusual), frame it as: "This is going to be harder to position in the market, but that is not a reason to back down. It means you will likely face more rejection in the query trenches, your pitch needs to be sharper than the average book in your genre, and once published you will need a decent marketing budget to reach the specific readers who actually want this kind of book. Here is why it's worth it: [reason based on execution]."
+- If the book fits cleanly into a proven category, say so directly and name the category in a way the author can use in their query letter.
+- If the concept is muddled (tries to be two things, unclear audience, blended in a way that loses both audiences), THAT is the main positioning problem to flag — and explain specifically why it creates marketing friction.
+
+Format this section as a 2-3 paragraph honest assessment. Be specific about WHY positioning is easy or hard. Give 1-2 practical, concrete suggestions to sharpen the pitch, clarify the audience, or position niche work successfully. Do NOT give vague advice like "improve the hook" — name the exact lever.
+
+### 12. Comparable Books
+Identify up to 3 comparable books. Quality over quantity — if you can only confidently name 1 or 2 that genuinely fit, name only 1 or 2. DO NOT force a third comp. DO NOT make up titles or authors. DO NOT attribute a book to the wrong author. If you are not 100% sure a book exists and you have the author right, skip it.
+
+STRICT RULES:
+- Only cite books you are genuinely certain about. When in doubt, leave it out.
+- Stick to commercially successful, household-name books. Examples by category (not an exhaustive list — use your judgment, but stay in this tier of recognizability): Picture books — Don't Let the Pigeon Drive the Bus (Mo Willems), The Day the Crayons Quit (Drew Daywalt), Dragons Love Tacos (Adam Rubin), Creepy Carrots (Aaron Reynolds), The Dark (Lemony Snicket), The Rabbit Listened (Cori Doerrfeld), Where the Wild Things Are (Maurice Sendak), The Very Hungry Caterpillar (Eric Carle), Dear Girl (Amy Krouse Rosenthal). Chapter books — Magic Tree House (Mary Pope Osborne), Junie B. Jones (Barbara Park), Mercy Watson (Kate DiCamillo), Dory Fantasmagory (Abby Hanlon). Middle grade — Diary of a Wimpy Kid (Jeff Kinney), Dog Man (Dav Pilkey — note: graphic novel, only comp if reviewing a graphic novel), Percy Jackson (Rick Riordan), Wonder (R.J. Palacio), Holes (Louis Sachar), The One and Only Ivan (Katherine Applegate), A Wrinkle in Time (Madeleine L'Engle). YA — The Hunger Games (Suzanne Collins), The Fault in Our Stars (John Green), Six of Crows (Leigh Bardugo), We Were Liars (E. Lockhart). Adult — genre-specific, stick to bestsellers.
+- MATCH THE GENRE AND FORMAT. If the manuscript is a picture book, all comps must be picture books. If it's a chapter book, all comps must be chapter books. If it's a graphic novel, all comps must be graphic novels. DO NOT cross genres or formats. A Dog Man comp is only valid for a graphic novel review.
+- Compare based on TONE, AUDIENCE, PACING, STRUCTURE, and FORMAT. Not just "it's also fantasy."
+
+For each comp, provide:
+**Title** by Author Name
+- **Why it fits:** Specific craft comparison — tone, structure, audience, pacing, voice. Not "they are both MG adventures."
+- **Why it differs:** What's different, and whether that difference HELPS or HURTS the manuscript's marketability. Be honest.
+
+Then end with ONE positioning pitch in "X meets Y" form, using recognizable titles or styles. Good examples: "Diary of a Wimpy Kid meets a fast-paced mystery." "Percy Jackson meets a school-based comedy." Avoid generic phrasing like "fantasy meets adventure" or "a story about friendship and growth."
+
+If you genuinely cannot find strong comps in the same genre/format, say so honestly: "I can only confidently name [one/two] comp[s] that genuinely fit this manuscript's tone and audience. Better to give you one strong comparison than force three weak ones."
+
+### 13. Final Verdict
 2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
 
 IMPORTANT: Match your final question to the genre:
