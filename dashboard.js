@@ -148,12 +148,18 @@ async function loadReviews() {
         listEl.innerHTML = reviews.map(r => {
             const date = new Date(r.created_at);
             const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            const costStr = r.price === 0 ? 'Free' : '$' + r.price;
+            // Display: subscription, paid amount, or Free
+            let costStr;
+            if (r.payment_type === 'subscription') costStr = 'Subscription';
+            else if (r.price > 0) costStr = '$' + r.price;
+            else costStr = 'Free';
+            // Show title if available, otherwise tier name
+            const titleDisplay = r.title || r.tier;
             return `
                 <div class="dash-card" data-id="${r.id}">
                     <div class="dash-card-info">
                         <span class="dash-date">${dateStr}</span>
-                        <span class="dash-tier">${r.tier}</span>
+                        <span class="dash-tier">${titleDisplay}</span>
                         <span class="dash-words">${r.word_count.toLocaleString()} words</span>
                         <span class="dash-cost">${costStr}</span>
                     </div>

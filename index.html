@@ -35,7 +35,19 @@
             <!-- Logged in (hidden by default) -->
             <a href="/dashboard.html" class="nav-link-muted hidden" id="nav-dash">Dashboard</a>
             <a href="/review.html" class="nav-cta hidden" id="nav-cta-in">Get started</a>
-            <a href="#" class="nav-link-muted hidden" id="nav-signout">Sign out</a>
+            <div class="account-menu hidden" id="nav-account-menu" style="position: relative; display: none;">
+                <button id="account-menu-btn" style="background: transparent; border: 1px solid #333; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;" aria-label="Account">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <div id="account-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: #1a1816; border: 1px solid #333; border-radius: 8px; padding: 16px; min-width: 220px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 100;">
+                    <div id="account-email" style="color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; word-break: break-all;">Loading...</div>
+                    <div id="account-plan" style="color: #c9a96e; font-size: 0.8rem; margin-bottom: 12px;"></div>
+                    <div style="border-top: 1px solid #333; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <a href="/dashboard.html" style="color: #ccc; text-decoration: none; font-size: 0.85rem;">Dashboard</a>
+                        <a href="#" id="nav-signout" style="color: #999; text-decoration: none; font-size: 0.85rem;">Sign out</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -191,12 +203,11 @@
                 <p class="period">Up to 10,000 words</p>
                 <a href="review.html" class="btn-outline full">Get started</a>
             </div>
-            <div class="price-card popular anim-scale d1">
-                <span class="badge">Most popular</span>
+            <div class="price-card anim-scale d1">
                 <p class="tier">Middle Grade / Young Adult</p>
                 <p class="amount">$20</p>
                 <p class="period">10,000 &ndash; 100,000 words</p>
-                <a href="review.html" class="btn btn-glow full">Get started</a>
+                <a href="review.html" class="btn-outline full">Get started</a>
             </div>
             <div class="price-card anim-scale d2">
                 <p class="tier">Adult / Screenplay</p>
@@ -204,11 +215,12 @@
                 <p class="period">Full manuscript</p>
                 <a href="review.html" class="btn-outline full">Get started</a>
             </div>
-            <div class="price-card anim-scale d3">
+            <div class="price-card popular anim-scale d3">
+                <span class="badge">Most popular</span>
                 <p class="tier">Basic Plan</p>
                 <p class="amount">$50<span class="per">/mo</span></p>
                 <p class="period">10 reviews per month</p>
-                <a href="/auth.html?plan=basic" class="btn-outline full">Subscribe</a>
+                <a href="/auth.html?plan=basic" class="btn btn-glow full">Subscribe</a>
             </div>
         </div>
     </section>

@@ -559,7 +559,7 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
     // Now fetch all reviews belonging to this user
     const { data, error } = await supabaseAdmin
       .from('reviews')
-      .select('id, word_count, tier, price, review_markdown, created_at')
+      .select('id, word_count, tier, price, review_markdown, created_at, title, payment_type')
       .eq('user_id', req.user.id)
       .order('created_at', { ascending: false });
     if (error) return res.status(500).json({ error: 'Failed to load reviews' });
@@ -830,6 +830,11 @@ Provide your complete review following the structure outlined in your instructio
     let reviewId = null;
     if (supabaseAdmin) {
       try {
+        // Determine payment type
+        let paymentType = 'paid';
+        if (usedCredit) paymentType = 'subscription';
+        else if (totalCost === 0) paymentType = 'free';
+
         const { data, error } = await supabaseAdmin.from('reviews').insert({
           user_id: req.user ? req.user.id : null,
           customer_email: email || null,
@@ -839,6 +844,8 @@ Provide your complete review following the structure outlined in your instructio
           review_markdown: review,
           input_tokens: message.usage.input_tokens,
           output_tokens: message.usage.output_tokens,
+          title: manuscriptInfo?.title || null,
+          payment_type: paymentType,
         }).select('id').single();
         if (!error && data) reviewId = data.id;
       } catch (e) {

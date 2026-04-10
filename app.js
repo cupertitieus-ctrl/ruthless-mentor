@@ -6,14 +6,49 @@
     const dashEl = document.getElementById('nav-dash');
     const ctaInEl = document.getElementById('nav-cta-in');
     const signoutEl = document.getElementById('nav-signout');
+    const accountMenuEl = document.getElementById('nav-account-menu');
+    const accountEmailEl = document.getElementById('account-email');
+    const accountPlanEl = document.getElementById('account-plan');
 
     if (session) {
         // Logged in
         if (signinEl) signinEl.classList.add('hidden');
         if (ctaOutEl) ctaOutEl.classList.add('hidden');
-        if (dashEl) dashEl.classList.remove('hidden');
+        if (dashEl) dashEl.classList.add('hidden'); // hide separate dashboard link, it's in the menu now
         if (ctaInEl) ctaInEl.classList.remove('hidden');
-        if (signoutEl) signoutEl.classList.remove('hidden');
+        if (accountMenuEl) {
+            accountMenuEl.classList.remove('hidden');
+            accountMenuEl.style.display = 'inline-block';
+        }
+        if (accountEmailEl) accountEmailEl.textContent = session.user.email;
+
+        // Fetch subscription info for plan display
+        try {
+            const subRes = await fetch('/api/subscription', {
+                headers: { 'Authorization': 'Bearer ' + session.access_token }
+            });
+            const { subscription } = await subRes.json();
+            if (subscription && accountPlanEl) {
+                accountPlanEl.textContent = subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + ' Plan · ' + subscription.credits_remaining + ' left';
+            } else if (accountPlanEl) {
+                accountPlanEl.textContent = 'No active subscription';
+            }
+        } catch (e) {}
+    }
+
+    // Account menu toggle
+    const accountBtn = document.getElementById('account-menu-btn');
+    const accountDD = document.getElementById('account-dropdown');
+    if (accountBtn) {
+        accountBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            accountDD.style.display = accountDD.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', (e) => {
+            if (!accountBtn.contains(e.target) && !accountDD.contains(e.target)) {
+                accountDD.style.display = 'none';
+            }
+        });
     }
 
     if (signoutEl) {
