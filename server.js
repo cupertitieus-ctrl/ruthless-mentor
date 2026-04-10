@@ -422,21 +422,42 @@ If the manuscript is unfinished: what problems will get worse? What should the a
 If it's complete: say "This appears to be a complete manuscript."
 
 ### 11. Market Reality Check
-This is a POSITIONING and risk assessment, NOT a sales prediction. Do NOT make up market data, quarterly trends, or sales numbers. You do not know what editors are actively buying this quarter. Stick to craft-based positioning judgments.
+This section is written FOR A SELF-PUBLISHING AUTHOR. Do NOT frame it around traditional publishing (no "query trenches," no "agents and editors," no "bookstore buyers," no "submission"). Assume the author is publishing this book themselves and will be responsible for marketing it directly to readers. Your job is to honestly tell them how hard or easy this book will be to SELL to readers in the self-pub world.
 
-Evaluate these questions:
-- Does the concept fit a clear, recognizable category that a default reader or editor would instantly understand?
-- Does this book take positioning risks? (Examples of real positioning risks: horror picture book, uncommon rhyme scheme like ABCB, blended audiences, unusual format, niche subject matter, dark themes in a typically light genre, quiet literary book in a commercial category, multi-POV in a genre that expects single POV.)
-- Is the audience clear — would a bookstore buyer immediately know which shelf this goes on?
-- Does the concept read as "instantly pitchable" or "hard to explain"?
+Evaluate specifically from a self-publishing marketability angle:
+- **Amazon/KDP category fit:** Does the concept fit cleanly into an obvious Amazon category readers actually browse? Or does it straddle categories in a way that makes it hard to list?
+- **Thumbnail hook:** Will the title, concept, and cover angle work as a thumbnail on Amazon, Instagram, or TikTok? Can a reader understand what this book is in the 2 seconds they see it scrolling?
+- **Reader discovery difficulty:** How hard is it going to be for the RIGHT readers to find this book? Is the audience obvious (e.g. "parents of 4-year-olds who like funny picture books") or fuzzy (e.g. "people who enjoy experimental multi-genre fiction")?
+- **Niche vs broad:** Broad concepts sell easier on Amazon because the audience is huge and ads are cheap. Niche concepts sell to smaller audiences but convert better when you find them. Say which one this is.
+- **BookTok / social media viability:** Is there a hook that would work on BookTok, Instagram, or Pinterest? A high-concept one-liner, a surprising premise, a relatable kid moment, a visually shareable illustration style? Or is it a book that's hard to describe in a 30-second reel?
+- **Paid ad cost reality:** If the author runs Amazon ads or Facebook/Meta ads, will they be cheap (broad audience, clear keywords, easy targeting) or expensive (niche audience, unclear keywords, hard to target)?
+- **Positioning risk:** Does this book take creative risks (horror picture book, uncommon rhyme scheme, blended audiences, niche subject matter, dark themes in a typically light genre)? Niche bets are VALID for self-published authors because you can reach a passionate micro-audience — just be honest about the budget and time cost.
 
 CRITICAL TONE RULES:
 - NEVER tell the author to abandon a risky concept. Never discourage. The whole point of this section is to validate risk-taking while being honest about the cost.
-- If the book takes risks (niche, dark, unusual), frame it as: "This is going to be harder to position in the market, but that is not a reason to back down. It means you will likely face more rejection in the query trenches, your pitch needs to be sharper than the average book in your genre, and once published you will need a decent marketing budget to reach the specific readers who actually want this kind of book. Here is why it's worth it: [reason based on execution]."
-- If the book fits cleanly into a proven category, say so directly and name the category in a way the author can use in their query letter.
-- If the concept is muddled (tries to be two things, unclear audience, blended in a way that loses both audiences), THAT is the main positioning problem to flag — and explain specifically why it creates marketing friction.
+- Self-publishing IS the realm where risky bets pay off — traditional publishing rejects weird books, but self-publishing lets weird books find their readers. Respect this.
+- If the book is hard to market, frame it as: "This is going to be harder to sell as a self-published author. You will need a bigger marketing budget, more targeted ads, more time finding the exact readers who want this, and a sharper one-line hook. Here is specifically why it is harder: [reason]. Here is why it is still worth it: [reason based on execution or niche value]."
+- If the book is easy to market, say so directly and name the exact category and audience the author should target. Give them keywords, comp audiences, and ad angles if you can.
+- If the concept is muddled (tries to be two things, unclear audience, blended in a way that loses both audiences), THAT is the main positioning problem to flag — and explain specifically why it creates discovery friction on Amazon, BookTok, and in ads.
 
-Format this section as a 2-3 paragraph honest assessment. Be specific about WHY positioning is easy or hard. Give 1-2 practical, concrete suggestions to sharpen the pitch, clarify the audience, or position niche work successfully. Do NOT give vague advice like "improve the hook" — name the exact lever.
+FORBIDDEN LANGUAGE — do not use any of these phrases in this section:
+- "Query trenches"
+- "Agents and editors"
+- "Bookstore buyers"
+- "Submit to publishers"
+- "Acquiring editor"
+- "Get rejected by agents"
+- "Query letter"
+
+DO NOT GENDER THE AUDIENCE. Never describe this book as being "for boys" or "for girls." Gender is not a meaningful marketing category for kids' books in the self-publishing world — kids read what they like regardless of the protagonist's gender. Describe the audience by AGE, TONE, and INTEREST instead:
+- GOOD: "readers ages 6-10 who love funny mystery stories"
+- GOOD: "kids who gravitate toward spooky humor and relatable school-day chaos"
+- BAD: "boys who like adventure"
+- BAD: "girls who enjoy heartfelt stories"
+- BAD: "mostly appeals to boys"
+Do not assume or assign reader gender based on the protagonist's gender or the subject matter. Do not mention gender as a market segment at all.
+
+Format this section as a 2-3 paragraph honest assessment of self-publishing marketability. Be specific about WHY this book will be easy or hard to sell to readers directly. Give 1-2 practical, concrete suggestions the author can actually act on — keyword targeting, Amazon category, ad hook angle, BookTok pitch, niche community to target, visual cover angle. Do NOT give vague advice like "improve the hook" — name the exact lever.
 
 ### 12. Final Verdict
 2-4 paragraphs. Is it ready? What's the single biggest thing to fix? What's the strongest thing to protect?
