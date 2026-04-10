@@ -1076,14 +1076,33 @@ THE BIGGEST MISTAKE: If this manuscript reads like a short story — descriptive
     }
   }
 
-  // Screenplay-specific overrides for Market Reality Check and Comparable Books
+  // Screenplay-specific overrides for Section 11 (Market Reality Check)
   if (manuscriptInfo.genre === 'screenplay') {
-    parts.push(`SCREENPLAY OVERRIDE for Section 11 (Market Reality Check): Do NOT use book industry language like "query trenches", "agents and editors", "bookstore shelf", or "readers". This is a screenplay. Use screenplay industry framing:
+    parts.push(`SCREENPLAY OVERRIDE FOR SECTION 11 (MARKET REALITY CHECK) — CRITICAL:
 
-- The market is producers, managers, production companies, studios, streamers, and festival programmers — NOT agents and editors.
-- Positioning risk for a screenplay includes: genre budget (horror and thrillers are cheap; sci-fi, period, and fantasy are expensive and harder to greenlight from an unknown writer); format risk (limited series vs feature vs short); log line clarity (can you pitch this in one sentence in a room?); IP availability (is this based on something the writer owns or is it a derivative that needs rights?); commercial vs festival positioning (is this aimed at a Sundance slot or a wide theatrical release?).
-- The "marketing budget" line from the book version should become: "You will need a sharper log line, a stronger calling-card writing sample, and likely a producer or manager willing to take this out to the town. For expensive-to-produce concepts, expect a longer road to greenlight."
-- Validate the risk. Never tell them to abandon a spec that is hard to sell. Many of the best specs are the risky ones. Just be honest about the cost of entry.
+When the manuscript is a screenplay, all eight Market Reality Check subsections must be adapted for the film/TV industry. DO NOT use book language anywhere in Section 11 for a screenplay. DO NOT say "reader," "bookstore," "shelf," "chapter book," "pick up and open," "first page of the book," "kid holding the book," or any other phrase that only makes sense for a book. Use screenplay/film/TV language throughout.
+
+Adapt each subsection as follows (keep the same labels and order, but change the content framing):
+
+**The first page test:** For screenplays, this means the first 3-5 pages of the script — the opening scene. Producers, managers, and development readers decide within the first few pages whether to keep reading. A strong opening scene that hooks with voice, tone, and a compelling character moment is what separates a spec that gets passed around from one that gets abandoned. Look at the manuscript's actual opening scene: does it establish a clear tone in the slug line and action lines? Does the first line of dialogue have personality? Does the scene land a visual hook in the first page? If the first scene is talky setup or generic exposition, say so specifically. Name the exact beats that work or don't.
+
+**Who will relate:** For screenplays, this means who the intended audience is — not who will "read" the script, but who will BUY A TICKET or STREAM IT. Describe the audience by experience, taste, and life situation. Never by gender. Example: "fans of slow-burn supernatural horror who grew up on The Sixth Sense," "adults who loved coming-of-age dramedies about working-class families," "millennials who want to see themselves navigate late-stage dating fatigue." Be specific and layered about WHO shows up for this story.
+
+**The size calculation:** For screenplays, is this a broad commercial concept or a niche festival play? Broad = mass-market multiplex audience, streamer-friendly, high concept. Moderate = genre-specific fans who show up for this type of film regularly. Niche = festival circuit, arthouse, specific demographic or cultural audience. Be honest — niche is not bad, it's just a different path (A24 vs Marvel). No specific box office numbers or viewer counts, just the honest size assessment.
+
+**What makes this script stand out:** What is the specific thing about this script that could make a producer, manager, or actor say "I need to be attached to this"? Is it the voice? The premise? A killer role for a specific type of actor? A fresh take on a familiar genre? A specific set piece nobody else has done? For scripts that stand out well, name what's working. For scripts that don't yet, be specific about what needs to sharpen. NO film or TV title references — describe in pure craft terms.
+
+**The 3-sentence pitch test:** For screenplays, this is the LOG LINE + pitch. This is the MOST important subsection for a screenplay — producers literally live and die by log lines. Either write the actual log line/pitch for this script (one sentence setup + one sentence conflict + one sentence stakes or hook) OR honestly say you can't because the concept is too muddled. Don't fake-succeed. A clean log line for a spec is what gets it read. Example format: "Here's the log line: [Setup sentence]. [Conflict sentence]. [Hook/stakes sentence]." If you can't, explain specifically why (genre confusion, unclear protagonist goal, too many plotlines, muddled tone) and what would make it pitchable.
+
+**What will audiences feel:** What will viewers feel when they watch this? Use plain-English feeling words — "laugh out loud," "cry in the last scene," "want to look away but can't," "feel seen," "leave the theater quoting lines," "feel scared walking to the car after." Never use jargon like "emotional resonance" or "tonal depth." Say exactly what the intended feeling is and whether the script actually delivers it in its key scenes.
+
+**The rewatch factor:** For screenplays, "reread factor" becomes "rewatch factor." Will audiences come back to this? Will they rewatch it on a second date, quote it to friends, show it to their kids, rewatch it every Halloween? Name the specific craft elements that create rewatch value — a line so good it gets quoted, a twist that plays differently on second watch, a character so alive you miss them, a visual moment that lives rent-free. For scripts without rewatch value, be specific about what's missing.
+
+**The word-of-mouth factor:** For screenplays, this is about what audiences will actually tell their friends after watching. Picture someone texting a friend after leaving the theater or closing the laptop: what do they actually say? Write the ACTUAL text message or group chat message they'd send. USE THE EXACT MANUSCRIPT TITLE VERBATIM from the metadata (same rule as books — no fabricating, no paraphrasing the title). NEVER reference the poster, cover art, or any visual design element you cannot see. Example format: "Picture someone texting their friend after watching: 'Dude, [EXACT TITLE] messed me up, you HAVE to see it — there's this scene in the third act where [specific moment]...' That's a word-of-mouth hit." For scripts that lack a shareable hook, be specific about what would create one.
+
+REMEMBER: The 8 fixed subsection labels stay the same ("The first page test", "Who will relate", "The size calculation", etc.) — you're just adapting the CONTENT inside each to screenplay language. Do not skip any subsections. Do not rename them to film-specific versions like "The opening scene test." Use the same labels, different guts.
+
+FORBIDDEN BOOK LANGUAGE for screenplay reviews: "reader will pick up the book," "first page of the book," "kid holding the book in the lunch line," "bookstore," "dashboard," "chapter book," "parent reading bedtime story." Everything must be about audiences watching, viewers, producers, scripts, etc.
 
 `);
   }
