@@ -510,6 +510,15 @@ Each subsection gets 3-6 sentences of specific analysis referencing THIS manuscr
   - Any phrase that claims to know typical sales for debut/midlist/bestseller categories
   - "You're looking at a X-copy range"
   Sales numbers are fabrications. You have no data. Stick to audience size (broad/moderate/niche), not sales predictions.
+
+- ABSOLUTELY FORBIDDEN: referencing specific book titles or authors as comps or examples in Section 11. Do NOT name real books. NEVER say things like:
+  - "like Diary of a Wimpy Kid" or "think Junie B. Jones meets X"
+  - "this reminds me of [book title]"
+  - "similar to Amulet" / "like Dog Man" / "fans of Percy Jackson"
+  - Any phrase that compares the manuscript to a specific published book
+  Claude's recall of specific books is unreliable (it has called Amulet "funny" when it's not, and mislabels tones of famous books). Instead of referencing books, describe the manuscript's characteristics in pure craft terms: "this is a humor-driven mystery with a deadpan kid narrator" — not "this is like Book X."
+  If you want to describe the competitive landscape, describe it generically: "there are hundreds of chapter books in the school-mystery space" — NOT "Magic Tree House, Junie B. Jones, Mercy Watson dominate the chapter book market."
+  No book titles. No author names. No comps. Describe by tone, story engine, and audience instead.
 - Each subsection needs real substance — 3-6 sentences of specific analysis, not platitudes.
 - Be specific, never vague. "This will appeal to many readers" is banned. Name the readers.
 - Never gender the audience explicitly. Describe holistically by age, life situation, experience, and interest.
