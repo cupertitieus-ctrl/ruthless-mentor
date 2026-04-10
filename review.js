@@ -75,13 +75,13 @@ function updateCost() {
     const words = countWords(textarea ? textarea.value : '');
     if (wordCountEl) wordCountEl.textContent = words.toLocaleString();
 
-    // Use genre-selected price if available, otherwise fall back to word count tier
+    // ONLY show a price when the user has actually selected a genre.
+    // No word-count-based fallback — pricing is genre-driven.
     const genreVal = genreSelect ? genreSelect.value : '';
     const genreInfo = GENRE_PRICES[genreVal];
-    const tier = words > 0 ? getTier(words) : null;
 
-    let basePrice = genreInfo ? genreInfo.price : (tier ? tier.price : 0);
-    let tierName = genreInfo ? genreInfo.name : (tier ? tier.name : '--');
+    let basePrice = genreInfo ? genreInfo.price : 0;
+    let tierName = genreInfo ? genreInfo.name : '--';
     let total = basePrice;
 
     // Subscribers with credits get reviews covered by their plan
@@ -97,13 +97,17 @@ function updateCost() {
         else if (appliedCoupon.type === 'free') total = 0;
     }
 
-    if (estTierEl) estTierEl.textContent = words === 0 && !genreInfo ? '--' : tierName;
+    if (estTierEl) estTierEl.textContent = tierName;
     if (_subscription && _subscription.credits_remaining > 0) {
         if (estCostEl) estCostEl.textContent = 'Subscription';
         if (totalEl) totalEl.textContent = 'Subscription';
+    } else if (!genreInfo) {
+        // No genre selected yet — don't show any price
+        if (estCostEl) estCostEl.textContent = '--';
+        if (totalEl) totalEl.textContent = '--';
     } else {
-        if (estCostEl) estCostEl.textContent = basePrice === 0 ? '--' : '$' + basePrice;
-        if (totalEl) totalEl.textContent = basePrice === 0 ? '--' : (total === 0 ? 'FREE' : '$' + total.toFixed(0));
+        if (estCostEl) estCostEl.textContent = '$' + basePrice;
+        if (totalEl) totalEl.textContent = total === 0 ? 'FREE' : '$' + total.toFixed(0);
     }
 }
 
