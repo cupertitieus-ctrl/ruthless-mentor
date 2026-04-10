@@ -272,6 +272,16 @@ Then cover the rest using ALL CAPS bold subheaders. Follow this EXACT format:
 
 **PLOT HOLES:**
 
+CRITICAL: Before flagging something as a plot hole, ask: "Is this an intentional mystery or setup the author is going to answer later?" In mystery books, detective stories, thrillers, whodunits, and many middle-grade and YA novels, the unanswered question IS the point — the author deliberately doesn't explain something because revealing it would kill the story. Unanswered questions, missing information, and unexplained events in the setup of a mystery are NOT plot holes — they are the hook. A real plot hole is a contradiction or a logical impossibility, not a question that hasn't been answered yet.
+
+Before listing anything under PLOT HOLES, check:
+1. Is this question the central mystery of the book? If yes, it is NOT a plot hole.
+2. Is this something that's meant to be revealed in a later chapter? If the manuscript is unfinished or this is Book 1 of a series, unresolved threads are usually intentional.
+3. Is this a genuine contradiction (character is described as tall in Chapter 1 and short in Chapter 5) or a genuine impossibility (character is in two places at once)? If yes, flag it.
+4. Could an attentive reader reasonably wait for this to be explained later in the book? If yes, it is NOT a plot hole.
+
+If you are not sure whether something is intentional or a plot hole, hedge: "If this is intended as part of the mystery, disregard — but if the author wants readers to understand X by Chapter N, it needs more setup."
+
 **1. The First Issue Title:** Description of the plot hole and why it matters...
 
 **2. The Second Issue Title:** Description...
