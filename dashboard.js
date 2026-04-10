@@ -34,12 +34,28 @@ async function loadSubscription() {
             const nextBill = subscription.current_period_end
                 ? new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                 : 'N/A';
+            const total = subscription.credits_per_month || 10;
+            const remaining = subscription.credits_remaining || 0;
+            const used = total - remaining;
+            const pct = total > 0 ? (remaining / total) * 100 : 0;
             subInfoEl.innerHTML = `
-                <div class="sub-card">
-                    <div class="sub-plan">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</div>
-                    <div class="sub-credits">${subscription.credits_remaining} reviews remaining</div>
-                    <div class="sub-next">Next billing: ${nextBill}</div>
-                    <button class="btn-outline" id="manage-sub-btn">Manage subscription</button>
+                <div class="sub-card" style="background: linear-gradient(135deg, #1a1816 0%, #0d0b09 100%); border: 1px solid #c9a96e; border-radius: 10px; padding: 24px 28px; margin-bottom: 32px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 240px;">
+                            <div style="color: #c9a96e; font-size: 1.15rem; font-weight: 700; margin-bottom: 4px;">${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan</div>
+                            <div style="color: #999; font-size: 0.85rem;">Next billing: ${nextBill}</div>
+                        </div>
+                        <button class="btn-outline" id="manage-sub-btn" style="background: transparent; color: #c9a96e; border: 1px solid #c9a96e; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">Manage subscription</button>
+                    </div>
+                    <div style="margin-top: 18px;">
+                        <div style="display: flex; justify-content: space-between; color: #ccc; font-size: 0.9rem; margin-bottom: 8px;">
+                            <span><strong style="color:#fff">${used}</strong> used</span>
+                            <span><strong style="color:#c9a96e">${remaining}</strong> of ${total} reviews left</span>
+                        </div>
+                        <div style="background: #2a2622; border-radius: 999px; height: 10px; overflow: hidden;">
+                            <div style="background: #c9a96e; height: 100%; width: ${pct}%; border-radius: 999px; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
                 </div>
             `;
             document.getElementById('manage-sub-btn').addEventListener('click', async () => {
