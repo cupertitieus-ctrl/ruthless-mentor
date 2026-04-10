@@ -451,21 +451,31 @@ Audience size is not "good" or "bad." Broad books scale faster but have more com
 
 **AUDIENCE SIZE & POSITIONING RISK:**
 
-One paragraph. PICK EXACTLY ONE of these three buckets for this book: **BROAD**, **MODERATE**, or **NICHE**. Commit to it. Do not hedge. Do not invent hybrid labels like "broad-to-moderate" or "moderate leaning niche" or "broad but somewhat niche." Pick ONE label and state it plainly.
+Talk to the author like a real human, not a market analyst. Ruthless, direct, warm — like a smart friend at a coffee shop giving them the real deal. No corporate hedging, no made-up labels, no "spectrum" talk.
 
-FORBIDDEN hedge phrases:
-- "This book sits on the broad-to-moderate spectrum"
-- "Leaning toward broad / moderate / niche"
-- "Somewhere between broad and niche"
-- "Broad but with niche elements"
-- Any phrase that combines two buckets into one
+Start by answering this one question in PLAIN ENGLISH: **How many people are actually going to care about this book?**
 
-REQUIRED format: Start the paragraph with one of these exact openings:
-- "This is a BROAD concept." (then explain why, and who will relate)
-- "This is a MODERATE concept." (then explain why, and who will relate)
-- "This is a NICHE concept." (then explain why, and who will relate)
+Write it the way you'd say it out loud. Examples of GOOD openings:
+- "Your book is relatable to a lot of people, but not quite universal."
+- "This is a book almost every kid could see themselves in."
+- "This book is for a very specific group of kids and families — and that group is going to love it."
+- "Honestly? The audience for this is small. Not small-bad, small-specific. The kids who need this book will really need it."
+- "Every kid has been through this. The audience is huge."
 
-After picking the bucket, explain WHO will see themselves in this book. Describe readers by age, life situation, experience, and interests — NEVER by gender (no "boys who..." or "girls who..."). Then address positioning risk: does this book take a creative risk (horror picture book, uncommon rhyme scheme, blended audience, dark theme, unusual format, niche subject matter)? If yes, validate the risk — niche and risky bets are often the most memorable books. Never tell the author to abandon the concept.
+Examples of BAD openings (FORBIDDEN):
+- "This book sits on the broad-to-moderate spectrum, leaning toward broad." — WHAT does that even mean?
+- "The audience is moderately broad." — corporate nonsense.
+- "This is a NICHE concept." — stiff, sounds like a category label, not a human saying something real.
+- "The target demographic is..." — market-analyst speak. Don't do it.
+
+After the opening, explain WHO will see themselves in this book in human terms. Describe readers by the experience they've had, the situation they're in, the feeling the book captures. NEVER by gender (no "boys who..." or "girls who..."). Examples of GOOD audience descriptions:
+- "This is for kids who lie awake worrying about the first day of school."
+- "This is for families whose lives just got rewritten by a diagnosis they didn't see coming."
+- "This is for kids who think their class pet is secretly up to something — which is every kid who's ever had a class pet."
+
+Then address positioning risk directly and humanly. Does this book take a creative risk (horror picture book, uncommon rhyme scheme, blended audience, dark theme, unusual format, niche subject matter)? Say so in plain language: "You're writing a horror picture book. That's a harder lane — most parents default to funny or heartwarming. But it's also where the memorable books live, and the kids who love scary stuff are out there looking for exactly this." Never discourage the risk. Validate it with humanity.
+
+KEEP IT HUMAN. Write it like you're actually talking to the author. Contractions are fine. Direct questions are fine. Ruthlessly honest + warm = the right tone.
 
 **SELF-PUBLISHING PATH:**
 
