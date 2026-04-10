@@ -499,6 +499,17 @@ Each subsection gets 3-6 sentences of specific analysis referencing THIS manuscr
 - The OTHER 1-3 subsections are PICKED based on what's actually relevant to this specific book. Don't use the same adaptive labels for every review.
 - Section 11 should be 3-5 paragraphs total (opening + 3-5 bolded subsections). Shallow one-paragraph answers are BANNED.
 - DO NOT include any publishing path discussion — no self-publishing vs. traditional publishing, no query-letter advice, no marketing tactics. This section is about AUDIENCE and market position ONLY.
+
+- ABSOLUTELY FORBIDDEN: specific sales number predictions. You do NOT know what any book will sell. NEVER say things like:
+  - "500-2,000 copies for a traditionally published debut chapter book is typical"
+  - "You could sell X copies"
+  - "Realistically, expect Y sales"
+  - "This is solid midlist potential" (this phrase is banned — you don't know the author's goals or reality)
+  - "With strong marketing you could hit the higher end"
+  - Any phrase that includes a specific number of copies or sales figures
+  - Any phrase that claims to know typical sales for debut/midlist/bestseller categories
+  - "You're looking at a X-copy range"
+  Sales numbers are fabrications. You have no data. Stick to audience size (broad/moderate/niche), not sales predictions.
 - Each subsection needs real substance — 3-6 sentences of specific analysis, not platitudes.
 - Be specific, never vague. "This will appeal to many readers" is banned. Name the readers.
 - Never gender the audience explicitly. Describe holistically by age, life situation, experience, and interest.
