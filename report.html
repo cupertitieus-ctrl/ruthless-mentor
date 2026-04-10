@@ -298,6 +298,8 @@ function parseReviewMarkdown(md) {
   const lines = md.split('\n');
   let html = '';
   let i = 0;
+  // Track current section so we only render character grade badges inside sections 7 and 8
+  let inCharacterSection = false;
 
   while (i < lines.length) {
     const line = lines[i];
@@ -315,6 +317,8 @@ function parseReviewMarkdown(md) {
     // Section headers: ### or ## followed by content (not caught by title handler above)
     if (/^#{2,3}\s/.test(trimmed)) {
       const headerText = trimmed.replace(/^#{1,3}\s*/, '');
+      // Detect character report sections — letter grade badges are ONLY allowed here
+      inCharacterSection = /main\s*character/i.test(headerText) || /supporting\s*character/i.test(headerText) || /character\s*report/i.test(headerText);
       const scoreMatch = headerText.match(/(.+?):\s*(\d+)\/10(?:\s*[—\-]\s*(.+))?/);
       if (scoreMatch) {
         const title = scoreMatch[1].trim();
@@ -389,8 +393,12 @@ function parseReviewMarkdown(md) {
       i++; continue;
     }
 
-    // Character grade: many formats
+    // Character grade: many formats — ONLY apply inside Main Character / Supporting Characters sections
     // **Name** — Grade: X | **Name — X** | **Name**: X | **Name** (Grade: X) | Name — Grade: X
+    if (!inCharacterSection) {
+      // Not in a character section — skip the grade parser entirely so bold-text lines
+      // in other sections (like Repeat Word Report) don't accidentally get rendered as grade cards
+    } else {
     const charPatterns = [
       // **Name** — Grade: B+ (grade outside bold)
       /^\*\*(.+?)\*\*\s*[-–—:]\s*Grade:\s*([A-F][+\-−]?)/i,
@@ -448,6 +456,7 @@ function parseReviewMarkdown(md) {
       html += `<div class="char-card"><div class="char-header"><span class="char-name">${esc(name)}</span><span class="char-grade ${gradeClass}">${esc(grade)}</span></div><div class="char-body">${bodyHtml}</div></div>`;
       continue;
     }
+    } // end if (inCharacterSection)
 
     // Depth rating
     const depthMatch = trimmed.match(/^(?:Rating|Depth):\s*(Shallow|Surface|Adequate|Deep|Unflinching)/i);
