@@ -951,20 +951,92 @@ app.post('/api/cancel-subscription', requireAuth, async (req, res) => {
       .single();
     if (!sub) return res.status(404).json({ error: 'No active subscription found' });
 
-    // Cancel in Stripe (if real subscription)
+    let stripeCancelled = false;
+    let resolvedStripeSubId = sub.stripe_subscription_id;
+    let resolvedStripeCustomerId = sub.stripe_customer_id;
+
+    // Case 1: Real Stripe subscription ID — cancel directly
     if (stripe && sub.stripe_subscription_id && !sub.stripe_subscription_id.startsWith('manual')) {
       try {
         await stripe.subscriptions.update(sub.stripe_subscription_id, { cancel_at_period_end: true });
+        stripeCancelled = true;
+        console.log(`[CANCEL] Cancelled Stripe sub ${sub.stripe_subscription_id} for user ${req.user.id}`);
       } catch (stripeErr) {
         console.error('[CANCEL] Stripe error:', stripeErr.message);
-        // Continue anyway — mark as cancelled in our DB
       }
     }
 
-    // Mark cancelled in Supabase (status stays active until period end so they keep credits)
-    await supabaseAdmin.from('subscriptions')
-      .update({ status: 'cancelled', updated_at: new Date().toISOString() })
-      .eq('id', sub.id);
+    // Case 2: manual_backfill subscription — look up the real one by customer email
+    if (stripe && sub.stripe_subscription_id && sub.stripe_subscription_id.startsWith('manual')) {
+      try {
+        const userEmail = req.user.email;
+        console.log(`[CANCEL] Manual backfill detected — searching Stripe for ${userEmail}`);
+
+        // Search Stripe customers by email
+        const customers = await stripe.customers.list({ email: userEmail, limit: 10 });
+
+        // Find the first customer with an active subscription
+        for (const customer of customers.data) {
+          const subs = await stripe.subscriptions.list({
+            customer: customer.id,
+            status: 'active',
+            limit: 10,
+          });
+
+          // Also check for 'trialing' and 'past_due' statuses
+          const allSubs = [...subs.data];
+          if (subs.data.length === 0) {
+            const trialingSubs = await stripe.subscriptions.list({
+              customer: customer.id,
+              status: 'trialing',
+              limit: 10,
+            });
+            allSubs.push(...trialingSubs.data);
+          }
+
+          if (allSubs.length > 0) {
+            // Cancel all active subscriptions for this customer at period end
+            for (const stripeSub of allSubs) {
+              await stripe.subscriptions.update(stripeSub.id, { cancel_at_period_end: true });
+              console.log(`[CANCEL] Cancelled real Stripe sub ${stripeSub.id} (was backfilled as ${sub.stripe_subscription_id})`);
+              // Store the first real sub ID + customer ID back into Supabase so future operations use the real one
+              if (!resolvedStripeSubId || resolvedStripeSubId.startsWith('manual')) {
+                resolvedStripeSubId = stripeSub.id;
+                resolvedStripeCustomerId = customer.id;
+              }
+              stripeCancelled = true;
+            }
+          }
+        }
+
+        if (!stripeCancelled) {
+          console.warn(`[CANCEL] No active Stripe subscription found for ${userEmail} — marking as cancelled in DB only`);
+        }
+      } catch (stripeErr) {
+        console.error('[CANCEL] Stripe lookup error:', stripeErr.message);
+      }
+    }
+
+    // Update Supabase: mark cancelled AND heal the manual_backfill ID if we found the real one
+    const updatePayload = {
+      status: 'cancelled',
+      updated_at: new Date().toISOString(),
+    };
+    if (resolvedStripeSubId && resolvedStripeSubId !== sub.stripe_subscription_id) {
+      updatePayload.stripe_subscription_id = resolvedStripeSubId;
+    }
+    if (resolvedStripeCustomerId && resolvedStripeCustomerId !== sub.stripe_customer_id) {
+      updatePayload.stripe_customer_id = resolvedStripeCustomerId;
+    }
+    await supabaseAdmin.from('subscriptions').update(updatePayload).eq('id', sub.id);
+
+    if (!stripeCancelled && stripe) {
+      return res.json({
+        success: true,
+        warning: true,
+        message: 'Subscription marked cancelled in your account, but we could not reach your Stripe billing record automatically. If you are still being charged, please contact support.',
+      });
+    }
 
     res.json({ success: true, message: 'Subscription cancelled. You will keep access until the end of your billing period.' });
   } catch (err) {
