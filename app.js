@@ -1,6 +1,6 @@
 // ===== AUTH-AWARE NAV =====
 (async () => {
-    const { data: { session } } = await sb.auth.getSession();
+    const session = await authSession();
     const signinEl = document.getElementById('nav-signin');
     const ctaOutEl = document.getElementById('nav-cta-out');
     const dashEl = document.getElementById('nav-dash');
@@ -20,12 +20,12 @@
             accountMenuEl.classList.remove('hidden');
             accountMenuEl.style.display = 'inline-block';
         }
-        if (accountEmailEl) accountEmailEl.textContent = session.user.email;
+        if (accountEmailEl) accountEmailEl.textContent = session.email;
 
         // Fetch subscription info for plan display
         try {
             const subRes = await fetch('/api/subscription', {
-                headers: { 'Authorization': 'Bearer ' + session.access_token }
+                headers: await authHeaders()
             });
             const { subscription } = await subRes.json();
             if (subscription && accountPlanEl) {
@@ -54,7 +54,7 @@
     if (signoutEl) {
         signoutEl.addEventListener('click', async (e) => {
             e.preventDefault();
-            await sb.auth.signOut();
+            await authSignOut();
             window.location.reload();
         });
     }

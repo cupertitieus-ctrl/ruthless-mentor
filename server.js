@@ -162,31 +162,74 @@ if (supabaseUrl && supabaseKey) {
   console.warn('[WARN] Supabase not configured — auth/storage disabled, reviews still work');
 }
 
-// ===== AUTH MIDDLEWARE (soft — allows unauthenticated if Supabase is down) =====
+// ===== AUTH (Clerk verifies tokens; users map to Supabase UUIDs by email) =====
+// Reviews/subscriptions are keyed by Supabase auth UUIDs, so until the DB
+// migration we resolve each Clerk user to their existing Supabase user row
+// (creating one via the admin API for brand-new signups).
+let clerkAuth = null;
+if (process.env.CLERK_SECRET_KEY) {
+  const { clerkMiddleware, getAuth, clerkClient } = require('@clerk/express');
+  app.use(clerkMiddleware());
+  clerkAuth = { getAuth, clerkClient };
+  console.log('[OK] Clerk auth connected');
+} else {
+  console.warn('[WARN] Clerk not configured — auth disabled');
+}
+
+const clerkUserCache = new Map(); // clerkUserId -> { id: supabaseUuid, email }
+
+async function findSupabaseUserByEmail(email) {
+  const target = email.toLowerCase();
+  for (let page = 1; page <= 20; page++) {
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+    if (error || !data || !data.users || data.users.length === 0) return null;
+    const match = data.users.find(u => (u.email || '').toLowerCase() === target);
+    if (match) return match;
+    if (data.users.length < 200) return null;
+  }
+  return null;
+}
+
+async function resolveClerkUser(req) {
+  if (!clerkAuth || !supabaseAdmin) return null;
+  const { userId } = clerkAuth.getAuth(req);
+  if (!userId) return null;
+  if (clerkUserCache.has(userId)) return clerkUserCache.get(userId);
+
+  const clerkUser = await clerkAuth.clerkClient.users.getUser(userId);
+  const email = clerkUser.primaryEmailAddress?.emailAddress
+    || clerkUser.emailAddresses?.[0]?.emailAddress;
+  if (!email) return null;
+
+  let sbUser = await findSupabaseUserByEmail(email);
+  if (!sbUser) {
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({ email, email_confirm: true });
+    if (error || !data?.user) {
+      console.error('[AUTH] Failed to create Supabase user for', email, error?.message);
+      return null;
+    }
+    sbUser = data.user;
+    console.log('[AUTH] Created Supabase user for new Clerk signup:', email);
+  }
+
+  const resolved = { id: sbUser.id, email };
+  clerkUserCache.set(userId, resolved);
+  return resolved;
+}
+
 async function optionalAuth(req, res, next) {
   req.user = null;
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ') || !supabaseAdmin) {
-    return next();
-  }
   try {
-    const token = authHeader.split(' ')[1];
-    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-    if (!error && user) req.user = user;
+    req.user = await resolveClerkUser(req);
   } catch (e) { /* ignore auth errors */ }
   next();
 }
 
 async function requireAuth(req, res, next) {
-  if (!supabaseAdmin) return res.status(503).json({ error: 'Auth not configured' });
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Authentication required' });
-  }
+  if (!clerkAuth) return res.status(503).json({ error: 'Auth not configured' });
   try {
-    const token = authHeader.split(' ')[1];
-    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-    if (error || !user) return res.status(401).json({ error: 'Invalid or expired token' });
+    const user = await resolveClerkUser(req);
+    if (!user) return res.status(401).json({ error: 'Authentication required' });
     req.user = user;
     next();
   } catch (e) {

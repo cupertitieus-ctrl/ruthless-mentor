@@ -197,14 +197,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </div>
 
+<script src="clerk-config.js"></script>
 <script>
 // Check auth — show save button if not logged in
 (async () => {
   try {
-    const { createClient } = window.supabase || {};
-    if (!createClient) return;
-    const sb = createClient('https://kzmilbmfaauruedekfmu.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt6bWlsYm1mYWF1cnVlZGVrZm11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjY5OTMsImV4cCI6MjA4OTcwMjk5M30._SL6KJxICd_Yhi5yU8XBUccxnioMB-nog5G8U-xWlyw');
-    const { data: { session } } = await sb.auth.getSession();
+    const session = await authSession();
     if (!session) {
       document.getElementById('save-account-btn').style.display = '';
       // Show signup popup after 3 seconds

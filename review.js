@@ -4,7 +4,7 @@ let _subscription = null;
 
 (async () => {
     try {
-        const { data: { session } } = await sb.auth.getSession();
+        const session = await authSession();
         if (session) {
             _session = session;
             // Show dashboard link in nav
@@ -15,13 +15,13 @@ let _subscription = null;
             const emailInput = document.getElementById('q-email');
             if (emailField) emailField.style.display = 'none';
             if (emailInput) {
-                emailInput.value = session.user.email;
+                emailInput.value = session.email;
                 emailInput.removeAttribute('required');
             }
             // Check for subscription credits
             try {
                 const subRes = await fetch('/api/subscription', {
-                    headers: { 'Authorization': 'Bearer ' + session.access_token }
+                    headers: await authHeaders()
                 });
                 const subData = await subRes.json();
                 if (subData.subscription && subData.subscription.credits_remaining > 0) {
@@ -401,8 +401,7 @@ async function runReview(text, manuscriptInfo) {
     }, 3500);
 
     try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (_session) headers['Authorization'] = 'Bearer ' + _session.access_token;
+        const headers = { 'Content-Type': 'application/json', ...(await authHeaders()) };
 
         const pendingEmail = sessionStorage.getItem('rm_pending_email') || '';
         // Pass the applied coupon code so the server can correctly set the stored price

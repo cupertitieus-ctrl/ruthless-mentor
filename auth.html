@@ -40,50 +40,15 @@
     <section class="auth-page">
         <div class="auth-card">
             <h1>Welcome back.</h1>
-            <p class="auth-sub">Sign in to access your reviews, or create an account.</p>
+            <p class="auth-sub">Enter your email and we'll send you a sign-in code. No password to remember.</p>
 
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="signin">Sign in</button>
-                <button class="auth-tab" data-tab="signup">Create account</button>
-            </div>
+            <div id="clerk-auth"></div>
 
-            <!-- SIGN IN FORM -->
-            <form id="signin-form" class="auth-form">
-                <div class="form-group">
-                    <label for="si-email">Email</label>
-                    <input type="email" id="si-email" placeholder="you@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="si-password">Password</label>
-                    <input type="password" id="si-password" placeholder="Your password" required>
-                </div>
-                <button type="submit" class="btn btn-glow full">Sign in</button>
-                <div class="auth-divider"><span>or</span></div>
-                <button type="button" class="btn-outline full" id="si-magic">Send me a magic link</button>
-            </form>
-
-            <!-- SIGN UP FORM -->
-            <form id="signup-form" class="auth-form hidden">
-                <div class="form-group">
-                    <label for="su-email">Email</label>
-                    <input type="email" id="su-email" placeholder="you@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="su-password">Password</label>
-                    <input type="password" id="su-password" placeholder="Create a password (min 6 chars)" minlength="6" required>
-                </div>
-                <button type="submit" class="btn btn-glow full">Create account</button>
-                <div class="auth-divider"><span>or</span></div>
-                <button type="button" class="btn-outline full" id="su-magic">Send me a magic link</button>
-            </form>
-
-            <p class="auth-msg hidden" id="auth-msg"></p>
             <p class="auth-footer">Reviews start at just $5.</p>
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="supabase-config.js"></script>
+    <script src="clerk-config.js"></script>
     <script src="auth.js"></script>
 </body>
 </html>

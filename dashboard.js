@@ -1,16 +1,13 @@
 // ===== AUTH GATE =====
-let _session = null;
-
 (async () => {
-    const { data: { session } } = await sb.auth.getSession();
+    const session = await authSession();
     if (!session) {
         window.location.href = '/auth.html?redirect=/dashboard.html';
         return;
     }
-    _session = session;
     // Populate account menu
     const emailEl = document.getElementById('account-email');
-    if (emailEl) emailEl.textContent = session.user.email;
+    if (emailEl) emailEl.textContent = session.email;
     loadReviews();
     loadSubscription();
 })();
@@ -32,7 +29,7 @@ document.addEventListener('click', (e) => {
 // ===== SIGN OUT =====
 document.getElementById('signout-btn').addEventListener('click', async (e) => {
     e.preventDefault();
-    await sb.auth.signOut();
+    await authSignOut();
     window.location.href = '/';
 });
 
@@ -43,7 +40,7 @@ async function loadSubscription() {
 
     try {
         const res = await fetch('/api/subscription', {
-            headers: { 'Authorization': 'Bearer ' + _session.access_token }
+            headers: await authHeaders()
         });
         const { subscription } = await res.json();
 
@@ -98,7 +95,7 @@ async function loadSubscription() {
                 try {
                     const cancelRes = await fetch('/api/cancel-subscription', {
                         method: 'POST',
-                        headers: { 'Authorization': 'Bearer ' + _session.access_token, 'Content-Type': 'application/json' }
+                        headers: { ...(await authHeaders()), 'Content-Type': 'application/json' }
                     });
                     const data = await cancelRes.json();
                     if (data.success) {
@@ -128,7 +125,7 @@ async function loadSubscription() {
                         const subRes = await fetch('/api/subscribe', {
                             method: 'POST',
                             headers: {
-                                'Authorization': 'Bearer ' + _session.access_token,
+                                ...(await authHeaders()),
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ plan: 'basic' })
@@ -159,7 +156,7 @@ async function loadReviews() {
 
     try {
         const res = await fetch('/api/reviews', {
-            headers: { 'Authorization': 'Bearer ' + _session.access_token }
+            headers: await authHeaders()
         });
         const { reviews } = await res.json();
 
