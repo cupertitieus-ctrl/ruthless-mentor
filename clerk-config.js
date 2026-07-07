@@ -1,6 +1,9 @@
 // Clerk auth — loads ClerkJS and exposes small helpers used across pages.
-// The publishable key is safe to expose in frontend code.
-const CLERK_PUBLISHABLE_KEY = 'pk_test_YW11c2VkLWhhZ2Zpc2gtOTMuY2xlcmsuYWNjb3VudHMuZGV2JA';
+// Publishable keys are safe to expose in frontend code.
+// Production key on the real domain, development key everywhere else (localhost, previews).
+const CLERK_PUBLISHABLE_KEY = /(^|\.)ruthlessmentor\.com$/.test(location.hostname)
+    ? 'pk_live_Y2xlcmsucnV0aGxlc3NtZW50b3IuY29tJA'
+    : 'pk_test_YW11c2VkLWhhZ2Zpc2gtOTMuY2xlcmsuYWNjb3VudHMuZGV2JA';
 
 window.clerkReady = new Promise((resolve, reject) => {
     // Frontend API domain is encoded in the publishable key
