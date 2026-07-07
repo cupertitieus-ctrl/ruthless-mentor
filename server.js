@@ -32,12 +32,6 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 
   console.log(`[WEBHOOK] ${event.type}`);
 
-  // Lazy-load supabaseAdmin (it's initialized below)
-  const getSupabase = () => {
-    if (!supabaseAdmin) return null;
-    return supabaseAdmin;
-  };
-
   const PLAN_CREDITS = { 'basic': 10, 'pro': 25, 'advanced': 60 };
 
   try {
@@ -51,14 +45,12 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       const plan = session.metadata?.plan || 'basic';
       const credits = PLAN_CREDITS[plan] || 10;
       let userId = session.metadata?.userId;
-      const db = getSupabase();
 
       // Fallback: if userId missing from metadata, look up user by email
-      if (!userId && db) {
+      if (!userId && pool) {
         const email = session.customer_email || session.customer_details?.email;
         if (email) {
-          const { data: { users } } = await db.auth.admin.listUsers();
-          const matched = users.find(u => u.email === email);
+          const matched = await q1('SELECT id FROM users WHERE lower(email) = lower($1)', [email]);
           if (matched) {
             userId = matched.id;
             console.log(`[WEBHOOK] Resolved userId from email ${email}: ${userId}`);
@@ -68,27 +60,29 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
         }
       }
 
-      if (db && userId) {
+      if (pool && userId) {
         // Safely get current_period_end
         const periodEnd = sub.current_period_end
           ? new Date(sub.current_period_end * 1000).toISOString()
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
-        const { error } = await db.from('subscriptions').upsert({
-          user_id: userId,
-          stripe_subscription_id: session.subscription,
-          stripe_customer_id: session.customer,
-          plan,
-          credits_remaining: credits,
-          credits_per_month: credits,
-          status: 'active',
-          current_period_end: periodEnd,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id' });
-        if (error) console.error('[WEBHOOK] Subscription upsert error:', error.message, error.details || '', error.hint || '');
-        else console.log(`[WEBHOOK] Subscription created: ${plan} for user ${userId} (${credits} reviews)`);
+        await q(`
+          INSERT INTO subscriptions (user_id, stripe_subscription_id, stripe_customer_id, plan,
+            credits_remaining, credits_per_month, status, current_period_end, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, 'active', $7, NOW())
+          ON CONFLICT (user_id) DO UPDATE SET
+            stripe_subscription_id = EXCLUDED.stripe_subscription_id,
+            stripe_customer_id = EXCLUDED.stripe_customer_id,
+            plan = EXCLUDED.plan,
+            credits_remaining = EXCLUDED.credits_remaining,
+            credits_per_month = EXCLUDED.credits_per_month,
+            status = 'active',
+            current_period_end = EXCLUDED.current_period_end,
+            updated_at = NOW()
+        `, [userId, session.subscription, session.customer, plan, credits, credits, periodEnd]);
+        console.log(`[WEBHOOK] Subscription created: ${plan} for user ${userId} (${credits} reviews)`);
       } else {
-        console.error(`[WEBHOOK] Cannot save subscription — db:${!!db} userId:${userId}`);
+        console.error(`[WEBHOOK] Cannot save subscription — db:${!!pool} userId:${userId}`);
       }
     }
 
@@ -96,24 +90,17 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
       const invoice = event.data.object;
       if (!invoice.subscription) return res.json({ received: true });
 
-      const db = getSupabase();
-      if (db) {
-        // Find subscription by stripe_subscription_id
-        const { data: sub } = await db.from('subscriptions')
-          .select('*')
-          .eq('stripe_subscription_id', invoice.subscription)
-          .single();
+      if (pool) {
+        const sub = await q1('SELECT * FROM subscriptions WHERE stripe_subscription_id = $1', [invoice.subscription]);
 
         if (sub && invoice.billing_reason === 'subscription_cycle') {
           // Monthly renewal — RESET reviews (no rollover)
           const newCredits = sub.credits_per_month;
           const stripeSub = await stripe.subscriptions.retrieve(invoice.subscription);
-          await db.from('subscriptions').update({
-            credits_remaining: newCredits,
-            status: 'active',
-            current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
-            updated_at: new Date().toISOString(),
-          }).eq('id', sub.id);
+          await q(`
+            UPDATE subscriptions SET credits_remaining = $1, status = 'active',
+              current_period_end = $2, updated_at = NOW() WHERE id = $3
+          `, [newCredits, new Date(stripeSub.current_period_end * 1000).toISOString(), sub.id]);
           console.log(`[WEBHOOK] Renewal: ${sub.plan} reset to ${newCredits} reviews`);
         }
       }
@@ -121,12 +108,8 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 
     if (event.type === 'customer.subscription.deleted') {
       const subscription = event.data.object;
-      const db = getSupabase();
-      if (db) {
-        await db.from('subscriptions').update({
-          status: 'cancelled',
-          updated_at: new Date().toISOString(),
-        }).eq('stripe_subscription_id', subscription.id);
+      if (pool) {
+        await q("UPDATE subscriptions SET status = 'cancelled', updated_at = NOW() WHERE stripe_subscription_id = $1", [subscription.id]);
         console.log(`[WEBHOOK] Subscription cancelled: ${subscription.id}`);
       }
     }
@@ -149,17 +132,24 @@ const stripe = stripeKey ? require('stripe')(stripeKey) : null;
 if (stripe) console.log('[OK] Stripe connected');
 else console.warn('[WARN] Stripe not configured — payments disabled');
 
-// Supabase (optional — gracefully degrade if not configured)
-let supabaseAdmin = null;
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (supabaseUrl && supabaseKey) {
-  const { createClient } = require('@supabase/supabase-js');
-  supabaseAdmin = createClient(supabaseUrl, supabaseKey);
-  console.log('[OK] Supabase connected');
+// Neon Postgres (optional — gracefully degrade if not configured)
+let pool = null;
+if (process.env.DATABASE_URL) {
+  const { Pool } = require('pg');
+  pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 5 });
+  console.log('[OK] Neon Postgres connected');
 } else {
-  console.warn('[WARN] Supabase not configured — auth/storage disabled, reviews still work');
+  console.warn('[WARN] DATABASE_URL not set — storage disabled, reviews still work');
+}
+
+// Query helpers: q() returns all rows, q1() returns first row or null
+async function q(text, params) {
+  const { rows } = await pool.query(text, params);
+  return rows;
+}
+async function q1(text, params) {
+  const rows = await q(text, params);
+  return rows[0] || null;
 }
 
 // ===== AUTH (Clerk verifies tokens; users map to Supabase UUIDs by email) =====
@@ -176,43 +166,32 @@ if (process.env.CLERK_SECRET_KEY) {
   console.warn('[WARN] Clerk not configured — auth disabled');
 }
 
-const clerkUserCache = new Map(); // clerkUserId -> { id: supabaseUuid, email }
-
-async function findSupabaseUserByEmail(email) {
-  const target = email.toLowerCase();
-  for (let page = 1; page <= 20; page++) {
-    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
-    if (error || !data || !data.users || data.users.length === 0) return null;
-    const match = data.users.find(u => (u.email || '').toLowerCase() === target);
-    if (match) return match;
-    if (data.users.length < 200) return null;
-  }
-  return null;
-}
+const clerkUserCache = new Map(); // clerkUserId -> { id: local users.id uuid, email }
 
 async function resolveClerkUser(req) {
-  if (!clerkAuth || !supabaseAdmin) return null;
+  if (!clerkAuth || !pool) return null;
   const { userId } = clerkAuth.getAuth(req);
   if (!userId) return null;
   if (clerkUserCache.has(userId)) return clerkUserCache.get(userId);
 
-  const clerkUser = await clerkAuth.clerkClient.users.getUser(userId);
-  const email = clerkUser.primaryEmailAddress?.emailAddress
-    || clerkUser.emailAddresses?.[0]?.emailAddress;
-  if (!email) return null;
+  // Fast path: user already linked to this Clerk ID
+  let user = await q1('SELECT id, email FROM users WHERE clerk_id = $1', [userId]);
 
-  let sbUser = await findSupabaseUserByEmail(email);
-  if (!sbUser) {
-    const { data, error } = await supabaseAdmin.auth.admin.createUser({ email, email_confirm: true });
-    if (error || !data?.user) {
-      console.error('[AUTH] Failed to create Supabase user for', email, error?.message);
-      return null;
-    }
-    sbUser = data.user;
-    console.log('[AUTH] Created Supabase user for new Clerk signup:', email);
+  if (!user) {
+    const clerkUser = await clerkAuth.clerkClient.users.getUser(userId);
+    const email = clerkUser.primaryEmailAddress?.emailAddress
+      || clerkUser.emailAddresses?.[0]?.emailAddress;
+    if (!email) return null;
+
+    // Link existing user by email, or create a new row for a fresh signup
+    user = await q1(`
+      INSERT INTO users (email, clerk_id) VALUES (lower($1), $2)
+      ON CONFLICT (email) DO UPDATE SET clerk_id = EXCLUDED.clerk_id
+      RETURNING id, email
+    `, [email, userId]);
   }
 
-  const resolved = { id: sbUser.id, email };
+  const resolved = { id: user.id, email: user.email };
   clerkUserCache.set(userId, resolved);
   return resolved;
 }
@@ -889,12 +868,8 @@ const { generatePdf } = require('./pdf-generator');
 // ===== GET USER INFO =====
 app.get('/api/me', requireAuth, async (req, res) => {
   try {
-    const { count, error } = await supabaseAdmin
-      .from('reviews')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', req.user.id);
-    if (error) return res.status(500).json({ error: 'Failed to load user info' });
-    res.json({ email: req.user.email, reviewCount: count, isFirstFree: count === 0 });
+    const row = await q1('SELECT COUNT(*)::int AS count FROM reviews WHERE user_id = $1', [req.user.id]);
+    res.json({ email: req.user.email, reviewCount: row.count, isFirstFree: row.count === 0 });
   } catch (e) {
     res.json({ email: req.user.email, reviewCount: 0, isFirstFree: true });
   }
@@ -906,21 +881,15 @@ app.get('/api/reviews', requireAuth, async (req, res) => {
     // First, claim any unclaimed reviews that match this user's email (case-insensitive)
     const userEmail = req.user.email;
     if (userEmail) {
-      await supabaseAdmin
-        .from('reviews')
-        .update({ user_id: req.user.id })
-        .ilike('customer_email', userEmail)
-        .is('user_id', null);
+      await q('UPDATE reviews SET user_id = $1 WHERE lower(customer_email) = lower($2) AND user_id IS NULL', [req.user.id, userEmail]);
     }
 
     // Now fetch all reviews belonging to this user
-    const { data, error } = await supabaseAdmin
-      .from('reviews')
-      .select('id, word_count, tier, price, review_markdown, created_at, title, payment_type, manuscript_info')
-      .eq('user_id', req.user.id)
-      .order('created_at', { ascending: false });
-    if (error) return res.status(500).json({ error: 'Failed to load reviews' });
-    res.json({ reviews: data || [] });
+    const data = await q(`
+      SELECT id, word_count, tier, price, review_markdown, created_at, title, payment_type, manuscript_info
+      FROM reviews WHERE user_id = $1 ORDER BY created_at DESC
+    `, [req.user.id]);
+    res.json({ reviews: data });
   } catch (e) {
     res.json({ reviews: [] });
   }
@@ -935,15 +904,12 @@ const SUBSCRIPTION_PLANS = {
 
 // Get user's subscription (active or cancelled — cancelled still has access until period end)
 app.get('/api/subscription', requireAuth, async (req, res) => {
-  if (!supabaseAdmin) return res.json({ subscription: null });
+  if (!pool) return res.json({ subscription: null });
   try {
-    const { data } = await supabaseAdmin.from('subscriptions')
-      .select('*')
-      .eq('user_id', req.user.id)
-      .in('status', ['active', 'cancelled'])
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .single();
+    const data = await q1(`
+      SELECT * FROM subscriptions WHERE user_id = $1 AND status IN ('active', 'cancelled')
+      ORDER BY updated_at DESC LIMIT 1
+    `, [req.user.id]);
     // If cancelled and past period end, treat as no subscription
     if (data && data.status === 'cancelled' && data.current_period_end && new Date(data.current_period_end) < new Date()) {
       return res.json({ subscription: null });
@@ -985,13 +951,9 @@ app.post('/api/subscribe', requireAuth, async (req, res) => {
 // Stripe Customer Portal (manage subscription)
 // Cancel subscription
 app.post('/api/cancel-subscription', requireAuth, async (req, res) => {
-  if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
+  if (!pool) return res.status(503).json({ error: 'Database not configured' });
   try {
-    const { data: sub } = await supabaseAdmin.from('subscriptions')
-      .select('*')
-      .eq('user_id', req.user.id)
-      .eq('status', 'active')
-      .single();
+    const sub = await q1("SELECT * FROM subscriptions WHERE user_id = $1 AND status = 'active' LIMIT 1", [req.user.id]);
     if (!sub) return res.status(404).json({ error: 'No active subscription found' });
 
     let stripeCancelled = false;
@@ -1060,18 +1022,17 @@ app.post('/api/cancel-subscription', requireAuth, async (req, res) => {
       }
     }
 
-    // Update Supabase: mark cancelled AND heal the manual_backfill ID if we found the real one
-    const updatePayload = {
-      status: 'cancelled',
-      updated_at: new Date().toISOString(),
-    };
-    if (resolvedStripeSubId && resolvedStripeSubId !== sub.stripe_subscription_id) {
-      updatePayload.stripe_subscription_id = resolvedStripeSubId;
-    }
-    if (resolvedStripeCustomerId && resolvedStripeCustomerId !== sub.stripe_customer_id) {
-      updatePayload.stripe_customer_id = resolvedStripeCustomerId;
-    }
-    await supabaseAdmin.from('subscriptions').update(updatePayload).eq('id', sub.id);
+    // Update DB: mark cancelled AND heal the manual_backfill ID if we found the real one
+    await q(`
+      UPDATE subscriptions SET status = 'cancelled', updated_at = NOW(),
+        stripe_subscription_id = COALESCE($1, stripe_subscription_id),
+        stripe_customer_id = COALESCE($2, stripe_customer_id)
+      WHERE id = $3
+    `, [
+      resolvedStripeSubId !== sub.stripe_subscription_id ? resolvedStripeSubId : null,
+      resolvedStripeCustomerId !== sub.stripe_customer_id ? resolvedStripeCustomerId : null,
+      sub.id,
+    ]);
 
     if (!stripeCancelled && stripe) {
       return res.json({
@@ -1089,12 +1050,9 @@ app.post('/api/cancel-subscription', requireAuth, async (req, res) => {
 });
 
 app.post('/api/customer-portal', requireAuth, async (req, res) => {
-  if (!stripe || !supabaseAdmin) return res.status(503).json({ error: 'Not configured' });
+  if (!stripe || !pool) return res.status(503).json({ error: 'Not configured' });
   try {
-    const { data: sub } = await supabaseAdmin.from('subscriptions')
-      .select('stripe_customer_id')
-      .eq('user_id', req.user.id)
-      .single();
+    const sub = await q1('SELECT stripe_customer_id FROM subscriptions WHERE user_id = $1 LIMIT 1', [req.user.id]);
     if (!sub || !sub.stripe_customer_id) return res.status(404).json({ error: 'No subscription found' });
 
     const portalSession = await stripe.billingPortal.sessions.create({
@@ -1110,14 +1068,13 @@ app.post('/api/customer-portal', requireAuth, async (req, res) => {
 
 // ===== GET SINGLE REVIEW BY ID (public, for shareable links) =====
 app.get('/api/review/:id', async (req, res) => {
-  if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
+  if (!pool) return res.status(503).json({ error: 'Database not configured' });
   try {
-    const { data, error } = await supabaseAdmin
-      .from('reviews')
-      .select('id, word_count, tier, review_markdown, created_at, title, payment_type, manuscript_info')
-      .eq('id', req.params.id)
-      .single();
-    if (error || !data) return res.status(404).json({ error: 'Review not found' });
+    const data = await q1(`
+      SELECT id, word_count, tier, review_markdown, created_at, title, payment_type, manuscript_info
+      FROM reviews WHERE id = $1
+    `, [req.params.id]);
+    if (!data) return res.status(404).json({ error: 'Review not found' });
     res.json(data);
   } catch (e) {
     res.status(500).json({ error: 'Failed to load review' });
@@ -1346,18 +1303,12 @@ app.post('/api/review', optionalAuth, async (req, res) => {
   }
 
   // Check if user has subscription credits (overrides any pricing)
-  if (req.user && supabaseAdmin) {
+  if (req.user && pool) {
     try {
-      const { data: sub } = await supabaseAdmin.from('subscriptions')
-        .select('*')
-        .eq('user_id', req.user.id)
-        .eq('status', 'active')
-        .single();
+      const sub = await q1("SELECT * FROM subscriptions WHERE user_id = $1 AND status = 'active' LIMIT 1", [req.user.id]);
       if (sub && sub.credits_remaining > 0) {
         // Use a credit instead of charging
-        await supabaseAdmin.from('subscriptions')
-          .update({ credits_remaining: sub.credits_remaining - 1, updated_at: new Date().toISOString() })
-          .eq('id', sub.id);
+        await q('UPDATE subscriptions SET credits_remaining = credits_remaining - 1, updated_at = NOW() WHERE id = $1', [sub.id]);
         totalCost = 0;
         usedCredit = true;
         console.log(`[REVIEW] ${req.user.email} used 1 review (${sub.credits_remaining - 1} remaining)`);
@@ -1405,29 +1356,34 @@ Provide your complete review following the structure outlined in your instructio
 
     const review = message.content[0].text;
 
-    // Store review in Supabase for ALL users (shareable link requires it)
+    // Store review in DB for ALL users (shareable link requires it)
     let reviewId = null;
-    if (supabaseAdmin) {
+    if (pool) {
       try {
         // Determine payment type
         let paymentType = 'paid';
         if (usedCredit) paymentType = 'subscription';
         else if (totalCost === 0) paymentType = 'free';
 
-        const { data, error } = await supabaseAdmin.from('reviews').insert({
-          user_id: req.user ? req.user.id : null,
-          customer_email: email || null,
-          word_count: wordCount,
-          tier: tier.name,
-          price: totalCost,
-          review_markdown: review,
-          input_tokens: message.usage.input_tokens,
-          output_tokens: message.usage.output_tokens,
-          title: manuscriptInfo?.title || null,
-          payment_type: paymentType,
-          manuscript_info: manuscriptInfo || null,
-        }).select('id').single();
-        if (!error && data) reviewId = data.id;
+        const data = await q1(`
+          INSERT INTO reviews (user_id, customer_email, word_count, tier, price, review_markdown,
+            input_tokens, output_tokens, title, payment_type, manuscript_info)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          RETURNING id
+        `, [
+          req.user ? req.user.id : null,
+          email || null,
+          wordCount,
+          tier.name,
+          totalCost,
+          review,
+          message.usage.input_tokens,
+          message.usage.output_tokens,
+          manuscriptInfo?.title || null,
+          paymentType,
+          manuscriptInfo ? JSON.stringify(manuscriptInfo) : null,
+        ]);
+        if (data) reviewId = data.id;
       } catch (e) {
         console.error('[DB ERROR]', e.message);
       }
@@ -1524,18 +1480,14 @@ app.post('/api/review-pdf', optionalAuth, async (req, res) => {
     // Generate PDF
     const pdfBuffer = await generatePdf(reviewData);
 
-    // Store in Supabase if authenticated
-    if (supabaseAdmin && req.user) {
+    // Store in DB if authenticated
+    if (pool && req.user) {
       try {
-        await supabaseAdmin.from('reviews').insert({
-          user_id: req.user.id,
-          word_count: wordCount,
-          tier: tier.name,
-          price: tier.price,
-          review_markdown: JSON.stringify(reviewData),
-          input_tokens: message.usage.input_tokens,
-          output_tokens: message.usage.output_tokens,
-        });
+        await q(`
+          INSERT INTO reviews (user_id, word_count, tier, price, review_markdown, input_tokens, output_tokens)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `, [req.user.id, wordCount, tier.name, tier.price, JSON.stringify(reviewData),
+            message.usage.input_tokens, message.usage.output_tokens]);
       } catch (e) {
         console.error('[DB ERROR]', e.message);
       }
@@ -1731,16 +1683,16 @@ app.post('/api/create-checkout', async (req, res) => {
   try {
     // Save manuscript text server-side before Stripe redirect
     let pendingId = null;
-    if (supabaseAdmin && text) {
-      const { data, error } = await supabaseAdmin.from('pending_reviews').insert({
-        manuscript_text: text,
-        manuscript_info: manuscriptInfo || {},
-        genre: genre || '',
-        price_cents: priceInCents,
-        status: 'pending',
-      }).select('id').single();
-      if (!error && data) pendingId = data.id;
-      else console.error('[PENDING SAVE ERROR]', error?.message);
+    if (pool && text) {
+      try {
+        const data = await q1(`
+          INSERT INTO pending_reviews (manuscript_text, manuscript_info, genre, price_cents, status)
+          VALUES ($1, $2, $3, $4, 'pending') RETURNING id
+        `, [text, JSON.stringify(manuscriptInfo || {}), genre || '', priceInCents]);
+        if (data) pendingId = data.id;
+      } catch (e) {
+        console.error('[PENDING SAVE ERROR]', e.message);
+      }
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -1774,8 +1726,8 @@ app.post('/api/create-checkout', async (req, res) => {
     });
 
     // Update pending record with stripe session ID
-    if (pendingId && supabaseAdmin) {
-      await supabaseAdmin.from('pending_reviews').update({ stripe_session_id: session.id }).eq('id', pendingId);
+    if (pendingId && pool) {
+      await q('UPDATE pending_reviews SET stripe_session_id = $1 WHERE id = $2', [session.id, pendingId]);
     }
 
     res.json({ url: session.url, sessionId: session.id });
@@ -1789,15 +1741,11 @@ app.post('/api/create-checkout', async (req, res) => {
 // Helper: run a paid review from saved pending_reviews data. Idempotent — if already completed,
 // returns the existing review. Safe to retry after a failed Claude call or deploy interruption.
 async function runPaidReviewFromPending(pendingId, session) {
-  if (!supabaseAdmin) throw new Error('Database not configured');
+  if (!pool) throw new Error('Database not configured');
 
   // 1. Load the pending review
-  const { data: pending, error: loadErr } = await supabaseAdmin
-    .from('pending_reviews')
-    .select('manuscript_text, manuscript_info, status')
-    .eq('id', pendingId)
-    .single();
-  if (loadErr || !pending) throw new Error('Pending review not found');
+  const pending = await q1('SELECT manuscript_text, manuscript_info, status FROM pending_reviews WHERE id = $1', [pendingId]);
+  if (!pending) throw new Error('Pending review not found');
 
   const savedText = pending.manuscript_text;
   const savedInfo = pending.manuscript_info || {};
@@ -1807,13 +1755,10 @@ async function runPaidReviewFromPending(pendingId, session) {
     const paidEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email || null;
     // Find the most recent review for this customer (best-effort match since we don't store pending_id on reviews)
     if (paidEmail) {
-      const { data: existing } = await supabaseAdmin
-        .from('reviews')
-        .select('id, review_markdown, word_count, tier')
-        .eq('customer_email', paidEmail)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      const existing = await q1(`
+        SELECT id, review_markdown, word_count, tier FROM reviews
+        WHERE customer_email = $1 ORDER BY created_at DESC LIMIT 1
+      `, [paidEmail]);
       if (existing) {
         console.log(`[PAID REVIEW] Idempotent return for pending ${pendingId} — existing review ${existing.id}`);
         return {
@@ -1859,24 +1804,20 @@ async function runPaidReviewFromPending(pendingId, session) {
   let paidReviewId = null;
   const paidEmail = session.metadata?.customerEmail || session.customer_email || session.customer_details?.email || null;
   try {
-    const { data, error } = await supabaseAdmin.from('reviews').insert({
-      customer_email: paidEmail,
-      word_count: wordCount,
-      tier: tier.name,
-      price: session.amount_total / 100,
-      review_markdown: review,
-      input_tokens: message.usage.input_tokens,
-      output_tokens: message.usage.output_tokens,
-      title: savedInfo.title || null,
-      payment_type: 'paid',
-      manuscript_info: savedInfo,
-    }).select('id').single();
-    if (!error && data) paidReviewId = data.id;
+    const data = await q1(`
+      INSERT INTO reviews (customer_email, word_count, tier, price, review_markdown,
+        input_tokens, output_tokens, title, payment_type, manuscript_info)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'paid', $9)
+      RETURNING id
+    `, [paidEmail, wordCount, tier.name, session.amount_total / 100, review,
+        message.usage.input_tokens, message.usage.output_tokens,
+        savedInfo.title || null, JSON.stringify(savedInfo)]);
+    if (data) paidReviewId = data.id;
   } catch (e) { console.error('[DB ERROR]', e.message); }
 
   // 5. Only mark pending as completed AFTER the review is safely saved
   if (paidReviewId) {
-    await supabaseAdmin.from('pending_reviews').update({ status: 'completed' }).eq('id', pendingId);
+    await q("UPDATE pending_reviews SET status = 'completed' WHERE id = $1", [pendingId]);
   }
 
   // 6. Auto-email the review link (non-blocking, don't fail the request if email fails)
@@ -1924,7 +1865,7 @@ app.post('/api/verify-payment', async (req, res) => {
     }
 
     const pendingId = session.metadata?.pendingId;
-    if (!pendingId || !supabaseAdmin) {
+    if (!pendingId || !pool) {
       return res.json({ paid: true, autoReview: false, metadata: session.metadata });
     }
 
@@ -1976,12 +1917,8 @@ app.post('/api/admin/retry-review', async (req, res) => {
       pendingId = pendingId || session.metadata?.pendingId;
     } else {
       // Fabricate a minimal session-like object from pending_reviews for direct pendingId recovery
-      if (!supabaseAdmin) return res.status(503).json({ error: 'Database not configured' });
-      const { data: pending } = await supabaseAdmin
-        .from('pending_reviews')
-        .select('manuscript_info, stripe_session_id, price_cents')
-        .eq('id', pendingId)
-        .single();
+      if (!pool) return res.status(503).json({ error: 'Database not configured' });
+      const pending = await q1('SELECT manuscript_info, stripe_session_id, price_cents FROM pending_reviews WHERE id = $1', [pendingId]);
       if (!pending) return res.status(404).json({ error: 'Pending review not found' });
 
       if (pending.stripe_session_id && stripe) {
@@ -2000,7 +1937,7 @@ app.post('/api/admin/retry-review', async (req, res) => {
     if (!pendingId) return res.status(400).json({ error: 'Could not resolve pendingId' });
 
     // Force re-run by resetting status to pending first (so the idempotent path doesn't short-circuit with a bad match)
-    await supabaseAdmin.from('pending_reviews').update({ status: 'pending' }).eq('id', pendingId);
+    await q("UPDATE pending_reviews SET status = 'pending' WHERE id = $1", [pendingId]);
 
     const result = await runPaidReviewFromPending(pendingId, session);
     res.json({
@@ -2032,22 +1969,20 @@ const COUPONS = {
   'GIFT-6A739D07': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
 };
 
-// Check how many times a limited-use coupon has been redeemed (Supabase-backed)
+// Check how many times a limited-use coupon has been redeemed (DB-backed)
 async function getCouponUseCount(code) {
-  if (!supabaseAdmin) return 0; // no DB = allow (graceful degradation)
-  const { data } = await supabaseAdmin
-    .from('used_coupons')
-    .select('id')
-    .eq('code', code);
-  return data ? data.length : 0;
+  if (!pool) return 0; // no DB = allow (graceful degradation)
+  const row = await q1('SELECT COUNT(*)::int AS count FROM used_coupons WHERE code = $1', [code]);
+  return row ? row.count : 0;
 }
 
 async function markCouponUsed(code) {
-  if (!supabaseAdmin) return;
-  const { error } = await supabaseAdmin
-    .from('used_coupons')
-    .insert({ code, used_at: new Date().toISOString() });
-  if (error) console.error('[COUPON] Failed to mark used:', error.message);
+  if (!pool) return;
+  try {
+    await q('INSERT INTO used_coupons (code) VALUES ($1)', [code]);
+  } catch (e) {
+    console.error('[COUPON] Failed to mark used:', e.message);
+  }
 }
 
 app.post('/api/coupon', async (req, res) => {
