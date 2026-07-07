@@ -121,6 +121,14 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async
 });
 
 app.use(express.json({ limit: '5mb' }));
+
+// Never serve backend source or config files
+const BLOCKED_PATHS = /^\/(server\.js|pdf-generator\.js|migrate-to-neon\.js|package(-lock)?\.json|report-template\.html|node_modules(\/|$)|\.env)/;
+app.use((req, res, next) => {
+  if (BLOCKED_PATHS.test(req.path)) return res.status(404).send('Not found');
+  next();
+});
+
 app.use(express.static(path.join(__dirname)));
 
 // Anthropic client
@@ -1392,7 +1400,7 @@ Provide your complete review following the structure outlined in your instructio
     // Auto-email the review link (no extra AI call needed)
     if (email && resend && reviewId) {
       const reviewUrl = `https://ruthlessmentor.com/report.html?id=${reviewId}`;
-      resend.emails.send({
+      const emailPromise = resend.emails.send({
         from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
         to: email,
         subject: 'Your Ruthless Mentor Review is Ready',
@@ -1410,6 +1418,8 @@ Provide your complete review following the structure outlined in your instructio
         </div>`,
       }).then(() => console.log(`[AUTO-EMAIL] Sent review link to ${email}`))
         .catch(err => console.error('[AUTO-EMAIL ERROR]', err.message));
+      // Must await on serverless — the function freezes after the response is sent
+      await emailPromise;
     }
 
     res.json({
@@ -1820,10 +1830,11 @@ async function runPaidReviewFromPending(pendingId, session) {
     await q("UPDATE pending_reviews SET status = 'completed' WHERE id = $1", [pendingId]);
   }
 
-  // 6. Auto-email the review link (non-blocking, don't fail the request if email fails)
+  // 6. Auto-email the review link (don't fail the request if email fails,
+  // but await it — on serverless the function freezes after returning)
   if (paidEmail && resend && paidReviewId) {
     const reviewUrl = `https://ruthlessmentor.com/report.html?id=${paidReviewId}`;
-    resend.emails.send({
+    await resend.emails.send({
       from: 'Ruthless Mentor <reviews@ruthlessmentor.com>',
       to: paidEmail,
       subject: 'Your Ruthless Mentor Review is Ready',
@@ -2058,6 +2069,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Ruthless Mentor server running on http://localhost:${PORT}`);
-});
+// On Vercel the app is exported and invoked as a serverless function;
+// listen only when run directly (local dev, Render)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Ruthless Mentor server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
