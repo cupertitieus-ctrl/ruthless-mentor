@@ -52,11 +52,13 @@ async function authSignOut() {
     await clerk.signOut();
 }
 
-// Shared appearance for mounted Clerk components (matches site dark theme)
+// Shared appearance for mounted Clerk components (matches site dark theme).
+// Clerk's own card chrome is stripped so the widget blends into our .auth-card
+// as if it were a native form.
 const CLERK_APPEARANCE = {
     variables: {
         colorPrimary: '#c9a96e',
-        colorBackground: '#171310',
+        colorBackground: 'transparent',
         colorText: '#f5efe6',
         colorTextSecondary: '#b5a795',
         colorInputBackground: '#211c17',
@@ -64,9 +66,29 @@ const CLERK_APPEARANCE = {
         colorDanger: '#e05c5c',
         borderRadius: '8px',
         fontFamily: "'Inter', sans-serif",
+        fontSize: '0.95rem',
     },
     elements: {
-        card: { boxShadow: 'none', border: '1px solid #2e2822' },
+        rootBox: { width: '100%' },
+        cardBox: { width: '100%', boxShadow: 'none', border: 'none', background: 'transparent', borderRadius: '0' },
+        card: { width: '100%', boxShadow: 'none', border: 'none', background: 'transparent', padding: '0', borderRadius: '0' },
+        header: { display: 'none' },
         footer: { display: 'none' },
+        formButtonPrimary: {
+            background: '#c9a96e',
+            color: '#0d0b09',
+            fontWeight: '700',
+            fontSize: '0.9rem',
+            textTransform: 'none',
+            boxShadow: 'none',
+            '&:hover': { background: '#d8bc85' },
+        },
+        formFieldLabel: { color: '#b5a795', fontSize: '0.8rem' },
+        formFieldInput: { border: '1px solid #2e2822', boxShadow: 'none' },
+        identityPreview: { border: '1px solid #2e2822', background: '#211c17' },
+        otpCodeFieldInput: { border: '1px solid #2e2822', background: '#211c17', color: '#f5efe6' },
+        socialButtonsBlockButton: { border: '1px solid #2e2822', background: '#211c17', color: '#f5efe6' },
+        dividerLine: { background: '#2e2822' },
+        dividerText: { color: '#b5a795' },
     },
 };
