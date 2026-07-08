@@ -131,6 +131,11 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname)));
 
+// Clean URL for the conversion-test landing page
+app.get(['/version2', '/v2'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'version2.html'));
+});
+
 // Anthropic client
 const client = new Anthropic();
 
