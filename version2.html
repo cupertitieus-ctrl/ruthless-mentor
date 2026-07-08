@@ -82,7 +82,7 @@ nav{
 .hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden}
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.38}
 .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,9,.55) 0%,rgba(13,11,9,.82) 55%,var(--ink) 100%);z-index:1}
-.hero-inner{position:relative;z-index:2;padding:90px 24px 70px;max-width:900px;margin:0 auto;text-align:center}
+.hero-inner{position:relative;z-index:2;padding:96px 24px 70px;max-width:1000px;margin:0 auto;text-align:center}
 .hero-eyebrow{
     font-family:var(--mono);font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;
     color:var(--gold);margin-bottom:26px;
@@ -90,10 +90,12 @@ nav{
 }
 h1{
     font-family:var(--display);font-weight:400;
-    font-size:clamp(2.7rem,6.6vw,5rem);
-    line-height:1.06;letter-spacing:.005em;
+    font-size:clamp(2.5rem,5.4vw,4rem);
+    line-height:1.12;letter-spacing:.005em;
     animation:rise .7s .25s both;
 }
+.l1{white-space:nowrap}
+@media(max-width:700px){.l1{white-space:normal}}
 .strike{position:relative;white-space:nowrap;color:var(--dim);display:inline-block}
 .strike::after{
     content:'';position:absolute;left:-3%;right:-3%;top:55%;height:.07em;
@@ -103,9 +105,12 @@ h1{
 .rewrite{
     font-family:var(--mono);color:var(--red-ink);
     font-size:.32em;font-weight:700;font-style:italic;letter-spacing:0;
-    position:absolute;left:50%;top:-.85em;
+    position:absolute;left:50%;top:-.95em;
     transform:translateX(-50%) rotate(-2deg);white-space:nowrap;
     animation:fadeIn .4s 1.5s both;line-height:1;
+}
+@media(max-width:700px){
+    .rewrite{position:static;display:block;transform:rotate(-1.5deg);margin:6px auto 0}
 }
 .hero-sub{
     font-size:clamp(1.05rem,2vw,1.3rem);color:var(--muted);max-width:620px;margin:26px auto 0;
@@ -190,31 +195,46 @@ h2{
 .report-cta{text-align:center;margin-top:40px}
 
 /* ============ PRICING (THE PUSH) ============ */
-.pricing{background:var(--paper);border-top:1px solid var(--border)}
+.pricing{background:var(--paper);border-top:1px solid var(--border);position:relative;overflow:hidden}
+.pricing::before{
+    content:'';position:absolute;left:50%;top:38%;width:900px;height:700px;
+    transform:translateX(-30%);pointer-events:none;
+    background:radial-gradient(ellipse,rgba(201,169,110,.14),transparent 65%);
+}
+.pricing .wrap{position:relative}
 .plans{display:grid;grid-template-columns:.85fr 1.15fr;gap:26px;margin-top:54px;align-items:stretch}
 .plan{
     border:1px solid var(--border);border-radius:10px;padding:36px 32px;
     background:var(--ink);display:flex;flex-direction:column;
 }
 .plan-sub{
-    background:linear-gradient(165deg,#221a11,#171310);
-    border:1px solid var(--gold);position:relative;
-    box-shadow:0 20px 70px rgba(201,169,110,.12);
+    background:linear-gradient(165deg,#2a2013,#181310 70%);
+    border:2px solid var(--gold);position:relative;
+    box-shadow:0 24px 90px rgba(201,169,110,.22),inset 0 1px 0 rgba(226,200,145,.25);
+    transform:scale(1.03);
 }
+.plan-sub:hover{transform:scale(1.045);transition:transform .25s}
+.plan:not(.plan-sub){opacity:.82}
 .badge{
-    position:absolute;top:-14px;left:32px;
-    font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-    background:var(--gold);color:var(--ink);padding:5px 14px;border-radius:3px;
+    position:absolute;top:-16px;left:32px;
+    font-family:var(--mono);font-size:.75rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    background:linear-gradient(90deg,var(--gold),var(--gold-bright));color:var(--ink);padding:7px 16px;border-radius:3px;
+    box-shadow:0 6px 20px rgba(201,169,110,.4);
 }
 .plan-name{font-family:var(--display);font-weight:400;font-size:1.45rem;margin-bottom:6px}
 .plan-tag{font-family:var(--mono);font-size:.8rem;color:var(--dim);margin-bottom:22px}
 .plan-price{font-family:var(--display);font-weight:400;font-size:3.3rem;line-height:1;color:var(--cream)}
 .plan-price small{font-size:1rem;font-family:var(--body);font-weight:400;color:var(--dim)}
-.plan-sub .plan-price{color:var(--gold-bright)}
+.plan-sub .plan-price{color:var(--gold-bright);font-size:4rem}
 .per-review{
-    margin-top:10px;font-family:var(--mono);font-size:.9rem;color:var(--green);
+    margin-top:14px;font-family:var(--mono);font-size:.9rem;color:var(--muted);
 }
 .per-review s{color:var(--dim)}
+.per-review b{
+    display:inline-block;background:rgba(127,174,122,.15);color:var(--green);
+    border:1px solid rgba(127,174,122,.4);border-radius:999px;padding:4px 14px;
+    font-size:1rem;margin-left:4px;
+}
 .plan-list{list-style:none;margin:26px 0 30px;display:grid;gap:12px;font-size:.95rem;color:var(--muted)}
 .plan-list li{display:flex;gap:10px;align-items:baseline}
 .plan-list li::before{content:'✓';color:var(--gold);font-family:var(--mono);font-weight:700}
@@ -272,8 +292,10 @@ footer .logo-img{height:28px;margin:0 auto 18px;opacity:.7}
 @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes strikeIn{from{transform:scaleX(0) rotate(-2deg)}to{transform:scaleX(1) rotate(-2deg)}}
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-.reveal.in{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.in{opacity:1;transform:none}
+.js .plan-sub.reveal.in{transform:scale(1.03)}
+.js .plan-sub.reveal.in:hover{transform:scale(1.045)}
 
 @media(max-width:860px){
     .split{grid-template-columns:1fr;gap:40px}
@@ -306,7 +328,7 @@ footer .logo-img{height:28px;margin:0 auto 18px;opacity:.7}
         <div class="hero-inner">
             <p class="hero-eyebrow">Manuscript reviews for serious writers</p>
             <h1>
-                Everyone says your book is <span class="strike">nice<span class="rewrite">ready to sell?</span></span>.<br>
+                <span class="l1">Everyone says your book is <span class="strike">nice<span class="rewrite">ready to sell?</span></span>.</span><br>
                 We'll tell you the truth.
             </h1>
             <p class="hero-sub">
@@ -492,7 +514,8 @@ footer .logo-img{height:28px;margin:0 auto 18px;opacity:.7}
     </footer>
 
 <script>
-// scroll reveal
+// scroll reveal (gated behind .js so content is never hidden without JS)
+document.documentElement.classList.add('js');
 const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
 }, { threshold: 0.12 });
