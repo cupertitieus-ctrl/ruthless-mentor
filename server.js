@@ -131,9 +131,12 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname)));
 
-// Clean URL for the conversion-test landing page
+// Clean URLs for the conversion-test landing pages
 app.get(['/version2', '/v2'], (req, res) => {
   res.sendFile(path.join(__dirname, 'version2.html'));
+});
+app.get(['/version3', '/v3'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'version3.html'));
 });
 
 // Anthropic client
