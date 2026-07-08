@@ -516,10 +516,20 @@ footer .logo-img{height:28px;margin:0 auto 18px;opacity:.7}
 <script>
 // scroll reveal (gated behind .js so content is never hidden without JS)
 document.documentElement.classList.add('js');
-const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+(() => {
+    let els = [...document.querySelectorAll('.reveal')];
+    const check = () => {
+        els = els.filter(el => {
+            const r = el.getBoundingClientRect();
+            if (r.top < innerHeight * 0.92 && r.bottom > 0) { el.classList.add('in'); return false; }
+            return true;
+        });
+        if (!els.length) removeEventListener('scroll', check);
+    };
+    addEventListener('scroll', check, { passive: true });
+    addEventListener('resize', check, { passive: true });
+    check();
+})();
 </script>
 </body>
 </html>
