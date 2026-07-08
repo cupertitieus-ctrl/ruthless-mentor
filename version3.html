@@ -10,11 +10,68 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruthless Mentor — The truth about your manuscript</title>
-    <meta name="description" content="Brutally honest manuscript reviews. Know exactly what's broken — and how to fix it — before readers find out.">
+    <title>ruthlessmentor.com</title>
+    <meta name="description" content="Honest, actionable feedback for writers who want to get better.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* v3 pricing — subscription-first */
+    #pricing .v3-sub{
+        position:relative;max-width:620px;margin:2.6rem auto 0;border-radius:16px;padding:3px;
+        background:linear-gradient(120deg,#c9a96e,#8a744f 30%,#e2c891 50%,#8a744f 70%,#c9a96e);
+        background-size:300% 100%;animation:v3flow 7s linear infinite;
+        box-shadow:0 26px 80px rgba(201,169,110,.35);
+    }
+    @keyframes v3flow{0%{background-position:0% 0}100%{background-position:300% 0}}
+    .v3-sub-inner{
+        background:linear-gradient(170deg,#221a11,#0f0c0a 65%);border-radius:13px;
+        padding:2.8rem 2.6rem 2.4rem;text-align:center;position:relative;color:#f5efe6;
+    }
+    .v3-badge{
+        position:absolute;top:-14px;left:50%;transform:translateX(-50%);white-space:nowrap;
+        background:linear-gradient(90deg,#c9a96e,#e2c891);color:#0d0b09;
+        font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+        padding:.45rem 1.3rem;border-radius:999px;box-shadow:0 8px 24px rgba(201,169,110,.5);
+    }
+    .v3-sub-name{font-size:1.35rem;font-weight:800;margin:.4rem 0 .1rem}
+    .v3-sub-tag{font-size:.85rem;color:#b5a795;margin-bottom:1.2rem}
+    .v3-price{font-size:4rem;font-weight:800;letter-spacing:-.04em;line-height:1;color:#e2c891}
+    .v3-price span{font-size:1rem;color:#b5a795;font-weight:400}
+    .v3-chip-row{margin-top:.9rem;font-size:.9rem;color:#b5a795}
+    .v3-chip-row s{color:#7d7264}
+    .v3-chip{
+        display:inline-block;background:rgba(127,174,122,.15);color:#8fc38a;
+        border:1px solid rgba(127,174,122,.45);border-radius:999px;padding:.25rem .95rem;
+        font-weight:700;font-size:.95rem;margin-left:.4rem;
+    }
+    .v3-list{list-style:none;margin:1.5rem auto 1.7rem;max-width:380px;text-align:left;display:grid;gap:.65rem;padding:0}
+    .v3-list li{display:flex;gap:.6rem;align-items:baseline;font-size:.95rem;color:#cfc4b3!important}
+    .v3-list li::before{content:'\2713';color:#c9a96e;font-weight:700;flex-shrink:0}
+    .v3-list li b{color:#f5efe6}
+    .v3-sub .btn-glow{display:block;font-size:1.02rem;padding:1rem;position:relative;overflow:hidden}
+    .v3-sub .btn-glow::after{
+        content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;
+        background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);
+        transform:skewX(-20deg);animation:v3shine 3.5s 1.2s infinite;
+    }
+    @keyframes v3shine{0%{left:-80%}18%{left:130%}100%{left:130%}}
+    .v3-note{font-size:.72rem;color:#7d7264;margin-top:.9rem}
+    .v3-singles-label{
+        text-align:center;margin:2.6rem auto 1rem;font-size:.85rem;color:#888;
+        display:flex;align-items:center;gap:14px;max-width:520px;
+    }
+    .v3-singles-label::before,.v3-singles-label::after{content:'';flex:1;height:1px;background:#ddd8d0}
+    #pricing .pricing-row{grid-template-columns:repeat(3,1fr);max-width:760px}
+    #pricing .price-card{padding:1.2rem 1rem;opacity:.85}
+    #pricing .price-card .amount{font-size:1.7rem}
+    #pricing .price-card:hover{opacity:1}
+    @media(max-width:700px){
+        .v3-sub-inner{padding:2.2rem 1.4rem 2rem}
+        #pricing .pricing-row{grid-template-columns:1fr}
+    }
+    </style>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3SCZVZ422X"></script>
     <script>
@@ -23,534 +80,283 @@
       gtag('js', new Date());
       gtag('config', 'G-3SCZVZ422X');
     </script>
-<style>
-:root{
-    --ink:#0d0b09;
-    --paper:#171310;
-    --paper2:#211c17;
-    --border:#2e2822;
-    --gold:#c9a96e;
-    --gold-bright:#e2c891;
-    --cream:#f5efe6;
-    --muted:#b5a795;
-    --dim:#7d7264;
-    --red:#d94f3d;
-    --red-ink:#e05c45;
-    --green:#7fae7a;
-    --display:'Instrument Serif',serif;
-    --body:'Source Serif 4',Georgia,serif;
-    --mono:'Courier Prime',monospace;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-    background:var(--ink);
-    color:var(--cream);
-    font-family:var(--body);
-    font-size:1.05rem;
-    line-height:1.65;
-    overflow-x:hidden;
-}
-/* film grain */
-body::after{
-    content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.05;
-    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
-
-/* ============ NAV ============ */
-nav{
-    position:sticky;top:0;z-index:100;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:14px 28px;
-    background:rgba(13,11,9,.92);backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--border);
-}
-.logo-img{height:34px;filter:invert(1)}
-.nav-right{display:flex;align-items:center;gap:22px;font-family:var(--mono);font-size:.85rem}
-.nav-right a{color:var(--muted);transition:color .2s}
-.nav-right a:hover{color:var(--cream)}
-.nav-cta{
-    background:var(--gold);color:var(--ink)!important;font-weight:700;
-    padding:9px 20px;border-radius:4px;transition:transform .15s,background .2s;
-}
-.nav-cta:hover{background:var(--gold-bright);transform:translateY(-1px)}
-
-/* ============ HERO ============ */
-.hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden}
-.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.38}
-.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,11,9,.55) 0%,rgba(13,11,9,.82) 55%,var(--ink) 100%);z-index:1}
-.hero-inner{position:relative;z-index:2;padding:96px 24px 70px;max-width:1000px;margin:0 auto;text-align:center}
-.hero-eyebrow{
-    font-family:var(--mono);font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;
-    color:var(--gold);margin-bottom:26px;
-    animation:rise .7s .1s both;
-}
-h1{
-    font-family:var(--display);font-weight:400;
-    font-size:clamp(2.5rem,5.4vw,4rem);
-    line-height:1.12;letter-spacing:.005em;
-    animation:rise .7s .25s both;
-}
-.l1{white-space:nowrap}
-@media(max-width:700px){.l1{white-space:normal}}
-.strike{position:relative;white-space:nowrap;color:var(--dim);display:inline-block}
-.strike::after{
-    content:'';position:absolute;left:-3%;right:-3%;top:55%;height:.07em;
-    background:var(--red-ink);transform:rotate(-2.5deg);border-radius:2px;
-    animation:strikeIn .5s 1.1s both;transform-origin:left center;
-}
-.rewrite{
-    font-family:var(--mono);color:var(--red-ink);
-    font-size:.32em;font-weight:700;font-style:italic;letter-spacing:0;
-    position:absolute;left:50%;top:-.95em;
-    transform:translateX(-50%) rotate(-2deg);white-space:nowrap;
-    animation:fadeIn .4s 1.5s both;line-height:1;
-}
-@media(max-width:700px){
-    .rewrite{position:static;display:block;transform:rotate(-1.5deg);margin:6px auto 0}
-}
-.hero-sub{
-    font-size:clamp(1.05rem,2vw,1.3rem);color:var(--muted);max-width:620px;margin:26px auto 0;
-    animation:rise .7s .45s both;
-}
-.hero-sub strong{color:var(--cream)}
-.hero-ctas{margin-top:38px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:rise .7s .6s both}
-.btn{
-    display:inline-block;font-family:var(--mono);font-weight:700;font-size:1rem;
-    padding:16px 34px;border-radius:4px;border:none;cursor:pointer;transition:transform .15s,background .2s,box-shadow .2s;
-}
-.btn-gold{background:linear-gradient(100deg,var(--gold),var(--gold-bright) 50%,var(--gold));background-size:200% 100%;color:var(--ink);box-shadow:0 10px 40px rgba(201,169,110,.25);position:relative;overflow:hidden}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 50px rgba(201,169,110,.4);background-position:100% 0}
-.btn-gold::after{
-    content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
-    transform:skewX(-20deg);animation:shine 3.5s 1.4s infinite;
-}
-@keyframes shine{0%{left:-80%}18%{left:130%}100%{left:130%}}
-.btn-ghost{background:transparent;color:var(--cream);border:1px solid var(--border)}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
-.hero-proof{
-    margin-top:34px;font-family:var(--mono);font-size:.8rem;color:var(--dim);
-    animation:rise .7s .75s both;
-}
-.hero-proof b{color:var(--gold)}
-
-/* ============ MARGIN-NOTE SECTION LABELS ============ */
-.section{padding:100px 0;position:relative}
-.margin-note{
-    font-family:var(--mono);color:var(--red-ink);font-size:.85rem;font-style:italic;
-    margin-bottom:14px;display:flex;align-items:center;gap:10px;
-}
-.margin-note::before{content:'';width:34px;height:1px;background:var(--red-ink)}
-h2{
-    font-family:var(--display);font-weight:400;
-    font-size:clamp(1.9rem,3.9vw,2.9rem);line-height:1.12;margin-bottom:18px;
-}
-.lead{color:var(--muted);max-width:640px;font-size:1.1rem}
-
-/* ============ PROBLEM ============ */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.split-img{position:relative}
-.split-img img{border-radius:6px;border:1px solid var(--border)}
-.stamp{
-    position:absolute;top:-18px;right:-14px;transform:rotate(8deg);
-    font-family:var(--mono);font-weight:700;font-size:.8rem;letter-spacing:.15em;
-    color:var(--red-ink);border:2px solid var(--red-ink);border-radius:4px;
-    padding:6px 12px;background:rgba(13,11,9,.85);
-}
-.problem-list{list-style:none;margin-top:26px;display:grid;gap:14px}
-.problem-list li{display:flex;gap:12px;color:var(--muted)}
-.problem-list li::before{content:'✗';color:var(--red-ink);font-family:var(--mono);font-weight:700;flex-shrink:0}
-.problem-list li b{color:var(--cream)}
-
-/* ============ ANCHOR / COMPARISON ============ */
-.anchor{background:var(--paper);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:48px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.compare-col{padding:38px 34px}
-.compare-col.them{background:var(--ink)}
-.compare-col.us{background:linear-gradient(160deg,#1d1712,#171310);position:relative}
-.compare-col.us::before{content:'';position:absolute;inset:0;border:1px solid var(--gold);border-radius:0;pointer-events:none;opacity:.55}
-.compare-label{font-family:var(--mono);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
-.compare-col.us .compare-label{color:var(--gold)}
-.compare-price{font-family:var(--display);font-weight:400;font-size:2.9rem;line-height:1}
-.compare-price small{font-size:1rem;color:var(--dim);font-weight:400;font-family:var(--body)}
-.compare-col.them .compare-price{color:var(--dim)}
-.compare-col.us .compare-price{color:var(--gold-bright)}
-.compare-list{list-style:none;margin-top:22px;display:grid;gap:12px;font-size:.95rem}
-.compare-list li{display:flex;gap:10px;align-items:baseline}
-.them .compare-list li{color:var(--dim)}
-.them .compare-list li::before{content:'—';font-family:var(--mono)}
-.us .compare-list li{color:var(--muted)}
-.us .compare-list li::before{content:'✓';color:var(--green);font-family:var(--mono);font-weight:700}
-.us .compare-list li b{color:var(--cream)}
-
-/* ============ SAMPLE REPORT ============ */
-.report-frame{position:relative;margin-top:48px}
-.report-frame img{border-radius:8px;border:1px solid var(--border);box-shadow:0 30px 80px rgba(0,0,0,.5)}
-.annotation{
-    position:absolute;font-family:var(--mono);font-style:italic;font-size:.85rem;
-    color:var(--red-ink);max-width:190px;line-height:1.4;
-}
-.annotation svg{display:block;margin-top:6px}
-.anno-1{top:8%;right:-8px}
-.anno-2{bottom:16%;left:-8px;text-align:right}
-@media(max-width:1240px){.anno-1,.anno-2{display:none}}
-.report-cta{text-align:center;margin-top:40px}
-
-/* ============ PRICING (THE PUSH) ============ */
-.pricing{background:var(--paper);border-top:1px solid var(--border);position:relative;overflow:hidden}
-.pricing::before{
-    content:'';position:absolute;left:50%;top:38%;width:900px;height:700px;
-    transform:translateX(-30%);pointer-events:none;
-    background:radial-gradient(ellipse,rgba(201,169,110,.18),transparent 62%);
-}
-.pricing .wrap{position:relative}
-.sub-card{
-    position:relative;max-width:640px;margin:60px auto 0;border-radius:14px;padding:3px;
-    background:linear-gradient(120deg,var(--gold),#6b5636 30%,var(--gold-bright) 50%,#6b5636 70%,var(--gold));
-    background-size:300% 100%;animation:borderFlow 7s linear infinite;
-    box-shadow:0 30px 100px rgba(201,169,110,.28);
-}
-@keyframes borderFlow{0%{background-position:0% 0}100%{background-position:300% 0}}
-.sub-card-inner{
-    background:linear-gradient(170deg,#261d12,#171310 65%);border-radius:12px;padding:46px 48px 40px;position:relative;
-}
-.single-line{text-align:center;margin-top:28px;font-size:.95rem;color:var(--dim)}
-.single-line a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
-.single-line a:hover{color:var(--gold)}
-.badge{
-    position:absolute;top:-16px;left:50%;transform:translateX(-50%);white-space:nowrap;
-    font-family:var(--mono);font-size:.75rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-    background:linear-gradient(90deg,var(--gold),var(--gold-bright));color:var(--ink);padding:8px 22px;border-radius:999px;
-    box-shadow:0 8px 26px rgba(201,169,110,.45);
-}
-.plan-name{font-family:var(--display);font-weight:400;font-size:1.8rem;margin-bottom:4px;text-align:center}
-.plan-tag{font-family:var(--mono);font-size:.82rem;color:var(--dim);margin-bottom:24px;text-align:center}
-.plan-price{font-family:var(--display);font-weight:400;font-size:4.6rem;line-height:1;color:var(--gold-bright);text-align:center}
-.plan-price small{font-size:1.05rem;font-family:var(--mono);font-weight:400;color:var(--muted)}
-.per-review{
-    margin-top:16px;font-family:var(--mono);font-size:.95rem;color:var(--muted);text-align:center;
-}
-.per-review s{color:var(--dim)}
-.per-review b{
-    display:inline-block;background:rgba(127,174,122,.15);color:var(--green);
-    border:1px solid rgba(127,174,122,.4);border-radius:999px;padding:4px 14px;
-    font-size:1rem;margin-left:4px;
-}
-.plan-list{list-style:none;margin:30px auto 32px;display:grid;gap:13px;font-size:.98rem;color:var(--muted);max-width:430px}
-.plan-list li{display:flex;gap:10px;align-items:baseline}
-.plan-list li::before{content:'✓';color:var(--gold);font-family:var(--mono);font-weight:700}
-.plan-list li.dim::before{content:'—';color:var(--dim)}
-.plan-list li.dim{color:var(--dim)}
-.plan-list b{color:var(--cream)}
-.sub-card .btn{display:block;width:100%;text-align:center;font-size:1.05rem;padding:19px}
-.plan-note{font-family:var(--mono);font-size:.76rem;color:var(--dim);text-align:center;margin-top:14px}
-.math-strip{
-    margin-top:44px;border:1px dashed var(--border);border-radius:8px;padding:22px 28px;
-    display:flex;gap:30px;justify-content:center;flex-wrap:wrap;
-    font-family:var(--mono);font-size:.9rem;color:var(--muted);text-align:center;
-}
-.math-strip b{color:var(--gold-bright)}
-
-/* ============ TESTIMONIALS ============ */
-.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:50px}
-.quote{
-    background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:30px 28px;
-    position:relative;
-}
-.quote::before{
-    content:'“';font-family:var(--display);font-size:3.4rem;color:var(--gold);
-    position:absolute;top:6px;left:20px;opacity:.35;line-height:1;
-}
-.stars{color:#e8963e;letter-spacing:2px;font-size:.85rem;margin-bottom:14px}
-.quote p{font-size:.97rem;color:var(--cream)}
-.quote-who{margin-top:18px;font-family:var(--mono);font-size:.78rem;color:var(--dim)}
-
-/* ============ FINAL CTA ============ */
-.final{
-    text-align:center;padding:130px 24px;position:relative;overflow:hidden;
-}
-.final::before{
-    content:'';position:absolute;inset:0;
-    background:radial-gradient(ellipse 60% 55% at 50% 60%,rgba(201,169,110,.13),transparent 70%);
-}
-.final-inner{position:relative;max-width:660px;margin:0 auto}
-.final h2{font-size:clamp(2rem,4.5vw,3.2rem)}
-.final .lead{margin:20px auto 40px}
-.guarantee{
-    margin-top:26px;font-family:var(--mono);font-size:.8rem;color:var(--dim);
-}
-
-/* ============ STICKY BAR ============ */
-.sticky-bar{
-    position:fixed;left:0;right:0;bottom:0;z-index:90;
-    display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;
-    padding:13px 20px;background:rgba(20,16,12,.96);backdrop-filter:blur(12px);
-    border-top:1px solid rgba(201,169,110,.35);
-    transform:translateY(110%);transition:transform .35s ease;
-}
-.sticky-bar.show{transform:none}
-.sticky-text{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
-.sticky-text b{color:var(--gold-bright)}
-.sticky-bar .btn{padding:11px 24px;font-size:.85rem}
-
-/* ============ FOOTER ============ */
-footer{
-    border-top:1px solid var(--border);padding:44px 28px;text-align:center;
-    font-family:var(--mono);font-size:.8rem;color:var(--dim);
-}
-footer .logo-img{height:28px;margin:0 auto 18px;opacity:.7}
-.footer-links{display:flex;gap:26px;justify-content:center;margin-bottom:14px}
-.footer-links a:hover{color:var(--cream)}
-
-/* ============ ANIMATIONS ============ */
-@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes strikeIn{from{transform:scaleX(0) rotate(-2deg)}to{transform:scaleX(1) rotate(-2deg)}}
-.js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
-.js .reveal.in{opacity:1;transform:none}
-
-@media(max-width:860px){
-    .split{grid-template-columns:1fr;gap:40px}
-    .compare{grid-template-columns:1fr}
-    .plans{grid-template-columns:1fr}
-    .quotes{grid-template-columns:1fr}
-    .section{padding:70px 0}
-    .nav-right a:not(.nav-cta){display:none}
-}
-</style>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TL7FFKB3"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <nav>
         <a href="/" class="logo"><img src="logo.png" alt="ruthlessmentor.com" class="logo-img"></a>
-        <div class="nav-right">
-            <a href="#how">How it works</a>
+        <button class="mobile-menu" id="mobile-toggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="#writing">Features</a>
             <a href="#pricing">Pricing</a>
-            <a href="/auth.html">Sign in</a>
-            <a href="/review.html" class="nav-cta">Get my review</a>
+            <a href="#story">About</a>
+            <a href="/contact.html">Contact</a>
+            <!-- Logged out -->
+            <a href="/auth.html" class="nav-cta" id="nav-cta-out">Sign up</a>
+            <!-- Logged in (hidden by default) -->
+            <a href="/dashboard.html" class="nav-link-muted hidden" id="nav-dash">Dashboard</a>
+            <a href="/review.html" class="nav-cta hidden" id="nav-cta-in">Get started</a>
+            <div class="account-menu hidden" id="nav-account-menu" style="position: relative; display: none;">
+                <button id="account-menu-btn" style="background: transparent; border: 1px solid #333; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;" aria-label="Account">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <div id="account-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: #1a1816; border: 1px solid #333; border-radius: 8px; padding: 16px; min-width: 220px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 100;">
+                    <div id="account-email" style="color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; word-break: break-all;">Loading...</div>
+                    <div id="account-plan" style="color: #c9a96e; font-size: 0.8rem; margin-bottom: 12px;"></div>
+                    <div style="border-top: 1px solid #333; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <a href="/dashboard.html" style="color: #ccc; text-decoration: none; font-size: 0.85rem;">Dashboard</a>
+                        <a href="#" id="nav-signout" style="color: #999; text-decoration: none; font-size: 0.85rem;">Sign out</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- HERO -->
-    <header class="hero">
-        <img src="hero.PNG" alt="" class="hero-bg" aria-hidden="true">
-        <div class="hero-inner">
-            <p class="hero-eyebrow">Manuscript reviews for serious writers</p>
-            <h1>
-                <span class="l1">Everyone says your book is <span class="strike">nice</span>.</span><br>
-                But is it ready to sell?
-            </h1>
-            <p class="hero-sub">
-                An 11-section, line-by-line manuscript review that finds what's keeping your book
-                from selling — <strong>in minutes, not months.</strong>
-            </p>
-            <div class="hero-ctas">
-                <a href="/review.html" class="btn btn-gold">Get my review — from $15</a>
-                <a href="#sample" class="btn btn-ghost">See a real report</a>
+    <!-- HERO — full bleed image with overlay -->
+    <div class="hero-wrap">
+        <img src="hero.PNG" alt="Ruthless Mentor — Let's see how your book measures up" class="hero-bg">
+        <div class="hero-overlay">
+            <p class="hero-tagline anim-fade">Let's take your book to the next level.</p>
+            <div class="hero-btns anim-fade d2">
+                <a href="review.html" class="btn btn-glow">Get your report</a>
+                <a href="#problem" class="btn-outline">How it works</a>
             </div>
-            <p class="hero-proof"><b>180+</b> manuscripts reviewed &nbsp;·&nbsp; <b>11</b> sections per report &nbsp;·&nbsp; delivered in <b>~3 minutes</b></p>
         </div>
-    </header>
+    </div>
 
-    <!-- PROBLEM -->
-    <section class="section" id="how">
-        <div class="wrap split">
-            <div class="split-img reveal">
-                <img src="comic.jpg" alt="Expectation vs reality — everyone says your book is amazing but sales are zero">
-                <span class="stamp">NEEDS WORK</span>
+    <div class="light-body">
+    <!-- PROBLEM — image + text side by side -->
+    <section id="problem" class="split">
+        <div class="split-img anim-scale">
+            <img src="comic.jpg" alt="Expectation vs Reality — everyone says your book is amazing but sales are zero">
+        </div>
+        <div class="split-text">
+            <h2 class="anim-slide-up">Find out what's keeping your book from becoming a bestseller.</h2>
+            <p class="anim-fade d1">A developmental editor costs $1,000&ndash;$3,000. Fixing your book after bad reviews costs even more.</p>
+            <p class="anim-fade d2">For the price of lunch, we'll tell you exactly what's working and what's not and how to quickly fix it!</p>
+            <button class="btn anim-fade d3" id="sample-btn">See a sample report</button>
+        </div>
+    </section>
+
+    <!-- SAMPLE MODAL -->
+    <div id="sample-modal" class="sample-modal hidden">
+        <div class="sample-modal-inner">
+            <button class="sample-close" id="sample-close">&times;</button>
+            <h2>Sample Review Report</h2>
+            <p class="sample-note">This is a real report (used with author's permission). Full reports are typically <strong>10-20 pages</strong> depending on your manuscript length.</p>
+            <div class="sample-img-wrap">
+                <img src="sample.png" alt="Sample Ruthless Mentor review report page">
             </div>
-            <div class="reveal">
-                <p class="margin-note">the problem nobody tells you</p>
-                <h2>Your friends are lying to you. Kindly.</h2>
-                <p class="lead">Family says it's great. Friends say they loved it. Then you publish — and strangers, agents, and algorithms tell you what everyone was too polite to say.</p>
-                <ul class="problem-list">
-                    <li><b>By then it's public.</b> Bad early reviews follow a book forever.</li>
-                    <li><b>By then it's expensive.</b> Rewriting after launch costs months.</li>
-                    <li><b>By then it's personal.</b> A 1-star from a stranger hurts more than any edit note.</li>
-                </ul>
-                <p style="margin-top:26px;color:var(--muted)">The writers who make it aren't the ones with perfect first drafts. They're the ones who found the problems <em>before</em> readers did.</p>
+            <a href="review.html" class="btn btn-glow">Get your report</a>
+        </div>
+    </div>
+
+    <!-- WHAT YOU GET + DEMO — wrapped in beige band -->
+    <div class="beige-band">
+    <section id="writing">
+        <h2 class="anim-slide-up">What your review includes.</h2>
+        <p class="sub anim-fade">Every submission gets the full 10-part treatment. No shortcuts.</p>
+        <div class="features-grid">
+            <div class="f-card anim-scale"><span class="f-num">01</span><h3>First Impressions</h3><p>Gut reaction. What landed, what made us stop reading.</p></div>
+            <div class="f-card anim-scale d05"><span class="f-num">02</span><h3>Author's Voice</h3><p>Does the writing have a pulse or feel generic? We score it.</p></div>
+            <div class="f-card anim-scale d1"><span class="f-num">03</span><h3>Prose Quality</h3><p>Crutch words counted. Dead metaphors flagged. Filler killed.</p></div>
+            <div class="f-card anim-scale d15"><span class="f-num">04</span><h3>Repeat Words</h3><p>"Sharp" 14 times in 20 pages? We find all 14.</p></div>
+            <div class="f-card anim-scale d2"><span class="f-num">05</span><h3>Depth Check</h3><p>Does your book go there or wave from a safe distance?</p></div>
+            <div class="f-card anim-scale d25"><span class="f-num">06</span><h3>Character Grades</h3><p>A through F. Motivation, backstory, voice, and arc graded for every major character.</p></div>
+            <div class="f-card anim-scale d3"><span class="f-num">07</span><h3>Structure & Pacing</h3><p>Core issues first, ruthless fix, then chapter-by-chapter breakdown.</p></div>
+            <div class="f-card anim-scale d35"><span class="f-num">08</span><h3>Market Check</h3><p>Audience size, hook strength, and what makes your book stand out.</p></div>
+        </div>
+    </section>
+
+    <!-- REPEAT WORD DEMO -->
+    <section>
+        <div class="demo-box anim-scale">
+            <h2 class="demo-label">See it in action.</h2>
+            <p class="demo-text">"Her voice was <mark>sharp</mark>, cutting through the silence. The <mark>sharp</mark> edge of his words left a <mark>sharp</mark> sting. She felt a <mark>sharp</mark> pain in her chest, a <mark>sharp</mark> reminder of what she'd lost. The <mark>sharp</mark> wind howled against the <mark>sharp</mark> cliffs..."</p>
+            <div class="demo-tags">
+                <span class="tag-pill pop" style="--i:0">"sharp" <b>7x</b></span>
+                <span class="tag-pill pop" style="--i:1">"just" <b>23x</b></span>
+                <span class="tag-pill pop" style="--i:2">"felt" <b>12x</b></span>
+                <span class="tag-pill pop" style="--i:3">"seemed" <b>9x</b></span>
+            </div>
+        </div>
+    </section>
+    </div><!-- end beige-band -->
+
+    <!-- CONFIDENCE CTA -->
+    <section id="confidence" class="confidence-section">
+        <h2 class="confidence-heading anim-slide-up">Want to know if your book is on the right track?</h2>
+        <div class="confidence-wrap anim-slide-up">
+            <div class="confidence-img-wrap">
+                <img src="guy typing.png" alt="Writer typing on laptop" class="confidence-img">
+            </div>
+            <div class="confidence-text">
+                <p>You've written 3 chapters&hellip; and now you're not sure if you should keep going.</p>
+                <p class="confidence-highlight">That's exactly when you need real feedback.</p>
+                <p>Send what you have, and we'll tell you if you're on the right track, what's working, and what to fix before you keep writing.</p>
+                <a href="review.html" class="btn btn-glow">Submit your work</a>
             </div>
         </div>
     </section>
 
-    <!-- ANCHOR -->
-    <section class="section anchor">
-        <div class="wrap">
-            <p class="margin-note reveal">what honest feedback actually costs</p>
-            <h2 class="reveal">A developmental editor charges $1,000&ndash;$3,000.<br>And makes you wait six weeks.</h2>
-            <p class="lead reveal">They're worth it — for a finished manuscript. But you shouldn't pay editor prices to find out your Act II drags or your villain is cardboard.</p>
-            <div class="compare reveal">
-                <div class="compare-col them">
-                    <p class="compare-label">Developmental editor</p>
-                    <p class="compare-price">$1,000+<small> per pass</small></p>
-                    <ul class="compare-list">
-                        <li>4&ndash;8 week turnaround</li>
-                        <li>One round of notes</li>
-                        <li>Awkward to ask twice</li>
-                        <li>Priced for finished drafts only</li>
-                    </ul>
+    <!-- TIME GRAPH -->
+    <section id="time-graph" class="time-graph-section">
+        <div class="time-graph-wrap">
+            <h2 class="anim-slide-up centered">Is this you?</h2>
+            <p class="sub anim-fade centered">Most authors spend months writing but almost no time getting real feedback before they publish.</p>
+            <div class="time-bars anim-scale">
+                <div class="time-bar-row">
+                    <span class="time-label">Writing</span>
+                    <div class="time-track"><div class="time-fill writing-fill" style="width:90%"><span>6-12 months</span></div></div>
                 </div>
-                <div class="compare-col us">
-                    <p class="compare-label">Ruthless Mentor</p>
-                    <p class="compare-price">$15&ndash;$25<small> per review</small></p>
-                    <ul class="compare-list">
-                        <li><b>~3 minute</b> turnaround</li>
-                        <li><b>11-section</b> deep report, every time</li>
-                        <li>Resubmit after every revision</li>
-                        <li>Works on <b>rough and unfinished</b> drafts</li>
-                    </ul>
+                <div class="time-bar-row">
+                    <span class="time-label">Editing</span>
+                    <div class="time-track"><div class="time-fill editing-fill" style="width:55%"><span>2-4 months</span></div></div>
+                </div>
+                <div class="time-bar-row">
+                    <span class="time-label">Cover Design</span>
+                    <div class="time-track"><div class="time-fill cover-fill" style="width:30%"><span>2-4 weeks</span></div></div>
+                </div>
+                <div class="time-bar-row">
+                    <span class="time-label">Getting Feedback</span>
+                    <div class="time-track"><div class="time-fill feedback-fill" style="width:5%"><span></span></div></div>
+                    <span class="time-tiny">~ 1 hour</span>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- SAMPLE -->
-    <section class="section" id="sample">
-        <div class="wrap">
-            <p class="margin-note reveal">no hand-waving — here's a real one</p>
-            <h2 class="reveal">This is what the truth looks like.</h2>
-            <p class="lead reveal">Structure &amp; pacing. Voice scored out of 10. Every overused word counted. Every character graded A&ndash;F. Line-level callouts with rewrites. 10&ndash;20 pages of it.</p>
-            <div class="report-frame reveal">
-                <img src="sample.png" alt="A real Ruthless Mentor review report">
-                <div class="annotation anno-1">
-                    finds the exact chapters<br>where readers quit
-                    <svg width="60" height="34" viewBox="0 0 60 34" fill="none"><path d="M55 2C40 10 20 12 4 30" stroke="#e05c45" stroke-width="1.5" stroke-linecap="round"/><path d="M10 22l-6 8 10-2" stroke="#e05c45" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <div class="annotation anno-2">
-                    <svg width="60" height="34" viewBox="0 0 60 34" fill="none" style="margin-left:auto"><path d="M5 32C20 22 38 20 56 4" stroke="#e05c45" stroke-width="1.5" stroke-linecap="round"/><path d="M50 12l6-8-10 2" stroke="#e05c45" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    every crutch word,<br>counted and quoted
-                </div>
-            </div>
-            <div class="report-cta reveal">
-                <a href="/review.html" class="btn btn-gold">Run this on my manuscript</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- PRICING -->
-    <section class="section pricing" id="pricing">
-        <div class="wrap">
-            <p class="margin-note reveal">choose how serious you are</p>
-            <h2 class="reveal">One review finds the problems.<br>Revision after revision fixes them.</h2>
-            <p class="lead reveal">Nobody fixes a book in one pass. The writers who finish strong review every draft — that's why most choose the plan.</p>
-
-            <div class="sub-card reveal">
-                <div class="sub-card-inner">
-                    <span class="badge">Best value — most popular</span>
-                    <p class="plan-name">The Basic Plan</p>
-                    <p class="plan-tag">for writers who actually revise</p>
-                    <p class="plan-price">$50<small> /month</small></p>
-                    <p class="per-review"><s>$25 per review</s> <b>$5 per review</b> · 10 every month</p>
-                    <ul class="plan-list">
-                        <li><b>10 full reviews</b> per month — any genre, any length</li>
-                        <li>Check <b>every single revision</b> before you move on</li>
-                        <li>Watch your scores climb draft after draft</li>
-                        <li>All reviews saved to your dashboard</li>
-                        <li><b>Cancel anytime</b> — keep access till period ends</li>
-                    </ul>
-                    <a href="/dashboard.html?subscribed=start" class="btn btn-gold">Start the plan — $50/mo</a>
-                    <p class="plan-note">that's 80% off the per-review price · first review in ~3 minutes</p>
-                </div>
-            </div>
-
-            <p class="single-line reveal">Just want one? <a href="/review.html">Get a single review for $15&ndash;$25</a> — you can upgrade later.</p>
-
-            <div class="math-strip reveal">
-                <span>3 drafts × 1 review each = <b>$75</b> paying single</span>
-                <span>vs</span>
-                <span>a whole month of unlimited-ish revising = <b>$50</b></span>
-                <span>vs</span>
-                <span>one editor pass = <b>$1,000+</b></span>
+            <div class="time-cta anim-fade">
+                <p class="time-warning">Then you hit publish and the Amazon reviews roll in...</p>
+                <p class="time-pitch">Get the feedback that could save your book from bad reviews.</p>
+                <a href="review.html" class="btn btn-glow">Get your report</a>
             </div>
         </div>
     </section>
 
     <!-- TESTIMONIALS -->
-    <section class="section">
-        <div class="wrap">
-            <p class="margin-note reveal">writers who took the truth</p>
-            <h2 class="reveal">It stings for a minute.<br>It sells for a lifetime.</h2>
-            <div class="quotes">
-                <div class="quote reveal">
-                    <div class="stars">★★★★★</div>
-                    <p>"It found the exact chapter where my beta readers kept stalling — and told me why. I'd been staring at that scene for a year."</p>
-                    <p class="quote-who">— adult fiction author</p>
-                </div>
-                <div class="quote reveal">
-                    <div class="stars">★★★★★</div>
-                    <p>"I used the word 'suddenly' 41 times. Forty-one. No human editor ever counted. This thing counted."</p>
-                    <p class="quote-who">— middle grade writer</p>
-                </div>
-                <div class="quote reveal">
-                    <div class="stars">★★★★★</div>
-                    <p>"Cheaper than my morning coffee habit and more honest than my critique group has ever been."</p>
-                    <p class="quote-who">— picture book author</p>
-                </div>
+    <section id="testimonials">
+        <h2 class="anim-slide-up centered">What authors are saying.</h2>
+        <div class="testimonials-row">
+            <div class="testimonial-card anim-scale">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I was like wait... how did I not see that? It made my book so much better."</p>
+                <p class="testimonial-author">&mdash; Early chapter book author</p>
+            </div>
+            <div class="testimonial-card anim-scale d1">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I belong to a writing group and someone recommended me this site. It really gave me a different perspective that I needed!"</p>
+                <p class="testimonial-author">&mdash; Self-published author</p>
+            </div>
+            <div class="testimonial-card anim-scale d2">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I was honestly kind of scared to see what feedback I would get back, but it was so amazing. I love the character scores feedback!"</p>
+                <p class="testimonial-author">&mdash; Adult fantasy author</p>
+            </div>
+            <div class="testimonial-card anim-scale d3">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I've been writing this screenplay for years and I was too embarrassed to show any of my family. This was a perfect way to get feedback without judgement."</p>
+                <p class="testimonial-author">&mdash; Screenplay author</p>
             </div>
         </div>
     </section>
 
-    <!-- FINAL CTA -->
-    <section class="final">
-        <div class="final-inner">
-            <p class="margin-note reveal" style="justify-content:center">last page of the report says it best</p>
-            <h2 class="reveal">Your book isn't getting better<br>while it sits there.</h2>
-            <p class="lead reveal">In three minutes you'll know exactly what to fix. Or you can keep wondering.</p>
-            <div class="reveal">
-                <a href="/review.html" class="btn btn-gold">Get my review now</a>
-            </div>
-            <p class="guarantee reveal">Your manuscript is never stored, shared, or trained on.</p>
+    <!-- NOT FINISHED YET -->
+    <section id="unfinished" class="unfinished-section">
+        <div class="unfinished-wrap anim-slide-up">
+            <h2>Is your manuscript not finished yet? Perfect.</h2>
+            <p>You don't need a completed book to get real feedback. In fact, the earlier you do this, the more time you save.</p>
+            <p>Submit what you have — whether it's 3 chapters or 30 — and we'll tell you if you're on the right track, what to fix before you keep writing, and where your story is headed.</p>
+            <p class="unfinished-highlight">Why waste 6 months finishing a book that needed a course correction in Chapter 3?</p>
+            <a href="review.html" class="btn btn-glow">Submit your work in progress</a>
         </div>
     </section>
 
-    <div class="sticky-bar" id="sticky-bar">
-        <span class="sticky-text"><b>$5 per review</b> on the plan — 10 every month</span>
-        <a href="#pricing" class="btn btn-gold">Start for $50/mo</a>
-    </div>
+    <!-- PRICING -->
+    <section id="pricing">
+        <h2 class="anim-slide-up centered">Simple pricing.</h2>
+        <p class="sub anim-fade centered">One plan covers every draft you write this month. Single reviews available too.</p>
+        <div class="v3-sub anim-scale">
+            <div class="v3-sub-inner">
+                <span class="v3-badge">Best value &middot; Most popular</span>
+                <p class="v3-sub-name">Basic Plan</p>
+                <p class="v3-sub-tag">for writers who actually revise</p>
+                <p class="v3-price">$50<span> /month</span></p>
+                <p class="v3-chip-row"><s>$25 per review</s><span class="v3-chip">$5 per review</span></p>
+                <ul class="v3-list">
+                    <li><b>10 full reviews</b> every month &mdash; any genre, any length</li>
+                    <li>Check <b>every revision</b> before you move on</li>
+                    <li>Watch your scores climb draft after draft</li>
+                    <li>All reviews saved to your dashboard</li>
+                    <li><b>Cancel anytime</b> &mdash; keep access till period ends</li>
+                </ul>
+                <a href="/auth.html?plan=basic" class="btn btn-glow full">Subscribe &mdash; $50/mo</a>
+                <p class="v3-note">that's 80% off the single-review price &middot; first review in ~3 minutes</p>
+            </div>
+        </div>
+
+        <p class="v3-singles-label">or get a single review</p>
+        <div class="pricing-row">
+            <div class="price-card anim-scale">
+                <p class="tier">Children's / Picture Book / Chapter Book</p>
+                <p class="amount">$15</p>
+                <p class="period">Up to 10,000 words</p>
+                <a href="review.html" class="btn-outline full">Get started</a>
+            </div>
+            <div class="price-card anim-scale d1">
+                <p class="tier">Middle Grade / Young Adult</p>
+                <p class="amount">$20</p>
+                <p class="period">10,000 &ndash; 100,000 words</p>
+                <a href="review.html" class="btn-outline full">Get started</a>
+            </div>
+            <div class="price-card anim-scale d2">
+                <p class="tier">Adult / Screenplay</p>
+                <p class="amount">$25</p>
+                <p class="period">Full manuscript</p>
+                <a href="review.html" class="btn-outline full">Get started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOUNDER -->
+    <section id="story">
+        <div class="story-wrap anim-slide-up">
+            <h2>Why I built this.</h2>
+            <p>When I was writing my first chapter book, everyone told me it was amazing. Friends, family, everyone. And I believed them &mdash; of course I did. It was my first book. I had my author goggles on.</p>
+            <p>Then one guy I met in public told me my book had no plot. Not to be mean. Just honest. I had to rewrite the whole thing.</p>
+            <p>I wasn't mad at him. I was mad that I'd wasted months getting nothing but "it's great!" from everyone around me, just to have one stranger be the first person to tell me the truth.</p>
+            <p>That's why I built Ruthless Mentor. So you don't have to wait six months and a random encounter to find out what's actually wrong.</p>
+            <p class="sig">&mdash; Ryan</p>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+        <h2 class="anim-slide-up">Questions.</h2>
+        <div class="faq-list">
+            <details class="anim-fade"><summary>Is this going to hurt my feelings?</summary><p>Maybe. But every critique comes with a reason and a fix.</p></details>
+            <details class="anim-fade d05"><summary>Does my draft need to be finished?</summary><p>No. Rough drafts, single chapters, half-baked ideas. All welcome.</p></details>
+            <details class="anim-fade d1"><summary>How do I submit?</summary><p>Copy and paste your text directly into the submission form.</p></details>
+            <details class="anim-fade d15"><summary>Is my stuff private?</summary><p>Yes. Processed and gone. Nothing stored, shared, or trained on.</p></details>
+            <details class="anim-fade d2"><summary>How does pricing work?</summary><p>Three tiers: Children's/Chapter Book $15, Middle Grade/YA $20, Adult/Screenplay $25. Full review + printable report included.</p></details>
+            <details class="anim-fade d25"><summary>Can I re-submit after I revise?</summary><p>Absolutely. Fix the issues we flagged, submit again, and your new review will reflect the improvements. It's the cheapest way to track your progress as a writer. Each submission is a new review, so standard pricing applies — or use a subscription plan for monthly review credits.</p></details>
+            <details class="anim-fade d3"><summary>Is this a replacement for an editor?</summary><p>No. This is a tool that gets your manuscript into a strong, complete draft so when you do work with a developmental editor, you get the most out of it.</p></details>
+            <details class="anim-fade d35"><summary>Does this do any copy/line editing or proofreading?</summary><p>It does not catch grammar or punctuation. It is purely there to see if you have a story arc, if you developed your characters, etc. Please see our sample report above.</p></details>
+        </div>
+    </section>
+
+    </div><!-- end light-body -->
 
     <footer>
-        <img src="logo.png" alt="ruthlessmentor.com" class="logo-img">
+        <img src="logo.png" alt="ruthlessmentor.com" class="logo-img footer-logo-img">
         <div class="footer-links"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></div>
-        <span>&copy; 2026 ruthlessmentor.com</span>
+        <span class="footer-copy">&copy; 2026</span>
     </footer>
 
-<script>
-// scroll reveal (gated behind .js so content is never hidden without JS)
-document.documentElement.classList.add('js');
-(() => {
-    let els = [...document.querySelectorAll('.reveal')];
-    const check = () => {
-        els = els.filter(el => {
-            const r = el.getBoundingClientRect();
-            if (r.top < innerHeight * 0.92 && r.bottom > 0) { el.classList.add('in'); return false; }
-            return true;
-        });
-        if (!els.length) removeEventListener('scroll', check);
-    };
-    addEventListener('scroll', check, { passive: true });
-    addEventListener('resize', check, { passive: true });
-    check();
-
-    // sticky subscription bar: show after scrolling past pricing, hide when it's visible or near footer
-    const bar = document.getElementById('sticky-bar');
-    const pricing = document.getElementById('pricing');
-    const toggle = () => {
-        const r = pricing.getBoundingClientRect();
-        const visible = r.bottom > 0 && r.top < innerHeight;
-        const past = r.bottom <= 0;
-        const nearBottom = innerHeight + scrollY > document.body.scrollHeight - 300;
-        bar.classList.toggle('show', past && !visible && !nearBottom);
-    };
-    addEventListener('scroll', toggle, { passive: true });
-    toggle();
-})();
-</script>
+    <script src="clerk-config.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
