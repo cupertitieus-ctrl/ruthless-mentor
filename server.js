@@ -1986,6 +1986,7 @@ const COUPONS = {
   'FREEONCE': { type: 'free', discount: 100, maxUses: 1, message: 'Free review code applied!' },
   'GIFT-C9027820': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
   'GIFT-6A739D07': { type: 'free', discount: 100, maxUses: 1, message: 'Gift code applied — this review is free!' },
+  'THANKSIZZY': { type: 'free', discount: 100, maxUses: 1, message: 'Thanks Izzy — this review is free!' },
 };
 
 // Check how many times a limited-use coupon has been redeemed (DB-backed)
