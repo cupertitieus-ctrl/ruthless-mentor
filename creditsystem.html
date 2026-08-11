@@ -18,6 +18,18 @@
     <link rel="stylesheet" href="style.css">
     <style>
     /* ===== CREDIT SYSTEM PREVIEW STYLES ===== */
+    /* centered nav: logo left, links dead-center, credits + CTA right */
+    #nav-links{flex:1;justify-content:flex-end;gap:1.1rem}
+    .cs-nav-center{
+        position:absolute;left:50%;transform:translateX(-50%);
+        display:flex;align-items:center;gap:1.8rem;white-space:nowrap;
+    }
+    @media(max-width:768px){
+        #nav-links{flex:none;align-items:flex-start}
+        .cs-credit-pill{align-self:flex-start}
+        .cs-nav-center{position:static;transform:none;flex-direction:column;align-items:flex-start;gap:.7rem;width:100%}
+        .cs-dd-panel{position:static;display:block;background:transparent;border:none;box-shadow:none;padding:0 0 0 12px;min-width:0}
+    }
     .cs-credit-pill{
         display:inline-flex;align-items:center;gap:6px;background:rgba(201,169,110,.14);
         border:1px solid rgba(201,169,110,.5);color:#c9a96e;border-radius:999px;
@@ -170,16 +182,18 @@
             <span></span><span></span><span></span>
         </button>
         <div class="nav-links" id="nav-links">
-            <span class="cs-dd"><a href="#writing">Tools &#9662;</a>
-                <div class="cs-dd-panel">
-                    <a href="/review.html">Manuscript Review<small>Full 8-part report &middot; 1 credit</small></a>
-                    <a href="#pricing">Cover Check<span class="cs-free-tag">FREE</span><small>Instant score, no login</small></a>
-                    <a href="#pricing">Description Maker<small>KDP-ready blurb from your book</small></a>
-                </div>
-            </span>
-            <a href="#pricing">Pricing</a>
-            <a href="#story">Blog</a>
-            <a href="#story">About</a>
+            <div class="cs-nav-center">
+                <span class="cs-dd"><a href="#writing">Tools &#9662;</a>
+                    <div class="cs-dd-panel">
+                        <a href="/review.html">Manuscript Review<small>Full 8-part report &middot; 1 credit</small></a>
+                        <a href="#pricing">Cover Check<span class="cs-free-tag">FREE</span><small>Instant score, no login</small></a>
+                        <a href="#pricing">Description Maker<small>KDP-ready blurb from your book</small></a>
+                    </div>
+                </span>
+                <a href="#pricing">Pricing</a>
+                <a href="#story">Blog</a>
+                <a href="#story">About</a>
+            </div>
             <span class="cs-credit-pill" title="Your credit balance">&#9679; 3 credits</span>
             <!-- Logged out -->
             <a href="/auth.html" class="nav-cta" id="nav-cta-out">Sign up</a>
