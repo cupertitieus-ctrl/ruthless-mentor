@@ -39,12 +39,15 @@
         font-size:.58rem;font-weight:800;letter-spacing:.08em;background:#7fae7a;color:#0d0b09;
         border-radius:3px;padding:1px 5px;margin-left:5px;vertical-align:middle;
     }
-    .cs-dd{position:relative}
+    .cs-dd{position:relative;display:inline-flex;align-items:center;padding:18px 0;cursor:pointer}
+    .cs-dd > a{user-select:none}
     .cs-dd-panel{
-        display:none;position:absolute;top:34px;left:-14px;background:#1a1816;border:1px solid #333;
+        display:none;position:absolute;top:100%;left:-14px;background:#1a1816;border:1px solid #333;
         border-radius:8px;padding:8px;min-width:250px;box-shadow:0 10px 34px rgba(0,0,0,.5);z-index:120;
     }
-    .cs-dd:hover .cs-dd-panel{display:block}
+    .cs-dd:hover .cs-dd-panel,
+    .cs-dd.open .cs-dd-panel{display:block}
+    .cs-dd.open > a{color:var(--accent)}
     .cs-dd-panel a{display:block;padding:9px 12px;border-radius:6px;color:#ccc!important;font-size:.85rem;line-height:1.35}
     .cs-dd-panel a:hover{background:#241f1a;color:#fff!important}
     .cs-dd-panel a small{display:block;color:#8a8078;font-size:.72rem}
@@ -541,6 +544,23 @@
 <script>
 // ===== CREDIT SYSTEM PREVIEW — pricing interactivity =====
 (function(){
+    // Tools dropdown: click to pin it open (hover alone is too easy to lose)
+    var dd = document.querySelector('.cs-dd');
+    if (dd) {
+        var trigger = dd.querySelector('a');
+        trigger.addEventListener('click', function(e){
+            if (window.innerWidth <= 768) return;   // mobile menu shows it inline
+            e.preventDefault();
+            dd.classList.toggle('open');
+        });
+        document.addEventListener('click', function(e){
+            if (!dd.contains(e.target)) dd.classList.remove('open');
+        });
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape') dd.classList.remove('open');
+        });
+    }
+
     // credit quantity selector
     var opts = document.querySelectorAll('#cs-qty .cs-qty-opt');
     var total = document.getElementById('cs-total');
