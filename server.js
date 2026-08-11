@@ -138,6 +138,9 @@ app.get(['/version2', '/v2'], (req, res) => {
 app.get(['/version3', '/v3'], (req, res) => {
   res.sendFile(path.join(__dirname, 'version3.html'));
 });
+app.get(['/creditsystem', '/credits'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'creditsystem.html'));
+});
 
 // Anthropic client
 const client = new Anthropic();

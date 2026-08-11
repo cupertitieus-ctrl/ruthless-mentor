@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TL7FFKB3');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ruthlessmentor.com</title>
+    <meta name="description" content="Honest, actionable feedback for writers who want to get better.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+    /* ===== CREDIT SYSTEM PREVIEW STYLES ===== */
+    .cs-credit-pill{
+        display:inline-flex;align-items:center;gap:6px;background:rgba(201,169,110,.14);
+        border:1px solid rgba(201,169,110,.5);color:#c9a96e;border-radius:999px;
+        padding:5px 13px;font-size:.78rem;font-weight:700;white-space:nowrap;
+    }
+    .cs-free-tag{
+        font-size:.58rem;font-weight:800;letter-spacing:.08em;background:#7fae7a;color:#0d0b09;
+        border-radius:3px;padding:1px 5px;margin-left:5px;vertical-align:middle;
+    }
+    .cs-dd{position:relative}
+    .cs-dd-panel{
+        display:none;position:absolute;top:34px;left:-14px;background:#1a1816;border:1px solid #333;
+        border-radius:8px;padding:8px;min-width:250px;box-shadow:0 10px 34px rgba(0,0,0,.5);z-index:120;
+    }
+    .cs-dd:hover .cs-dd-panel{display:block}
+    .cs-dd-panel a{display:block;padding:9px 12px;border-radius:6px;color:#ccc!important;font-size:.85rem;line-height:1.35}
+    .cs-dd-panel a:hover{background:#241f1a;color:#fff!important}
+    .cs-dd-panel a small{display:block;color:#8a8078;font-size:.72rem}
+
+    /* trust row under CTAs */
+    .cs-cta-meta{
+        display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:12px;
+        font-size:.76rem;color:#7d7264;
+    }
+    .cs-cta-meta.centered{justify-content:center}
+    .cs-cta-meta span{display:inline-flex;align-items:center;gap:5px}
+    .cs-cta-meta svg{flex-shrink:0}
+    .light-body .cs-cta-meta{color:#7a736a}
+
+    /* ===== PRICING ===== */
+    #pricing .cs-block-label{
+        text-align:center;font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+        color:#a08b5e;margin:0 0 .5rem;
+    }
+    #pricing .cs-block-sub{text-align:center;color:#666;font-size:.9rem;margin:0 auto 1.6rem;max-width:520px}
+
+    /* credits card */
+    .cs-credits{
+        max-width:660px;margin:0 auto;background:#fff;border:1px solid #e2ddd5;border-radius:14px;
+        padding:2.2rem 2.2rem 1.9rem;box-shadow:0 14px 44px rgba(0,0,0,.07);
+    }
+    .cs-credits-head{text-align:center;margin-bottom:1.5rem}
+    .cs-credits-head h3{font-size:1.35rem;font-weight:800;margin:0 0 .3rem;color:#1a1a1a}
+    .cs-credits-head p{font-size:.9rem;color:#666;margin:0}
+    .cs-qty{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+    .cs-qty-opt{
+        border:1.5px solid #e2ddd5;border-radius:10px;padding:.85rem .5rem;text-align:center;cursor:pointer;
+        background:#fdfcfa;transition:all .15s;position:relative;
+    }
+    .cs-qty-opt:hover{border-color:#c9a96e}
+    .cs-qty-opt.on{border-color:#c9a96e;background:#fff9ee;box-shadow:0 0 0 3px rgba(201,169,110,.16)}
+    .cs-qty-n{font-size:1.5rem;font-weight:800;color:#1a1a1a;line-height:1}
+    .cs-qty-lbl{font-size:.68rem;color:#8a8078;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+    .cs-qty-each{font-size:.75rem;color:#666;margin-top:.45rem}
+    .cs-qty-save{
+        display:inline-block;font-size:.62rem;font-weight:800;color:#4f7d4a;background:#e8f2e7;
+        border-radius:3px;padding:1px 5px;margin-top:.35rem;
+    }
+    .cs-credits-total{
+        display:flex;align-items:baseline;justify-content:center;gap:.5rem;margin:1.5rem 0 .2rem;
+    }
+    .cs-total-num{font-size:3rem;font-weight:800;letter-spacing:-.04em;color:#1a1a1a;line-height:1}
+    .cs-total-desc{text-align:center;font-size:.85rem;color:#666;margin-bottom:1.3rem}
+    .cs-credits .btn{width:100%;text-align:center}
+    .cs-never-expire{text-align:center;font-size:.75rem;color:#8a8078;margin-top:.8rem}
+
+    /* plans */
+    .cs-toggle-wrap{display:flex;justify-content:center;margin-bottom:1.9rem}
+    .cs-toggle{
+        display:inline-flex;background:#efeae2;border-radius:999px;padding:4px;position:relative;
+    }
+    .cs-toggle button{
+        border:none;background:transparent;font-family:inherit;font-size:.85rem;font-weight:700;color:#7a736a;
+        padding:.5rem 1.2rem;border-radius:999px;cursor:pointer;transition:all .18s;white-space:nowrap;
+    }
+    .cs-toggle button.on{background:#fff;color:#1a1a1a;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .cs-toggle .cs-save-tag{font-size:.68rem;color:#4f7d4a;font-weight:800;margin-left:5px}
+
+    .cs-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:1000px;margin:0 auto;align-items:stretch}
+    .cs-plan{
+        background:#fff;border:1.5px solid #e2ddd5;border-radius:14px;padding:1.9rem 1.5rem 1.6rem;
+        display:flex;flex-direction:column;position:relative;transition:transform .2s,box-shadow .2s;
+    }
+    .cs-plan:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,.09)}
+    .cs-plan.featured{
+        border-color:#c9a96e;border-width:2px;box-shadow:0 18px 54px rgba(201,169,110,.22);
+    }
+    .cs-plan-badge{
+        display:inline-block;align-self:flex-start;background:#c9a96e;color:#0d0b09;
+        font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+        padding:.25rem .6rem;border-radius:4px;margin-bottom:.7rem;
+    }
+    .cs-plan-badge.ghost{visibility:hidden}
+    .cs-plan-name{font-size:1.15rem;font-weight:800;color:#1a1a1a;margin:0 0 .15rem}
+    .cs-plan-for{font-size:.78rem;color:#8a8078;margin:0 0 1.1rem;min-height:2.2em;line-height:1.35}
+    .cs-plan-price{display:flex;align-items:baseline;gap:.35rem}
+    .cs-plan-amt{font-size:2.7rem;font-weight:800;letter-spacing:-.04em;color:#1a1a1a;line-height:1}
+    .cs-plan-per{font-size:.85rem;color:#8a8078}
+    .cs-plan-billing{font-size:.75rem;color:#8a8078;margin-top:.4rem;min-height:2.6em;line-height:1.45}
+    .cs-plan-billing s{color:#b0a89e}
+    .cs-plan-billing b{color:#4f7d4a}
+    .cs-plan-credits{
+        margin:.9rem 0 1rem;padding:.6rem .8rem;background:#fdf8ee;border:1px solid #eee1c8;border-radius:7px;
+        font-size:.85rem;color:#7a6642;font-weight:700;text-align:center;
+    }
+    .cs-plan-credits small{display:block;font-weight:400;color:#8a8078;font-size:.72rem;margin-top:1px}
+    .cs-plan-list{list-style:none;padding:0;margin:0 0 1.4rem;display:grid;gap:.55rem}
+    .cs-plan-list li{display:flex;gap:.5rem;align-items:baseline;font-size:.85rem;color:#444;line-height:1.4}
+    .cs-plan-list li::before{content:'\2713';color:#c9a96e;font-weight:800;flex-shrink:0}
+    .cs-plan-list li.inherit{color:#8a8078;font-style:italic}
+    .cs-plan-list li.inherit::before{content:'+';color:#b0a89e}
+    .cs-plan .btn,.cs-plan .btn-outline{width:100%;text-align:center;margin-top:auto}
+
+    /* guarantee strip */
+    .cs-guarantee{
+        max-width:1000px;margin:2.2rem auto 0;display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;
+        padding:1.1rem 1.4rem;border:1px dashed #ddd6cc;border-radius:10px;background:#fdfcfa;
+    }
+    .cs-guarantee div{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:#555}
+    .cs-guarantee svg{flex-shrink:0}
+    .cs-guarantee b{color:#1a1a1a}
+
+    @media(max-width:860px){
+        .cs-plans{grid-template-columns:1fr;max-width:420px}
+        .cs-qty{grid-template-columns:repeat(2,1fr)}
+        .cs-credits{padding:1.6rem 1.2rem}
+        .cs-plan-for{min-height:0}
+        .cs-plan-billing{min-height:0}
+    }
+    </style>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3SCZVZ422X"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-3SCZVZ422X');
+    </script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TL7FFKB3"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <nav>
+        <a href="/" class="logo"><img src="logo.png" alt="ruthlessmentor.com" class="logo-img"></a>
+        <button class="mobile-menu" id="mobile-toggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <span class="cs-dd"><a href="#writing">Tools &#9662;</a>
+                <div class="cs-dd-panel">
+                    <a href="/review.html">Manuscript Review<small>Full 8-part report &middot; 1 credit</small></a>
+                    <a href="#pricing">Cover Check<span class="cs-free-tag">FREE</span><small>Instant score, no login</small></a>
+                    <a href="#pricing">Description Maker<small>KDP-ready blurb from your book</small></a>
+                </div>
+            </span>
+            <a href="#pricing">Pricing</a>
+            <a href="#story">Blog</a>
+            <a href="#story">About</a>
+            <span class="cs-credit-pill" title="Your credit balance">&#9679; 3 credits</span>
+            <!-- Logged out -->
+            <a href="/auth.html" class="nav-cta" id="nav-cta-out">Sign up</a>
+            <!-- Logged in (hidden by default) -->
+            <a href="/dashboard.html" class="nav-link-muted hidden" id="nav-dash">Dashboard</a>
+            <a href="/review.html" class="nav-cta hidden" id="nav-cta-in">Get started</a>
+            <div class="account-menu hidden" id="nav-account-menu" style="position: relative; display: none;">
+                <button id="account-menu-btn" style="background: transparent; border: 1px solid #333; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;" aria-label="Account">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </button>
+                <div id="account-dropdown" style="display: none; position: absolute; top: 50px; right: 0; background: #1a1816; border: 1px solid #333; border-radius: 8px; padding: 16px; min-width: 220px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 100;">
+                    <div id="account-email" style="color: #fff; font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; word-break: break-all;">Loading...</div>
+                    <div id="account-plan" style="color: #c9a96e; font-size: 0.8rem; margin-bottom: 12px;"></div>
+                    <div style="border-top: 1px solid #333; padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <a href="/dashboard.html" style="color: #ccc; text-decoration: none; font-size: 0.85rem;">Dashboard</a>
+                        <a href="#" id="nav-signout" style="color: #999; text-decoration: none; font-size: 0.85rem;">Sign out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO — full bleed image with overlay -->
+    <div class="hero-wrap">
+        <img src="hero.PNG" alt="Ruthless Mentor — Let's see how your book measures up" class="hero-bg">
+        <div class="hero-overlay">
+            <p class="hero-tagline anim-fade">Let's take your book to the next level.</p>
+            <div class="hero-btns anim-fade d2">
+                <a href="review.html" class="btn btn-glow">Get your report</a>
+                <a href="#problem" class="btn-outline">How it works</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="light-body">
+    <!-- PROBLEM — image + text side by side -->
+    <section id="problem" class="split">
+        <div class="split-img anim-scale">
+            <img src="comic.jpg" alt="Expectation vs Reality — everyone says your book is amazing but sales are zero">
+        </div>
+        <div class="split-text">
+            <h2 class="anim-slide-up">Find out what's keeping your book from becoming a bestseller.</h2>
+            <p class="anim-fade d1">A developmental editor costs $1,000&ndash;$3,000. Fixing your book after bad reviews costs even more.</p>
+            <p class="anim-fade d2">For the price of lunch, we'll tell you exactly what's working and what's not and how to quickly fix it!</p>
+            <button class="btn anim-fade d3" id="sample-btn">See a sample report</button>
+        </div>
+    </section>
+
+    <!-- SAMPLE MODAL -->
+    <div id="sample-modal" class="sample-modal hidden">
+        <div class="sample-modal-inner">
+            <button class="sample-close" id="sample-close">&times;</button>
+            <h2>Sample Review Report</h2>
+            <p class="sample-note">This is a real report (used with author's permission). Full reports are typically <strong>10-20 pages</strong> depending on your manuscript length.</p>
+            <div class="sample-img-wrap">
+                <img src="sample.png" alt="Sample Ruthless Mentor review report page">
+            </div>
+            <a href="review.html" class="btn btn-glow">Get your report</a>
+        </div>
+    </div>
+
+    <!-- WHAT YOU GET + DEMO — wrapped in beige band -->
+    <div class="beige-band">
+    <section id="writing">
+        <h2 class="anim-slide-up">What your review includes.</h2>
+        <p class="sub anim-fade">Every submission gets the full 8-part treatment. No shortcuts.</p>
+        <div class="features-grid">
+            <div class="f-card anim-scale"><span class="f-num">01</span><h3>First Impressions</h3><p>Gut reaction. What landed, what made us stop reading.</p></div>
+            <div class="f-card anim-scale d05"><span class="f-num">02</span><h3>Author's Voice</h3><p>Does the writing have a pulse or feel generic? We score it.</p></div>
+            <div class="f-card anim-scale d1"><span class="f-num">03</span><h3>Prose Quality</h3><p>Crutch words counted. Dead metaphors flagged. Filler killed.</p></div>
+            <div class="f-card anim-scale d15"><span class="f-num">04</span><h3>Repeat Words</h3><p>"Sharp" 14 times in 20 pages? We find all 14.</p></div>
+            <div class="f-card anim-scale d2"><span class="f-num">05</span><h3>Depth Check</h3><p>Does your book go there or wave from a safe distance?</p></div>
+            <div class="f-card anim-scale d25"><span class="f-num">06</span><h3>Character Grades</h3><p>A through F. Motivation, backstory, voice, and arc graded for every major character.</p></div>
+            <div class="f-card anim-scale d3"><span class="f-num">07</span><h3>Structure & Pacing</h3><p>Core issues first, ruthless fix, then chapter-by-chapter breakdown.</p></div>
+            <div class="f-card anim-scale d35"><span class="f-num">08</span><h3>Market Check</h3><p>Audience size, hook strength, and what makes your book stand out.</p></div>
+        </div>
+    </section>
+
+    <!-- REPEAT WORD DEMO -->
+    <section>
+        <div class="demo-box anim-scale">
+            <h2 class="demo-label">See it in action.</h2>
+            <p class="demo-text">"Her voice was <mark>sharp</mark>, cutting through the silence. The <mark>sharp</mark> edge of his words left a <mark>sharp</mark> sting. She felt a <mark>sharp</mark> pain in her chest, a <mark>sharp</mark> reminder of what she'd lost. The <mark>sharp</mark> wind howled against the <mark>sharp</mark> cliffs..."</p>
+            <div class="demo-tags">
+                <span class="tag-pill pop" style="--i:0">"sharp" <b>7x</b></span>
+                <span class="tag-pill pop" style="--i:1">"just" <b>23x</b></span>
+                <span class="tag-pill pop" style="--i:2">"felt" <b>12x</b></span>
+                <span class="tag-pill pop" style="--i:3">"seemed" <b>9x</b></span>
+            </div>
+        </div>
+    </section>
+    </div><!-- end beige-band -->
+
+    <!-- CONFIDENCE CTA -->
+    <section id="confidence" class="confidence-section">
+        <h2 class="confidence-heading anim-slide-up">Want to know if your book is on the right track?</h2>
+        <div class="confidence-wrap anim-slide-up">
+            <div class="confidence-img-wrap">
+                <img src="guy typing.png" alt="Writer typing on laptop" class="confidence-img">
+            </div>
+            <div class="confidence-text">
+                <p>You've written 3 chapters&hellip; and now you're not sure if you should keep going.</p>
+                <p class="confidence-highlight">That's exactly when you need real feedback.</p>
+                <p>Send what you have, and we'll tell you if you're on the right track, what's working, and what to fix before you keep writing.</p>
+                <a href="review.html" class="btn btn-glow">Submit your work</a>
+<div class="cs-cta-meta"><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Full report in ~3 minutes</span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Never stored, shared, or trained on</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIME GRAPH -->
+    <section id="time-graph" class="time-graph-section">
+        <div class="time-graph-wrap">
+            <h2 class="anim-slide-up centered">Is this you?</h2>
+            <p class="sub anim-fade centered">Most authors spend months writing but almost no time getting real feedback before they publish.</p>
+            <div class="time-bars anim-scale">
+                <div class="time-bar-row">
+                    <span class="time-label">Writing</span>
+                    <div class="time-track"><div class="time-fill writing-fill" style="width:90%"><span>6-12 months</span></div></div>
+                </div>
+                <div class="time-bar-row">
+                    <span class="time-label">Editing</span>
+                    <div class="time-track"><div class="time-fill editing-fill" style="width:55%"><span>2-4 months</span></div></div>
+                </div>
+                <div class="time-bar-row">
+                    <span class="time-label">Cover Design</span>
+                    <div class="time-track"><div class="time-fill cover-fill" style="width:30%"><span>2-4 weeks</span></div></div>
+                </div>
+                <div class="time-bar-row">
+                    <span class="time-label">Getting Feedback</span>
+                    <div class="time-track"><div class="time-fill feedback-fill" style="width:5%"><span></span></div></div>
+                    <span class="time-tiny">~ 1 hour</span>
+                </div>
+            </div>
+            <div class="time-cta anim-fade">
+                <p class="time-warning">Then you hit publish and the Amazon reviews roll in...</p>
+                <p class="time-pitch">Get the feedback that could save your book from bad reviews.</p>
+                <a href="review.html" class="btn btn-glow">Get your report</a>
+<div class="cs-cta-meta centered"><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Full report in ~3 minutes</span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Never stored, shared, or trained on</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+        <h2 class="anim-slide-up centered">What authors are saying.</h2>
+        <div class="testimonials-row">
+            <div class="testimonial-card anim-scale">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I was like wait... how did I not see that? It made my book so much better."</p>
+                <p class="testimonial-author">&mdash; Early chapter book author</p>
+            </div>
+            <div class="testimonial-card anim-scale d1">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I belong to a writing group and someone recommended me this site. It really gave me a different perspective that I needed!"</p>
+                <p class="testimonial-author">&mdash; Self-published author</p>
+            </div>
+            <div class="testimonial-card anim-scale d2">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I was honestly kind of scared to see what feedback I would get back, but it was so amazing. I love the character scores feedback!"</p>
+                <p class="testimonial-author">&mdash; Adult fantasy author</p>
+            </div>
+            <div class="testimonial-card anim-scale d3">
+                <p class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+                <p class="testimonial-quote">"I've been writing this screenplay for years and I was too embarrassed to show any of my family. This was a perfect way to get feedback without judgement."</p>
+                <p class="testimonial-author">&mdash; Screenplay author</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOT FINISHED YET -->
+    <section id="unfinished" class="unfinished-section">
+        <div class="unfinished-wrap anim-slide-up">
+            <h2>Is your manuscript not finished yet? Perfect.</h2>
+            <p>You don't need a completed book to get real feedback. In fact, the earlier you do this, the more time you save.</p>
+            <p>Submit what you have — whether it's 3 chapters or 30 — and we'll tell you if you're on the right track, what to fix before you keep writing, and where your story is headed.</p>
+            <p class="unfinished-highlight">Why waste 6 months finishing a book that needed a course correction in Chapter 3?</p>
+            <a href="review.html" class="btn btn-glow">Submit your work in progress</a>
+<div class="cs-cta-meta centered"><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Full report in ~3 minutes</span><span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Never stored, shared, or trained on</span></div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing">
+        <h2 class="anim-slide-up centered">Simple pricing.</h2>
+        <p class="sub anim-fade centered">1 credit = 1 full review, any length up to 120,000 words.</p>
+
+        <!-- ===== BLOCK 1: CREDITS ===== -->
+        <p class="cs-block-label anim-fade">Buy credits</p>
+        <p class="cs-block-sub anim-fade">Pay as you go. Credits never expire.</p>
+
+        <div class="cs-credits anim-scale">
+            <div class="cs-credits-head">
+                <h3>Review credits</h3>
+                <p>One flat rate &mdash; a 3,000-word picture book and a 120,000-word novel both cost 1 credit.</p>
+            </div>
+
+            <div class="cs-qty" id="cs-qty">
+                <div class="cs-qty-opt on" data-n="1" data-price="20">
+                    <div class="cs-qty-n">1</div><div class="cs-qty-lbl">credit</div>
+                    <div class="cs-qty-each">$20 each</div>
+                </div>
+                <div class="cs-qty-opt" data-n="3" data-price="54">
+                    <div class="cs-qty-n">3</div><div class="cs-qty-lbl">credits</div>
+                    <div class="cs-qty-each">$18 each</div>
+                    <span class="cs-qty-save">Save 10%</span>
+                </div>
+                <div class="cs-qty-opt" data-n="10" data-price="150">
+                    <div class="cs-qty-n">10</div><div class="cs-qty-lbl">credits</div>
+                    <div class="cs-qty-each">$15 each</div>
+                    <span class="cs-qty-save">Save 25%</span>
+                </div>
+                <div class="cs-qty-opt" data-n="25" data-price="325">
+                    <div class="cs-qty-n">25</div><div class="cs-qty-lbl">credits</div>
+                    <div class="cs-qty-each">$13 each</div>
+                    <span class="cs-qty-save">Save 35%</span>
+                </div>
+            </div>
+
+            <div class="cs-credits-total">
+                <span class="cs-total-num" id="cs-total">$20</span>
+            </div>
+            <p class="cs-total-desc" id="cs-total-desc">1 review &middot; $20 per review</p>
+
+            <a href="/review.html" class="btn btn-glow" id="cs-buy">Buy 1 credit &mdash; $20</a>
+            <p class="cs-never-expire">Credits never expire &middot; use them whenever you're ready</p>
+        </div>
+
+        <!-- ===== BLOCK 2: PLANS ===== -->
+        <p class="cs-block-label anim-fade" style="margin-top:4rem">Or subscribe</p>
+        <p class="cs-block-sub anim-fade">Credits every month, and they roll over. Cheaper per review at every tier.</p>
+
+        <div class="cs-toggle-wrap anim-fade">
+            <div class="cs-toggle" id="cs-toggle">
+                <button class="on" data-cycle="monthly">Monthly</button>
+                <button data-cycle="annual">Annual <span class="cs-save-tag">2 months free</span></button>
+            </div>
+        </div>
+
+        <div class="cs-plans">
+            <div class="cs-plan anim-scale">
+                <span class="cs-plan-badge ghost">&nbsp;</span>
+                <p class="cs-plan-name">Writer</p>
+                <p class="cs-plan-for">For the author drafting one book.</p>
+                <div class="cs-plan-price">
+                    <span class="cs-plan-amt" data-m="$29" data-a="$24">$29</span>
+                    <span class="cs-plan-per">/month</span>
+                </div>
+                <p class="cs-plan-billing" data-m="$14.50 per review" data-a="Billed annually at $290 &middot; <s>$348</s> <b>Save $58</b>">$14.50 per review</p>
+                <p class="cs-plan-credits">2 credits / month<small>rollover up to 12</small></p>
+                <ul class="cs-plan-list">
+                    <li>Progress tracking &amp; resubmit diff</li>
+                    <li>Description maker included</li>
+                    <li>Unused credits roll over</li>
+                </ul>
+                <a href="/auth.html?plan=writer" class="btn-outline full">Choose Writer</a>
+            </div>
+
+            <div class="cs-plan featured anim-scale d1">
+                <span class="cs-plan-badge">Best value per review</span>
+                <p class="cs-plan-name">Author</p>
+                <p class="cs-plan-for">For the serial self-publisher shipping a few books a year.</p>
+                <div class="cs-plan-price">
+                    <span class="cs-plan-amt" data-m="$79" data-a="$66">$79</span>
+                    <span class="cs-plan-per">/month</span>
+                </div>
+                <p class="cs-plan-billing" data-m="$13.17 per review" data-a="Billed annually at $790 &middot; <s>$948</s> <b>Save $158</b>">$13.17 per review</p>
+                <p class="cs-plan-credits">6 credits / month<small>rollover up to 24</small></p>
+                <ul class="cs-plan-list">
+                    <li class="inherit">Everything in Writer</li>
+                    <li>Genre-specific rubrics</li>
+                    <li>Priority queue</li>
+                    <li>Unlimited cover A/B tests</li>
+                    <li>One Launch Kit per month</li>
+                </ul>
+                <a href="/auth.html?plan=author" class="btn btn-glow">Choose Author</a>
+            </div>
+
+            <div class="cs-plan anim-scale d2">
+                <span class="cs-plan-badge ghost">&nbsp;</span>
+                <p class="cs-plan-name">Publisher</p>
+                <p class="cs-plan-for">For coaches, editors, cover designers, and small presses.</p>
+                <div class="cs-plan-price">
+                    <span class="cs-plan-amt" data-m="$199" data-a="$166">$199</span>
+                    <span class="cs-plan-per">/month</span>
+                </div>
+                <p class="cs-plan-billing" data-m="$9.95 per review" data-a="Billed annually at $1,990 &middot; <s>$2,388</s> <b>Save $398</b>">$9.95 per review</p>
+                <p class="cs-plan-credits">20 credits / month<small>rollover up to 60</small></p>
+                <ul class="cs-plan-list">
+                    <li class="inherit">Everything in Author</li>
+                    <li>White-label reports with your logo</li>
+                    <li>Bulk submit &amp; client folders</li>
+                    <li>3 team seats</li>
+                    <li>30% recurring affiliate</li>
+                </ul>
+                <a href="/auth.html?plan=publisher" class="btn-outline full">Choose Publisher</a>
+            </div>
+        </div>
+
+        <div class="cs-guarantee anim-fade">
+            <div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4f7d4a" stroke-width="2.2"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><span><b>Money-back guarantee.</b> Not useful? Full refund, no questions.</span></div>
+            <div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4f7d4a" stroke-width="2.2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><b>Your words stay yours.</b> Never stored, shared, or trained on.</span></div>
+            <div><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4f7d4a" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><b>~3 minutes.</b> Not four weeks.</span></div>
+        </div>
+    </section>
+
+    <!-- FOUNDER -->
+    <section id="story">
+        <div class="story-wrap anim-slide-up">
+            <h2>Why I built this.</h2>
+            <p>When I was writing my first chapter book, everyone told me it was amazing. Friends, family, everyone. And I believed them &mdash; of course I did. It was my first book. I had my author goggles on.</p>
+            <p>Then one guy I met in public told me my book had no plot. Not to be mean. Just honest. I had to rewrite the whole thing.</p>
+            <p>I wasn't mad at him. I was mad that I'd wasted months getting nothing but "it's great!" from everyone around me, just to have one stranger be the first person to tell me the truth.</p>
+            <p>That's why I built Ruthless Mentor. So you don't have to wait six months and a random encounter to find out what's actually wrong.</p>
+            <p class="sig">&mdash; Ryan</p>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+        <h2 class="anim-slide-up">Questions.</h2>
+        <div class="faq-list">
+            <details class="anim-fade"><summary>Is this going to hurt my feelings?</summary><p>Maybe. But every critique comes with a reason and a fix.</p></details>
+            <details class="anim-fade d05"><summary>Does my draft need to be finished?</summary><p>No. Rough drafts, single chapters, half-baked ideas. All welcome.</p></details>
+            <details class="anim-fade d1"><summary>How do I submit?</summary><p>Copy and paste your text directly into the submission form.</p></details>
+            <details class="anim-fade d15"><summary>Is my stuff private?</summary><p>Yes. Processed and gone. Nothing stored, shared, or trained on.</p></details>
+            <details class="anim-fade d2"><summary>How does pricing work?</summary><p>Three tiers: Children's/Chapter Book $15, Middle Grade/YA $20, Adult/Screenplay $25. Full review + printable report included.</p></details>
+            <details class="anim-fade d25"><summary>Can I re-submit after I revise?</summary><p>Absolutely. Fix the issues we flagged, submit again, and your new review will reflect the improvements. It's the cheapest way to track your progress as a writer. Each submission is a new review, so standard pricing applies — or use a subscription plan for monthly review credits.</p></details>
+            <details class="anim-fade d3"><summary>Is this a replacement for an editor?</summary><p>No. This is a tool that gets your manuscript into a strong, complete draft so when you do work with a developmental editor, you get the most out of it.</p></details>
+            <details class="anim-fade d35"><summary>Does this do any copy/line editing or proofreading?</summary><p>It does not catch grammar or punctuation. It is purely there to see if you have a story arc, if you developed your characters, etc. Please see our sample report above.</p></details>
+        </div>
+    </section>
+
+    </div><!-- end light-body -->
+
+    <footer>
+        <img src="logo.png" alt="ruthlessmentor.com" class="logo-img footer-logo-img">
+        <div class="footer-links"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></div>
+        <span class="footer-copy">&copy; 2026</span>
+    </footer>
+
+    <script src="clerk-config.js"></script>
+    <script src="app.js"></script>
+
+<script>
+// ===== CREDIT SYSTEM PREVIEW — pricing interactivity =====
+(function(){
+    // credit quantity selector
+    var opts = document.querySelectorAll('#cs-qty .cs-qty-opt');
+    var total = document.getElementById('cs-total');
+    var desc  = document.getElementById('cs-total-desc');
+    var buy   = document.getElementById('cs-buy');
+    opts.forEach(function(o){
+        o.addEventListener('click', function(){
+            opts.forEach(function(x){ x.classList.remove('on'); });
+            o.classList.add('on');
+            var n = +o.dataset.n, p = +o.dataset.price;
+            var each = (p / n).toFixed(2).replace(/\.00$/, '');
+            total.textContent = '$' + p;
+            desc.innerHTML = n + (n === 1 ? ' review' : ' reviews') + ' &middot; $' + each + ' per review';
+            buy.innerHTML = 'Buy ' + n + (n === 1 ? ' credit' : ' credits') + ' &mdash; $' + p;
+        });
+    });
+
+    // monthly / annual toggle
+    var btns = document.querySelectorAll('#cs-toggle button');
+    btns.forEach(function(b){
+        b.addEventListener('click', function(){
+            btns.forEach(function(x){ x.classList.remove('on'); });
+            b.classList.add('on');
+            var annual = b.dataset.cycle === 'annual';
+            document.querySelectorAll('.cs-plan-amt').forEach(function(el){
+                el.textContent = annual ? el.dataset.a : el.dataset.m;
+            });
+            document.querySelectorAll('.cs-plan-billing').forEach(function(el){
+                el.innerHTML = annual ? el.dataset.a : el.dataset.m;
+            });
+        });
+    });
+})();
+</script>
+</body>
+</html>
