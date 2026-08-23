@@ -126,29 +126,45 @@ h3{font-size:1rem;font-weight:600}
 .lede{color:var(--text2);font-size:1.02rem;max-width:56ch;line-height:1.7}
 .center{text-align:center;margin-left:auto;margin-right:auto}
 
-/* ---------- hero ---------- */
-.hero{
-  padding:4.5rem 0 4rem;
-  background:radial-gradient(ellipse 70% 60% at 22% 0%,rgba(196,149,106,.10),transparent 68%);
+/* ---------- hero: the site's own photograph, full bleed ---------- */
+.hero-img-wrap{position:relative;overflow:hidden;border-bottom:1px solid var(--border);z-index:2}
+.hero-img{width:100%;display:block;max-height:76vh;object-fit:cover}
+.hero-ov{
+  position:absolute;left:0;right:0;bottom:0;padding:3.5rem 1.75rem 2.75rem;
+  background:linear-gradient(to top,rgba(13,11,9,.97) 0%,rgba(13,11,9,.72) 48%,transparent 100%);
 }
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
-.hero h1{max-width:13ch}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero .lede{margin:1.4rem 0 2rem}
+.hero-ov .inner{max-width:1080px;margin:0 auto}
+.hero-tag{font-size:clamp(1.15rem,2.5vw,1.65rem);font-weight:600;letter-spacing:-.02em;max-width:30ch;margin-bottom:1.4rem}
 .hero-cta{display:flex;gap:.7rem;flex-wrap:wrap}
 .hero-meta{
-  display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.8rem;padding-top:1.5rem;
-  border-top:1px solid var(--border);font-family:var(--mono);font-size:.76rem;color:var(--text3);
+  display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.6rem;padding-top:1.3rem;
+  border-top:1px solid rgba(232,224,214,.14);font-family:var(--mono);font-size:.74rem;color:var(--text3);
 }
 .hero-meta b{color:var(--text2);font-weight:400}
 
-/* ---------- mascot ---------- */
-.mascot-stage{display:flex;align-items:center;justify-content:center;position:relative}
-.mascot-stage::after{
-  content:"";position:absolute;width:190px;height:26px;border-radius:50%;bottom:26px;
-  background:rgba(0,0,0,.45);filter:blur(16px);
+/* ---------- split: photo + text ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.split.flip .split-img{order:2}
+.split-img img{width:100%;display:block;border-radius:var(--r);border:1px solid var(--border)}
+.split-text h2{margin-bottom:1rem}
+.split-text p{color:var(--text2);font-size:.94rem;line-height:1.75;margin-bottom:1rem}
+.split-text .btn{margin-top:.5rem}
+
+/* ---------- meet Nib ---------- */
+.nib-band{
+  display:grid;grid-template-columns:auto 1fr;gap:2.5rem;align-items:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:2rem 2.2rem;
 }
-.mascot{width:min(300px,80%);height:auto;position:relative;z-index:2;animation:bob 4.5s ease-in-out infinite}
+.nib-band h2{font-size:1.5rem}
+.nib-band p{color:var(--text2);font-size:.92rem;margin-top:.7rem;line-height:1.7}
+
+/* ---------- mascot ---------- */
+.mascot-stage{display:flex;align-items:center;justify-content:center;position:relative;flex:none}
+.mascot-stage::after{
+  content:"";position:absolute;width:130px;height:20px;border-radius:50%;bottom:14px;
+  background:rgba(0,0,0,.45);filter:blur(14px);
+}
+.mascot{width:170px;height:auto;position:relative;z-index:2;animation:bob 4.5s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(2deg)}}
 .blink{animation:blink 5.2s infinite}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
@@ -350,6 +366,7 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
     </div>
     <a href="#pricing">Pricing</a>
     <a href="#report">Sample report</a>
+    <a href="/rmdash">Dashboard</a>
     <a href="#story">About</a>
   </div>
   <div class="nav-right">
@@ -363,23 +380,45 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
 </nav>
 
 <!-- ============ HERO ============ -->
-<section class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <p class="eyebrow rv">Honest feedback in about three minutes</p>
-      <h1 class="rv d1">Everyone says it's great. <em>One of us won't.</em></h1>
-      <p class="lede rv d2">Paste your manuscript. Get a report that names what's broken, quotes the line it broke on, and tells you how to fix it &mdash; before you pay an illustrator, an editor, or a printer.</p>
-      <div class="hero-cta rv d3">
+<div class="hero-img-wrap">
+  <img src="hero.PNG" alt="Ruthless Mentor — catch what's not working before Amazon reviewers do" class="hero-img">
+  <div class="hero-ov">
+    <div class="inner">
+      <p class="hero-tag">Let's take your book to the next level.</p>
+      <div class="hero-cta">
         <a href="#pricing" class="btn btn-primary">Review my manuscript</a>
         <a href="#report" class="btn btn-ghost">See a real report</a>
       </div>
-      <div class="hero-meta rv d3">
-        <span><b>No subscription required</b></span>
-        <span><b>Rhyming &amp; non-rhyming</b></span>
+      <div class="hero-meta">
+        <span><b>2 reviews a month on the plan</b></span>
+        <span><b>Credits roll over</b></span>
         <span><b>Never trained on</b></span>
       </div>
     </div>
-    <div class="mascot-stage rv d2">
+  </div>
+</div>
+
+<!-- ============ PROBLEM ============ -->
+<section>
+  <div class="wrap split">
+    <div class="split-img rv">
+      <img src="comic.jpg" alt="Everyone says your book is amazing, but the sales say otherwise">
+    </div>
+    <div class="split-text">
+      <p class="eyebrow rv">The problem</p>
+      <h2 class="rv d1">Find out what's keeping your book from selling.</h2>
+      <p class="rv d2">A developmental editor costs $1,000&ndash;$3,000. Fixing your book after the bad reviews land costs a good deal more than that.</p>
+      <p class="rv d2">For the price of lunch, you get the same answer: what's working, what isn't, and exactly how to fix it.</p>
+      <a href="#pricing" class="btn btn-primary rv d3">See pricing</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MEET NIB ============ -->
+<section>
+  <div class="wrap">
+    <div class="nib-band rv">
+      <div class="mascot-stage">
       <!-- NIB — the red pencil mentor -->
       <svg class="mascot" viewBox="0 0 200 300" role="img" aria-label="Nib, the red pencil mascot">
         <defs>
@@ -419,7 +458,12 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
         <path d="M64 170 q-22 8 -6 20" stroke="#9e4238" stroke-width="9" fill="none" stroke-linecap="round"/>
         <path d="M136 170 q22 8 6 20" stroke="#9e4238" stroke-width="9" fill="none" stroke-linecap="round"/>
       </svg>
-      <span class="mascot-name">meet <b>Nib</b> &mdash; he has notes</span>
+      </div>
+      <div>
+        <p class="eyebrow">Your reviewer</p>
+        <h2>This is Nib. He has notes.</h2>
+        <p>Nib doesn't do "this is great!" He reads the whole manuscript, quotes the exact line that isn't working, explains why, and hands you a rewrite. Then he does it again for your next draft &mdash; and tells you whether you actually fixed it.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -494,6 +538,22 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
   </div>
 </section>
 
+<!-- ============ WORK IN PROGRESS ============ -->
+<section>
+  <div class="wrap split flip">
+    <div class="split-img rv">
+      <img src="guy typing.png" alt="Writer typing at a laptop">
+    </div>
+    <div class="split-text">
+      <p class="eyebrow rv">Not finished yet? Good.</p>
+      <h2 class="rv d1">Three chapters is enough to start.</h2>
+      <p class="rv d2">You don't need a finished book. Send what you have and find out whether you're on the right track before you spend another six months on a draft that needed a course correction in chapter three.</p>
+      <p class="rv d2">This is exactly what the rolling credits are for &mdash; review a draft now, keep a credit in the bank for when you've revised it.</p>
+      <a href="#pricing" class="btn btn-primary rv d3">Start with the plan</a>
+    </div>
+  </div>
+</section>
+
 <!-- ============ LOYALTY ============ -->
 <section>
   <div class="wrap">
@@ -514,6 +574,19 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
         <div class="big">Free</div>
         <div class="sm">REVIEW UNLOCKED AT 3</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow rv">Your account</p>
+    <h2 class="rv d1">Drafts stack up. So does the proof you're improving.</h2>
+    <p class="lede rv d2" style="margin-top:.9rem;margin-bottom:2rem">Reviews group under the manuscript they belong to, so you can see draft one next to draft three and watch the scores climb. Credits, billing, and settings all live in the same place.</p>
+    <div class="nudge rv d2">
+      <p>The new dashboard: <b>credit balance</b>, manuscripts grouped by draft with a <b>score trend</b>, one-click <b>billing</b>, and real account settings.</p>
+      <a href="/rmdash" class="btn btn-primary btn-sm">Open the dashboard</a>
     </div>
   </div>
 </section>

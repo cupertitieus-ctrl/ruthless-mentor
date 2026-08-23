@@ -147,6 +147,9 @@ app.get(['/picturebook', '/pb'], (req, res) => {
 app.get(['/rmrework', '/rework'], (req, res) => {
   res.sendFile(path.join(__dirname, 'rmrework.html'));
 });
+app.get(['/rmdash', '/rework-dashboard'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'rmdash.html'));
+});
 
 // Anthropic client
 const client = new Anthropic();

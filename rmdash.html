@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Ruthless Mentor rework preview</title>
+<meta name="description" content="Preview of the reworked account area — credits, manuscripts grouped by draft, score history, billing and settings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0b09; --surface:#161310; --surface2:#1c1915; --surface3:#221e19;
+  --border:#2a2420; --border2:#3a332c;
+  --text:#e8e0d6; --text2:#9a8e80; --text3:#5c5246;
+  --accent:#c4956a; --accent2:#d9b489;
+  --accent-bg:rgba(196,149,106,.08); --accent-brd:rgba(196,149,106,.22);
+  --red:#c25a4d; --red-bg:rgba(194,90,77,.10); --red-brd:rgba(194,90,77,.3);
+  --green:#7f9a6b; --green-bg:rgba(127,154,107,.10);
+  --mono:'Courier Prime','Courier New',monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.ribbon{background:var(--red-bg);border-bottom:1px solid var(--red-brd);color:var(--text2);
+  font-family:var(--mono);font-size:.72rem;text-align:center;padding:.45rem 1rem}
+.ribbon b{color:var(--red);font-weight:700}
+
+/* ---------- nav (same three-track grid as the site) ---------- */
+nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:1rem;padding:0 1.75rem;height:64px;background:rgba(13,11,9,.85);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.brand{justify-self:start;display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red)}
+.nav-mid{justify-self:center;display:flex;gap:.35rem}
+.nav-mid a{font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;transition:.18s}
+.nav-mid a:hover{color:var(--text);background:var(--surface2)}
+.nav-mid a.on{color:var(--text);background:var(--surface2)}
+.nav-right{justify-self:end;display:flex;align-items:center;gap:.75rem;position:relative}
+.credit-pill{display:flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.76rem;
+  color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);
+  padding:.35rem .7rem;border-radius:999px;font-variant-numeric:tabular-nums}
+.credit-pill .d{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.18s}
+.avatar:hover{border-color:var(--accent-brd)}
+
+/* account dropdown — themed, not the inline-styled one */
+.acct{position:absolute;top:48px;right:0;width:270px;background:var(--surface);
+  border:1px solid var(--border2);border-radius:12px;padding:.45rem;
+  box-shadow:0 20px 45px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);
+  transition:.18s}
+.acct.open{opacity:1;visibility:visible;transform:none}
+.acct-id{padding:.75rem .8rem;border-bottom:1px solid var(--border)}
+.acct-id .e{font-size:.85rem;font-weight:600;word-break:break-all}
+.acct-id .p{font-family:var(--mono);font-size:.7rem;color:var(--accent);margin-top:.2rem}
+.acct a{display:flex;justify-content:space-between;padding:.55rem .8rem;border-radius:8px;font-size:.85rem;color:var(--text2)}
+.acct a:hover{background:var(--surface3);color:var(--text)}
+.acct a .k{font-family:var(--mono);font-size:.7rem;color:var(--text3)}
+.acct .sep{height:1px;background:var(--border);margin:.35rem 0}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.75rem}
+.page{padding:2.5rem 0 5rem}
+h1{font-size:1.9rem;font-weight:800;letter-spacing:-.03em}
+h2{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
+h3{font-size:.95rem;font-weight:600}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--text2);font-size:.9rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:inherit;
+  font-size:.85rem;font-weight:600;padding:.6rem 1.1rem;border-radius:10px;cursor:pointer;
+  border:1px solid transparent;transition:.18s}
+.btn-primary{background:var(--accent);color:#1a1206}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border2)}
+.btn-ghost:hover{background:var(--surface2);border-color:var(--text3)}
+.btn-sm{padding:.42rem .8rem;font-size:.78rem}
+
+/* ---------- top row: credits + plan ---------- */
+.top{display:grid;grid-template-columns:1.1fr 1fr;gap:1rem;margin-top:1.75rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem}
+.panel.accent{border-color:var(--accent-brd);background:linear-gradient(180deg,var(--accent-bg),var(--surface) 70%)}
+.bal{display:flex;align-items:baseline;gap:.6rem;margin-top:.5rem}
+.bal .n{font-size:3rem;font-weight:900;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.bal .u{font-family:var(--mono);font-size:.8rem;color:var(--text3)}
+.bal-note{font-size:.84rem;color:var(--text2);margin-top:.6rem}
+.bal-actions{display:flex;gap:.5rem;margin-top:1.2rem;flex-wrap:wrap}
+
+.renew{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;
+  padding-top:1rem;border-top:1px solid var(--border);font-size:.84rem;color:var(--text2)}
+.renew b{color:var(--text);font-weight:600}
+
+/* loyalty strip */
+.loy{margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--border)}
+.pips{display:flex;gap:.45rem;margin-top:.6rem}
+.pip{width:32px;height:32px;border-radius:9px;border:1px solid var(--border2);display:flex;
+  align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;color:var(--text3)}
+.pip.done{background:var(--accent-bg);border-color:var(--accent-brd);color:var(--accent)}
+.pip.next{border-style:dashed;border-color:var(--accent-brd)}
+
+/* ---------- manuscripts ---------- */
+.sec-bar{display:flex;justify-content:space-between;align-items:center;margin:2.75rem 0 1rem;gap:1rem;flex-wrap:wrap}
+.tools{display:flex;gap:.5rem;align-items:center}
+.search{background:var(--surface);border:1px solid var(--border2);border-radius:9px;padding:.45rem .75rem;
+  color:var(--text);font-family:inherit;font-size:.83rem;width:200px}
+.search::placeholder{color:var(--text3)}
+select.search{width:auto;cursor:pointer}
+
+.ms{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:.85rem}
+.ms-head{display:grid;grid-template-columns:1fr auto auto;gap:1.25rem;align-items:center;
+  padding:1.15rem 1.35rem;cursor:pointer;transition:background .18s}
+.ms-head:hover{background:var(--surface2)}
+.ms-title{font-size:1rem;font-weight:700;letter-spacing:-.015em}
+.ms-meta{font-family:var(--mono);font-size:.73rem;color:var(--text3);margin-top:.2rem}
+
+/* score trend sparkline */
+.trend{display:flex;align-items:center;gap:.7rem}
+.trend svg{display:block}
+.trend .delta{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--green);
+  background:var(--green-bg);padding:.15rem .45rem;border-radius:5px;white-space:nowrap}
+.trend .delta.down{color:var(--red);background:var(--red-bg)}
+
+.chev{color:var(--text3);transition:transform .22s}
+.ms.open .chev{transform:rotate(180deg)}
+
+.drafts{display:none;border-top:1px solid var(--border);background:var(--surface2)}
+.ms.open .drafts{display:block}
+.draft{display:grid;grid-template-columns:auto 1fr auto auto;gap:1rem;align-items:center;
+  padding:.85rem 1.35rem;border-bottom:1px solid var(--border)}
+.draft:last-child{border-bottom:none}
+.dnum{font-family:var(--mono);font-size:.72rem;color:var(--accent);background:var(--accent-bg);
+  border:1px solid var(--accent-brd);padding:.2rem .5rem;border-radius:5px;white-space:nowrap}
+.dwhen{font-family:var(--mono);font-size:.75rem;color:var(--text3)}
+.dscore{font-family:var(--mono);font-size:.82rem;font-variant-numeric:tabular-nums}
+.grade{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:8px;font-weight:800;font-size:.83rem;border:1px solid}
+.g-a{color:var(--green);background:var(--green-bg);border-color:rgba(127,154,107,.3)}
+.g-b{color:var(--accent);background:var(--accent-bg);border-color:var(--accent-brd)}
+.g-c{color:var(--red);background:var(--red-bg);border-color:var(--red-brd)}
+
+.empty{border:1px dashed var(--border2);border-radius:var(--r);padding:2.5rem;text-align:center}
+.empty p{color:var(--text2);font-size:.9rem;margin:.5rem 0 1.2rem}
+
+/* ---------- settings ---------- */
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  padding:.85rem 0;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row .l{font-size:.88rem}
+.row .s{font-size:.78rem;color:var(--text3);margin-top:.1rem}
+.danger{color:var(--red)}
+.switch{width:40px;height:22px;border-radius:99px;background:var(--surface3);border:1px solid var(--border2);
+  position:relative;cursor:pointer;flex:none;transition:.2s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+  background:var(--text3);transition:.2s}
+.switch.on{background:var(--accent-bg);border-color:var(--accent-brd)}
+.switch.on::after{transform:translateX(18px);background:var(--accent)}
+
+@media(max-width:820px){
+  .nav-mid{display:none}
+  .top,.settings{grid-template-columns:1fr}
+  .ms-head{grid-template-columns:1fr auto}
+  .trend{display:none}
+  .draft{grid-template-columns:auto 1fr auto}
+  .dscore{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="ribbon"><b>PREVIEW</b> &nbsp;/rmdash &mdash; concept only. Sample data.</div>
+
+<nav>
+  <a href="/rmrework" class="brand"><span class="dot"></span> ruthless mentor</a>
+  <div class="nav-mid">
+    <a href="/rmrework">Tools</a>
+    <a href="/rmrework#pricing">Pricing</a>
+    <a href="#" class="on">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <span class="credit-pill" title="Credit balance"><span class="d"></span> 5 credits</span>
+    <div class="avatar" id="avatar" title="Account" role="button" tabindex="0">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <div class="acct" id="acct">
+      <div class="acct-id">
+        <div class="e">diane@example.com</div>
+        <div class="p">WRITER PLAN &middot; RENEWS SEP 14</div>
+      </div>
+      <a href="#">Dashboard</a>
+      <a href="#settings">Account settings</a>
+      <a href="#">Billing &amp; invoices <span class="k">STRIPE</span></a>
+      <a href="#">Buy credits</a>
+      <div class="sep"></div>
+      <a href="#">Sign out</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+<div class="wrap">
+
+  <h1>Your work</h1>
+  <p class="muted" style="margin-top:.3rem">Three manuscripts, seven drafts reviewed.</p>
+
+  <!-- ===== credits + plan ===== -->
+  <div class="top">
+    <div class="panel accent">
+      <p class="eyebrow">Credit balance</p>
+      <div class="bal"><span class="n">5</span><span class="u">CREDITS</span></div>
+      <p class="bal-note">2 arrive on the 14th of every month. Unused credits roll over up to 12 &mdash; nothing expires on you.</p>
+      <div class="bal-actions">
+        <a href="#" class="btn btn-primary btn-sm">New review</a>
+        <a href="#" class="btn btn-ghost btn-sm">Buy more credits</a>
+      </div>
+      <div class="loy">
+        <h3>2 of 3 toward a free review</h3>
+        <div class="pips"><span class="pip done">&#10003;</span><span class="pip done">&#10003;</span><span class="pip next">3</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="eyebrow">Your plan</p>
+      <h2 style="margin-top:.5rem">Writer &mdash; $29/month</h2>
+      <p class="muted" style="margin-top:.4rem">2 credits a month, rollover up to 12, revision tracking included.</p>
+      <div class="renew"><span>Next billing date</span><b>September 14, 2026</b></div>
+      <div class="renew"><span>Payment method</span><b>Visa &bull;&bull;&bull;&bull; 4242</b></div>
+      <div class="bal-actions">
+        <a href="#" class="btn btn-ghost btn-sm">Manage billing</a>
+        <a href="#" class="btn btn-ghost btn-sm">Change plan</a>
+      </div>
+      <p class="muted" style="font-size:.78rem;margin-top:.9rem;color:var(--text3)">Opens the Stripe portal &mdash; update your card, download invoices, or cancel without emailing anyone.</p>
+    </div>
+  </div>
+
+  <!-- ===== manuscripts ===== -->
+  <div class="sec-bar">
+    <h2>Manuscripts</h2>
+    <div class="tools">
+      <input class="search" type="search" placeholder="Search titles..." aria-label="Search manuscripts">
+      <select class="search" aria-label="Sort">
+        <option>Recently reviewed</option>
+        <option>Title A&ndash;Z</option>
+        <option>Most drafts</option>
+        <option>Biggest improvement</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- manuscript 1 -->
+  <div class="ms open">
+    <div class="ms-head" role="button" tabindex="0">
+      <div>
+        <div class="ms-title">The Fox Who Forgot His Hat</div>
+        <div class="ms-meta">PICTURE BOOK &middot; RHYMING &middot; 3 DRAFTS &middot; LAST REVIEWED AUG 17</div>
+      </div>
+      <div class="trend">
+        <svg width="86" height="30" viewBox="0 0 86 30" aria-label="Score trend: 6.2 to 8.4">
+          <polyline points="4,24 30,20 56,11 82,5" fill="none" stroke="#7f9a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="82" cy="5" r="3.5" fill="#7f9a6b"/>
+        </svg>
+        <span class="delta">+2.2</span>
+      </div>
+      <svg class="chev" width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
+    </div>
+    <div class="drafts">
+      <div class="draft">
+        <span class="dnum">DRAFT 3</span>
+        <span class="dwhen">Aug 17, 2026 &middot; 512 words</span>
+        <span class="dscore">Voice 8.4 &middot; Meter 8.1</span>
+        <span class="grade g-a">A&minus;</span>
+      </div>
+      <div class="draft">
+        <span class="dnum">DRAFT 2</span>
+        <span class="dwhen">Jul 29, 2026 &middot; 540 words</span>
+        <span class="dscore">Voice 7.5 &middot; Meter 6.0</span>
+        <span class="grade g-b">B&minus;</span>
+      </div>
+      <div class="draft">
+        <span class="dnum">DRAFT 1</span>
+        <span class="dwhen">Jul 2, 2026 &middot; 610 words</span>
+        <span class="dscore">Voice 6.2 &middot; Meter 5.4</span>
+        <span class="grade g-c">C</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- manuscript 2 -->
+  <div class="ms">
+    <div class="ms-head" role="button" tabindex="0">
+      <div>
+        <div class="ms-title">Marigold and the Very Loud Tuesday</div>
+        <div class="ms-meta">PICTURE BOOK &middot; NON-RHYMING &middot; 2 DRAFTS &middot; LAST REVIEWED AUG 8</div>
+      </div>
+      <div class="trend">
+        <svg width="86" height="30" viewBox="0 0 86 30" aria-label="Score trend: 7.1 to 7.6">
+          <polyline points="4,18 43,15 82,12" fill="none" stroke="#7f9a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="82" cy="12" r="3.5" fill="#7f9a6b"/>
+        </svg>
+        <span class="delta">+0.5</span>
+      </div>
+      <svg class="chev" width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
+    </div>
+    <div class="drafts">
+      <div class="draft">
+        <span class="dnum">DRAFT 2</span>
+        <span class="dwhen">Aug 8, 2026 &middot; 639 words</span>
+        <span class="dscore">Voice 7.6 &middot; Prose 7.2</span>
+        <span class="grade g-b">B</span>
+      </div>
+      <div class="draft">
+        <span class="dnum">DRAFT 1</span>
+        <span class="dwhen">Jul 21, 2026 &middot; 702 words</span>
+        <span class="dscore">Voice 7.1 &middot; Prose 6.8</span>
+        <span class="grade g-b">B&minus;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- manuscript 3 -->
+  <div class="ms">
+    <div class="ms-head" role="button" tabindex="0">
+      <div>
+        <div class="ms-title">The Boy Who Counted Backwards</div>
+        <div class="ms-meta">CHAPTER BOOK &middot; 2 DRAFTS &middot; LAST REVIEWED JUN 30</div>
+      </div>
+      <div class="trend">
+        <svg width="86" height="30" viewBox="0 0 86 30" aria-label="Score trend: 7.4 to 6.9">
+          <polyline points="4,12 43,16 82,19" fill="none" stroke="#c25a4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="82" cy="19" r="3.5" fill="#c25a4d"/>
+        </svg>
+        <span class="delta down">&minus;0.5</span>
+      </div>
+      <svg class="chev" width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
+    </div>
+    <div class="drafts">
+      <div class="draft">
+        <span class="dnum">DRAFT 2</span>
+        <span class="dwhen">Jun 30, 2026 &middot; 8,410 words</span>
+        <span class="dscore">Voice 6.9 &middot; Pacing 6.1</span>
+        <span class="grade g-c">C+</span>
+      </div>
+      <div class="draft">
+        <span class="dnum">DRAFT 1</span>
+        <span class="dwhen">Jun 12, 2026 &middot; 7,980 words</span>
+        <span class="dscore">Voice 7.4 &middot; Pacing 6.6</span>
+        <span class="grade g-b">B&minus;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== settings ===== -->
+  <div class="sec-bar" id="settings"><h2>Account settings</h2></div>
+  <div class="settings">
+    <div class="panel">
+      <p class="eyebrow">Profile</p>
+      <div style="margin-top:.8rem">
+        <div class="row"><div><div class="l">Name</div><div class="s">Diane Alber</div></div><a href="#" class="btn btn-ghost btn-sm">Edit</a></div>
+        <div class="row"><div><div class="l">Email</div><div class="s">diane@example.com</div></div><a href="#" class="btn btn-ghost btn-sm">Change</a></div>
+        <div class="row"><div><div class="l">Pen name on reports</div><div class="s">Shown at the top of every report</div></div><a href="#" class="btn btn-ghost btn-sm">Set</a></div>
+      </div>
+    </div>
+    <div class="panel">
+      <p class="eyebrow">Email &amp; privacy</p>
+      <div style="margin-top:.8rem">
+        <div class="row"><div><div class="l">Review ready</div><div class="s">Email me when a report finishes</div></div><span class="switch on" role="switch" aria-checked="true" tabindex="0"></span></div>
+        <div class="row"><div><div class="l">Credit reminders</div><div class="s">Tell me before credits stack past 12</div></div><span class="switch on" role="switch" aria-checked="true" tabindex="0"></span></div>
+        <div class="row"><div><div class="l">Product news</div><div class="s">New tools and features. Rare.</div></div><span class="switch" role="switch" aria-checked="false" tabindex="0"></span></div>
+        <div class="row"><div><div class="l danger">Delete my account</div><div class="s">Removes every manuscript and report, permanently</div></div><a href="#" class="btn btn-ghost btn-sm danger">Delete</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:2.5rem">
+    <a href="/rmrework" class="btn btn-ghost btn-sm">&larr; Back to the site preview</a>
+  </div>
+
+</div>
+</div>
+
+<script>
+// account dropdown
+var avatar = document.getElementById('avatar'), acct = document.getElementById('acct');
+function toggleAcct(e){ e.stopPropagation(); acct.classList.toggle('open'); }
+avatar.addEventListener('click', toggleAcct);
+avatar.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleAcct(e); } });
+document.addEventListener('click', function(){ acct.classList.remove('open'); });
+acct.addEventListener('click', function(e){ e.stopPropagation(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') acct.classList.remove('open'); });
+
+// expand / collapse a manuscript's drafts
+document.querySelectorAll('.ms-head').forEach(function(h){
+  function go(){ h.parentElement.classList.toggle('open'); }
+  h.addEventListener('click', go);
+  h.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+});
+
+// notification switches
+document.querySelectorAll('.switch').forEach(function(s){
+  function flip(){ s.classList.toggle('on'); s.setAttribute('aria-checked', s.classList.contains('on')); }
+  s.addEventListener('click', flip);
+  s.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); flip(); } });
+});
+
+// search filter
+document.querySelector('.search[type="search"]').addEventListener('input', function(e){
+  var q = e.target.value.toLowerCase();
+  document.querySelectorAll('.ms').forEach(function(m){
+    var t = m.querySelector('.ms-title').textContent.toLowerCase();
+    m.style.display = t.indexOf(q) > -1 ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>
