@@ -88,7 +88,7 @@ document.documentElement.classList.add('rm-anim');
   var TOOLS = [
     {href:'/rmreview', name:'Manuscript Review', desc:'Full 8-part report &middot; 1 credit'},
     {href:'/rmeditor', name:'Advanced Editor',   desc:'Write with the notes beside you'},
-    {href:'/rmrework#pricing', name:'Cover Check', desc:'Instant score, no account needed', free:true},
+    {href:'/rmcover', name:'Cover Check', desc:'Instant grade, no account needed', free:true},
     {href:'/rmrework#pricing', name:'Description Maker', desc:'A ready-to-paste blurb from your book'}
   ];
   var LINKS = [
@@ -157,6 +157,24 @@ document.documentElement.classList.add('rm-anim');
     right.appendChild(toggle);
     right.appendChild(cta);
     right.appendChild(avatar);
+
+    /* dd-panel toggle — click to open, no hover dead zone */
+    var dd = mid.querySelector('.dd');
+    if (dd) {
+      var ddBtn = dd.querySelector('button');
+      ddBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = dd.classList.toggle('open');
+        ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      dd.querySelector('.dd-panel').addEventListener('click', function (e) { e.stopPropagation(); });
+      document.addEventListener('click', function () {
+        dd.classList.remove('open'); ddBtn.setAttribute('aria-expanded', 'false');
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { dd.classList.remove('open'); ddBtn.setAttribute('aria-expanded','false'); }
+      });
+    }
   }
 
   if (document.readyState === 'loading') {

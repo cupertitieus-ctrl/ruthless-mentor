@@ -300,3 +300,35 @@ html:not(.rm-anim) .rv{opacity:1 !important;transform:none !important}
   .edemo-doc{border-right:none;border-bottom:1px solid var(--border);font-size:.9rem;padding:1.2rem}
   .edemo-panel{min-height:200px}
 }
+
+/* ============================================================
+   Tools dropdown
+
+   The canonical nav injects this menu into every page, so its styles
+   have to be shared too — pages that only had their own minimal nav CSS
+   were rendering the panel open and unstyled across the bar.
+   ============================================================ */
+.nav-mid > a,.nav-mid .dd > button{
+  font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;
+  background:none;border:none;font-family:inherit;cursor:pointer;
+  display:flex;align-items:center;gap:.35rem;white-space:nowrap;
+  transition:color .18s,background .18s;
+}
+.nav-mid > a:hover,.nav-mid .dd > button:hover{color:var(--text);background:var(--surface2)}
+.nav-mid > a.on{color:var(--text);background:var(--surface2)}
+.dd{position:relative}
+.dd-panel{
+  position:absolute;top:calc(100% + 10px);left:50%;
+  transform:translateX(-50%) translateY(-6px);
+  min-width:290px;background:var(--surface);border:1px solid var(--border2);
+  border-radius:12px;padding:.4rem;box-shadow:var(--shadow-lg);
+  opacity:0;visibility:hidden;transition:opacity .18s,transform .18s,visibility .18s;
+  z-index:60;
+}
+.dd.open .dd-panel{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.dd-panel a{display:block;padding:.6rem .7rem;border-radius:8px;transition:background .15s;white-space:normal}
+.dd-panel a:hover{background:var(--surface3)}
+.dd-panel .t{display:flex;align-items:center;gap:.5rem;font-size:.86rem;font-weight:600;color:var(--text)}
+.dd-panel .d{display:block;font-size:.75rem;color:var(--text3);margin-top:.1rem;line-height:1.45}
+.free-tag{font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.08em;
+  color:var(--green);background:var(--green-bg);padding:.1rem .35rem;border-radius:4px;font-style:normal}
