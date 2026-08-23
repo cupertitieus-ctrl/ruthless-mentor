@@ -198,6 +198,7 @@ mark.flash{animation:flash 1.5s ease-out}
   <span class="exp" id="exp">
     <button class="btn btn-ghost btn-sm" id="expBtn" aria-haspopup="true" aria-expanded="false">Export &#9662;</button>
     <div class="exp-menu">
+      <button data-fmt="pdf">PDF<small>PRINT-READY &middot; KEEPS YOUR FORMATTING</small></button>
       <button data-fmt="doc">Word document<small>.DOC &middot; KEEPS YOUR FORMATTING</small></button>
       <button data-fmt="html">Web page<small>.HTML &middot; EXACT FONTS</small></button>
       <button data-fmt="txt">Plain text<small>.TXT &middot; WORDS ONLY</small></button>
@@ -483,6 +484,26 @@ function exportAs(fmt){
     return;
   }
   var body = cleanHTML();
+  if (fmt === 'pdf') {
+    /* Rendered through a hidden iframe rather than a popup, so no blocker
+       gets in the way. The browser's own print dialog handles Save as PDF,
+       and the document's fonts and formatting carry through as-is. */
+    var frame = document.createElement('iframe');
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    document.body.appendChild(frame);
+    var fd = frame.contentWindow.document;
+    fd.open();
+    fd.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + name + '</title><style>' +
+             FONT_CSS + '@page{margin:20mm}</style></head><body>' + body + '</body></html>');
+    fd.close();
+    frame.contentWindow.focus();
+    setTimeout(function(){
+      frame.contentWindow.print();
+      setTimeout(function(){ frame.remove(); }, 1500);
+    }, 250);
+    return;
+  }
   if (fmt === 'html') {
     download(name + '.html', 'text/html;charset=utf-8',
       '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8">' +

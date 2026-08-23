@@ -195,8 +195,11 @@ h3{font-size:1rem;font-weight:600}
 .plan .each{font-family:var(--mono);font-size:.74rem;color:var(--accent);margin-top:.35rem;
   font-variant-numeric:tabular-nums}
 .plan ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:1.3rem 0}
-.plan li{font-size:.85rem;color:var(--text2);display:flex;gap:.55rem;align-items:flex-start;line-height:1.55}
-.plan li::before{content:"+";color:var(--accent);font-family:var(--mono);flex:none}
+/* block, not flex — a flex li turns every inline child into its own column,
+   which split "Advanced Editor" away from the text that follows it */
+.plan li{display:block;position:relative;padding-left:1.15rem;font-size:.85rem;
+  color:var(--text2);line-height:1.6}
+.plan li::before{content:"+";position:absolute;left:0;top:0;color:var(--accent);font-family:var(--mono)}
 .plan li b{color:var(--text);font-weight:600}
 .plan .btn{margin-top:auto;width:100%}
 

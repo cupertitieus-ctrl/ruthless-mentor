@@ -74,6 +74,98 @@ document.documentElement.classList.add('rm-anim');
   window.rmTheme = { current: current, set: apply };
 })();
 
+
+/* ------------------------------------------------------------------
+   One canonical top bar.
+
+   The four preview pages had each hand-rolled their own nav, so the
+   links and their order differed on every page. This rebuilds the
+   centre links and the right-hand cluster from a single definition,
+   marks the current page, and creates anything a page is missing
+   (theme toggle, CTA) so the bar is identical everywhere.
+   ------------------------------------------------------------------ */
+(function () {
+  var TOOLS = [
+    {href:'/rmreview', name:'Manuscript Review', desc:'Full 8-part report &middot; 1 credit'},
+    {href:'/rmeditor', name:'Advanced Editor',   desc:'Write with the notes beside you'},
+    {href:'/rmrework#pricing', name:'Cover Check', desc:'Instant score, no account needed', free:true},
+    {href:'/rmrework#pricing', name:'Description Maker', desc:'A ready-to-paste blurb from your book'}
+  ];
+  var LINKS = [
+    {href:'/rmreview',        label:'New review'},
+    {href:'/rmeditor',        label:'Editor'},
+    {href:'/rmdash',          label:'Dashboard'},
+    {href:'/rmrework#pricing',label:'Pricing'},
+    {href:'/rmrework#story',  label:'About'}
+  ];
+
+  function build() {
+    var nav = document.querySelector('nav');
+    if (!nav) return;
+    var mid = nav.querySelector('.nav-mid');
+    var right = nav.querySelector('.nav-right');
+    if (!mid || !right) return;
+
+    var here = location.pathname.replace(/\/$/, '') || '/rmrework';
+
+    /* ---- centre ---- */
+    var tools = '<div class="dd" id="dd"><button aria-expanded="false" aria-haspopup="true">Tools' +
+      '<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8">' +
+      '<path d="M2 4l4 4 4-4"/></svg></button><div class="dd-panel">';
+    TOOLS.forEach(function (t) {
+      tools += '<a href="' + t.href + '"><span class="t">' + t.name +
+        (t.free ? ' <i class="free-tag">FREE</i>' : '') + '</span>' +
+        '<span class="d">' + t.desc + '</span></a>';
+    });
+    tools += '</div></div>';
+
+    var links = '';
+    LINKS.forEach(function (l) {
+      var path = l.href.split('#')[0];
+      // anchor links point back at the homepage, so they'd all match there —
+      // only a whole-page link counts as the current page
+      var on = (path === here && l.href.indexOf('#') === -1) ? ' class="on"' : '';
+      links += '<a href="' + l.href + '"' + on + '>' + l.label + '</a>';
+    });
+    mid.innerHTML = tools + links;
+
+    /* ---- right: theme, CTA, account, burger (burger added later) ---- */
+    var toggle = right.querySelector('.theme-toggle');
+    if (!toggle) {
+      toggle = document.createElement('button');
+      toggle.className = 'theme-toggle';
+      toggle.type = 'button';
+      toggle.innerHTML =
+        '<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>' +
+        '<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+    }
+    var cta = right.querySelector('.btn');
+    if (!cta) {
+      cta = document.createElement('a');
+      cta.className = 'btn btn-primary btn-sm';
+      cta.href = '/rmrework#pricing';
+      cta.textContent = 'Get a plan';
+    }
+    var avatar = right.querySelector('.avatar');
+    if (!avatar) {
+      avatar = document.createElement('a');
+      avatar.className = 'avatar';
+      avatar.href = '/rmdash';
+      avatar.title = 'Account';
+      avatar.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    }
+    right.appendChild(toggle);
+    right.appendChild(cta);
+    right.appendChild(avatar);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', build);
+  } else {
+    build();
+  }
+})();
+
 /* ------------------------------------------------------------------
    Mobile navigation.
 
