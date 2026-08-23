@@ -41,3 +41,97 @@
   // Expose for the pages' own scripts if they ever need it.
   window.rmTheme = { current: current, set: apply };
 })();
+
+/* ------------------------------------------------------------------
+   Mobile navigation.
+
+   Built here rather than in each page's markup so all three previews
+   behave identically. Any static .nav-burger in the page is reused;
+   pages without one get a burger created for them.
+   ------------------------------------------------------------------ */
+(function () {
+  function build() {
+    var nav = document.querySelector('nav');
+    if (!nav) return;
+    var mid = nav.querySelector('.nav-mid');
+    var right = nav.querySelector('.nav-right');
+    if (!mid || !right) return;
+
+    // Reuse a burger the page already has, otherwise make one.
+    var burger = nav.querySelector('.nav-burger');
+    if (!burger) {
+      burger = document.createElement('button');
+      burger.className = 'nav-burger';
+      burger.type = 'button';
+      burger.innerHTML = '<span></span><span></span><span></span>';
+    }
+    burger.setAttribute('aria-label', 'Menu');
+    burger.setAttribute('aria-expanded', 'false');
+    // Sit inside .nav-right so it shares the grid's end track.
+    right.appendChild(burger);
+
+    // Panel mirrors the centre links, flattening the Tools dropdown.
+    var panel = document.createElement('div');
+    panel.className = 'mobile-panel';
+
+    Array.prototype.forEach.call(mid.children, function (node) {
+      if (node.classList.contains('dd')) {
+        var sub = document.createElement('div');
+        sub.className = 'mp-sub';
+        sub.textContent = 'Tools';
+        panel.appendChild(sub);
+        Array.prototype.forEach.call(node.querySelectorAll('.dd-panel a'), function (a) {
+          var link = document.createElement('a');
+          link.href = a.getAttribute('href');
+          // .t holds the tool name; .d is the description we don't need here
+          var t = a.querySelector('.t');
+          if (t) { link.innerHTML = t.innerHTML; } else { link.textContent = a.textContent.trim(); }
+          panel.appendChild(link);
+        });
+      } else if (node.tagName === 'A') {
+        var copy = document.createElement('a');
+        copy.href = node.getAttribute('href');
+        copy.textContent = node.textContent.trim();
+        panel.appendChild(copy);
+      }
+    });
+
+    // The bar's CTA is hidden on mobile, so give it a home in the panel.
+    var cta = right.querySelector('.btn');
+    if (cta) {
+      var ctaLink = document.createElement('a');
+      ctaLink.href = cta.getAttribute('href') || '#';
+      ctaLink.className = 'mp-cta';
+      ctaLink.textContent = cta.textContent.trim();
+      panel.appendChild(ctaLink);
+    }
+
+    nav.appendChild(panel);
+
+    function close() {
+      panel.classList.remove('open');
+      burger.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+    }
+    function toggle(e) {
+      e.stopPropagation();
+      var open = panel.classList.toggle('open');
+      burger.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    burger.addEventListener('click', toggle);
+    panel.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') close(); else e.stopPropagation();
+    });
+    document.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 880) close(); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', build);
+  } else {
+    build();
+  }
+})();

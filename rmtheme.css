@@ -119,3 +119,84 @@ nav{background:var(--nav-bg) !important}
 
 /* The preview ribbon reads fine on both, but pin its text for contrast. */
 :root[data-theme="light"] .ribbon{color:var(--text2)}
+
+/* ============================================================
+   Mobile navigation + hero stacking
+   ============================================================ */
+
+/* The burger lives inside .nav-right so it can't fight it for the
+   grid's end track. Pages that hide .nav-right on mobile get overridden
+   here, otherwise the theme toggle becomes unreachable on a phone. */
+.nav-burger{
+  display:none;width:34px;height:34px;flex:none;padding:0;
+  background:none;border:1px solid var(--border2);border-radius:50%;
+  cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  transition:border-color .18s;
+}
+.nav-burger:hover{border-color:var(--accent-brd)}
+.nav-burger span{display:block;width:16px;height:1.5px;background:var(--text2);
+  border-radius:2px;transition:transform .22s,opacity .18s}
+.nav-burger.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+.nav-burger.open span:nth-child(2){opacity:0}
+.nav-burger.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+
+.mobile-panel{
+  position:absolute;top:100%;left:0;right:0;background:var(--surface);
+  border-bottom:1px solid var(--border);box-shadow:var(--shadow-lg);
+  padding:.6rem .9rem 1rem;display:none;flex-direction:column;gap:.15rem;z-index:49;
+}
+.mobile-panel.open{display:flex}
+.mobile-panel a{
+  display:block;padding:.85rem .8rem;border-radius:9px;font-size:.95rem;
+  font-weight:500;color:var(--text);transition:background .15s;
+}
+.mobile-panel a:hover,.mobile-panel a:active{background:var(--surface2)}
+.mobile-panel .mp-sub{
+  font-family:var(--mono);font-size:.7rem;color:var(--text3);
+  letter-spacing:.12em;text-transform:uppercase;padding:.9rem .8rem .35rem;
+}
+
+@media(max-width:880px){
+  nav{position:relative}
+  .nav-burger{display:flex}
+  /* beat the pages' own `display:none` on the account cluster */
+  .nav-right{display:flex !important}
+  .brand-logo{height:38px}
+}
+
+/* ---------- hero: stop cropping the photo on a phone ----------
+   hero.PNG is a wide photograph with the headline printed into the
+   image itself. object-fit:cover crops that headline off on a narrow
+   screen, and the overlay buttons land on top of what's left. Below
+   700px the photo runs full width uncropped and the copy sits under
+   it on solid ground. */
+@media(max-width:700px){
+  .hero-img{max-height:none !important;object-fit:contain !important}
+  .hero-ov{
+    position:static !important;
+    background:var(--bg) !important;
+    padding:1.6rem 1.5rem 2rem !important;
+  }
+  .hero-ov .hero-tag{color:var(--text) !important;max-width:none}
+  .hero-ov .hero-meta{
+    flex-direction:column;gap:.5rem;color:var(--text3) !important;
+    border-top-color:var(--border) !important;
+  }
+  .hero-ov .hero-meta b{color:var(--text2) !important}
+  .hero-ov .btn-ghost{color:var(--text) !important;border-color:var(--border2) !important}
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .hero-cta .btn{width:100%}
+}
+
+/* tighter panel rhythm + the CTA carried down from the bar */
+.mobile-panel a{padding:.7rem .8rem}
+.mobile-panel .free-tag{margin-left:.45rem;vertical-align:middle}
+.mobile-panel .mp-cta{
+  margin-top:.7rem;text-align:center;background:var(--accent);color:#fff;
+  font-weight:600;border-radius:10px;padding:.85rem .8rem;
+}
+.mobile-panel .mp-cta:hover{background:var(--accent2)}
+/* one CTA is enough on a narrow bar — logo, theme, account, burger */
+@media(max-width:880px){
+  .nav-right > .btn{display:none}
+}
