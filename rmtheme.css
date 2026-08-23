@@ -1,0 +1,121 @@
+/* ============================================================
+   Shared theming for the rework previews (/rmrework, /rmreview, /rmdash).
+
+   Each page defines the dark palette on bare :root in its own <style>.
+   This file adds the light palette and the toggle control. The
+   [data-theme] selectors outrank bare :root on specificity, so load
+   order doesn't matter.
+   ============================================================ */
+
+/* ---------- light palette ---------- */
+:root[data-theme="light"]{
+  --bg:#faf9f7;
+  --surface:#ffffff;
+  --surface2:#f3f1ec;
+  --surface3:#e9e5dd;
+  --border:#e3ded5;
+  --border2:#cec6b9;
+  --text:#191512;
+  --text2:#5b5245;
+  --text3:#776d60;
+  --accent:#8a5c2e;
+  --accent2:#6f4820;
+  --accent-bg:rgba(138,92,46,.07);
+  --accent-brd:rgba(138,92,46,.26);
+  --red:#a8463a;
+  --red-bg:rgba(168,70,58,.07);
+  --red-brd:rgba(168,70,58,.26);
+  --green:#5a7546;
+  --green-bg:rgba(90,117,70,.09);
+  --nav-bg:rgba(250,249,247,.85);
+  --shadow-lg:0 20px 45px rgba(60,48,34,.13);
+  --shadow-md:0 10px 30px rgba(60,48,34,.10);
+}
+
+/* Follow the OS when the reader hasn't chosen — an explicit choice always wins. */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]):not([data-theme="light"]){
+    --bg:#faf9f7; --surface:#ffffff; --surface2:#f3f1ec; --surface3:#e9e5dd;
+    --border:#e3ded5; --border2:#cec6b9;
+    --text:#191512; --text2:#5b5245; --text3:#776d60;
+    --accent:#8a5c2e; --accent2:#6f4820;
+    --accent-bg:rgba(138,92,46,.07); --accent-brd:rgba(138,92,46,.26);
+    --red:#a8463a; --red-bg:rgba(168,70,58,.07); --red-brd:rgba(168,70,58,.26);
+    --green:#5a7546; --green-bg:rgba(90,117,70,.09);
+    --nav-bg:rgba(250,249,247,.85);
+    --shadow-lg:0 20px 45px rgba(60,48,34,.13);
+    --shadow-md:0 10px 30px rgba(60,48,34,.10);
+  }
+}
+
+/* dark defaults for the tokens this file introduces */
+:root{
+  --nav-bg:rgba(13,11,9,.85);
+  --shadow-lg:0 20px 45px rgba(0,0,0,.55);
+  --shadow-md:0 10px 30px rgba(0,0,0,.45);
+}
+:root[data-theme="dark"]{
+  --nav-bg:rgba(13,11,9,.85);
+  --shadow-lg:0 20px 45px rgba(0,0,0,.55);
+  --shadow-md:0 10px 30px rgba(0,0,0,.45);
+}
+
+/* Pages hardcode the dark nav wash; route it through the token instead. */
+nav{background:var(--nav-bg) !important}
+
+/* ---------- RM logo ---------- */
+.brand{gap:0 !important}
+.brand-logo{
+  height:44px;width:auto;display:block;
+  /* the logo file is black artwork, so it needs inverting on dark grounds only */
+  filter:invert(1);
+}
+:root[data-theme="light"] .brand-logo{filter:none}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]):not([data-theme="light"]) .brand-logo{filter:none}
+}
+
+/* ---------- theme toggle ---------- */
+.theme-toggle{
+  width:34px;height:34px;flex:none;border-radius:50%;
+  border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--accent);transition:border-color .18s,background .18s,color .18s;
+  padding:0;
+}
+.theme-toggle:hover{border-color:var(--accent-brd);background:var(--surface3)}
+.theme-toggle svg{display:block;width:17px;height:17px}
+/* show the icon for the theme you'd switch TO */
+.theme-toggle .i-sun{display:none}
+.theme-toggle .i-moon{display:block}
+:root[data-theme="light"] .theme-toggle .i-sun{display:block}
+:root[data-theme="light"] .theme-toggle .i-moon{display:none}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]):not([data-theme="light"]) .theme-toggle .i-sun{display:block}
+  :root:not([data-theme="dark"]):not([data-theme="light"]) .theme-toggle .i-moon{display:none}
+}
+
+/* ---------- light-mode corrections ---------- */
+/* The hero photograph is dark, so its overlay stays dark in both themes and
+   keeps its own light type rather than inheriting the page tokens. */
+.hero-ov .hero-tag,
+.hero-ov .hero-meta,
+.hero-ov .hero-meta b{color:#e8e0d6}
+:root[data-theme="light"] .hero-ov .hero-meta{color:#b8ada0}
+:root[data-theme="light"] .hero-ov .btn-ghost{color:#e8e0d6;border-color:rgba(232,224,214,.35)}
+:root[data-theme="light"] .hero-ov .btn-ghost:hover{background:rgba(232,224,214,.12)}
+
+/* Report/plan cards carry heavy dark shadows inline; soften them on light. */
+:root[data-theme="light"] .report-demo,
+:root[data-theme="light"] .plan.best,
+:root[data-theme="light"] .dd-panel,
+:root[data-theme="light"] .acct{box-shadow:var(--shadow-lg)}
+
+/* Primary button keeps dark ink on the gold in both themes. */
+:root[data-theme="light"] .btn-primary{color:#fff}
+:root[data-theme="light"] .plan-tag,
+:root[data-theme="light"] .toggle button.on{color:#fff}
+:root[data-theme="light"] .toggle button.on .save-tag{color:#fff}
+
+/* The preview ribbon reads fine on both, but pin its text for contrast. */
+:root[data-theme="light"] .ribbon{color:var(--text2)}
