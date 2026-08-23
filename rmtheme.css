@@ -27,6 +27,10 @@
   --red-brd:rgba(168,70,58,.26);
   --green:#5a7546;
   --green-bg:rgba(90,117,70,.09);
+  --violet:#63488a; --violet-bg:rgba(99,72,138,.10); --violet-brd:rgba(99,72,138,.30);
+  --amber:#7c5f08;  --amber-bg:rgba(138,106,14,.10);  --amber-brd:rgba(138,106,14,.30);
+  --blue:#39607f;   --blue-bg:rgba(57,96,127,.10);    --blue-brd:rgba(57,96,127,.30);
+  --scan:#256f61;
   --nav-bg:rgba(250,249,247,.85);
   --shadow-lg:0 20px 45px rgba(60,48,34,.13);
   --shadow-md:0 10px 30px rgba(60,48,34,.10);
@@ -42,6 +46,10 @@
     --accent-bg:rgba(138,92,46,.07); --accent-brd:rgba(138,92,46,.26);
     --red:#a8463a; --red-bg:rgba(168,70,58,.07); --red-brd:rgba(168,70,58,.26);
     --green:#5a7546; --green-bg:rgba(90,117,70,.09);
+    --violet:#63488a; --violet-bg:rgba(99,72,138,.10); --violet-brd:rgba(99,72,138,.30);
+    --amber:#7c5f08;  --amber-bg:rgba(138,106,14,.10);  --amber-brd:rgba(138,106,14,.30);
+    --blue:#39607f;   --blue-bg:rgba(57,96,127,.10);    --blue-brd:rgba(57,96,127,.30);
+    --scan:#256f61;
     --nav-bg:rgba(250,249,247,.85);
     --shadow-lg:0 20px 45px rgba(60,48,34,.13);
     --shadow-md:0 10px 30px rgba(60,48,34,.10);
@@ -332,3 +340,10 @@ html:not(.rm-anim) .rv{opacity:1 !important;transform:none !important}
 .dd-panel .d{display:block;font-size:.75rem;color:var(--text3);margin-top:.1rem;line-height:1.45}
 .free-tag{font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.08em;
   color:var(--green);background:var(--green-bg);padding:.1rem .35rem;border-radius:4px;font-style:normal}
+
+/* inline plan badge — marks which tier a feature belongs to */
+.plan-badge.badge-inline{
+  font-size:.68rem;padding:.1rem .5rem;vertical-align:baseline;margin-right:.2rem;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 4px rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.28);
+}
+.plan-badge.badge-inline::after{height:44%}

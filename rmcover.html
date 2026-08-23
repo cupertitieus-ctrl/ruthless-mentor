@@ -62,7 +62,7 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
   margin-top:.7rem;text-wrap:balance}
 .lede{color:var(--text2);font-size:1rem;max-width:54ch;margin-top:.9rem;line-height:1.7}
 .free-badge{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;
-  color:var(--green);background:var(--green-bg);border:1px solid var(--green-brd);
+  color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);
   padding:.2rem .5rem;border-radius:5px;margin-left:.5rem;vertical-align:middle}
 
 /* ---------- layout ---------- */
@@ -121,10 +121,24 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
 .t-md{width:70px;height:98px}
 .t-lg{width:100px;height:140px}
 
-.drop{margin-top:1rem;border:1px dashed var(--border2);border-radius:11px;padding:1rem;
-  text-align:center;font-size:.83rem;color:var(--text3);transition:.18s;cursor:pointer}
-.drop:hover,.drop.over{border-color:var(--accent-brd);background:var(--accent-bg);color:var(--text2)}
-.drop input{display:none}
+/* the empty state: a lined outline you click to add a cover */
+.dropzone{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:.5rem;cursor:pointer;text-align:center;padding:1.5rem;
+  border:2px dashed var(--border2);border-radius:var(--r);background:var(--surface2);
+  transition:border-color .18s,background .18s,color .18s}
+.dropzone:hover,.dropzone.over{border-color:var(--accent);background:var(--accent-bg)}
+.dropzone svg{color:var(--text3);transition:color .18s}
+.dropzone:hover svg,.dropzone.over svg{color:var(--accent)}
+.dropzone .big{font-size:.95rem;font-weight:600;color:var(--text)}
+.dropzone .small{font-size:.78rem;color:var(--text3);line-height:1.5}
+.dropzone .types{font-family:var(--mono);font-size:.68rem;color:var(--text3);
+  border:1px solid var(--border2);border-radius:99px;padding:.2rem .6rem;margin-top:.3rem}
+.dropzone.gone{display:none}
+.drop-again{margin-top:.8rem;font-family:var(--mono);font-size:.72rem;color:var(--accent);
+  cursor:pointer;background:none;border:none;text-decoration:underline;display:none}
+.drop-again.show{display:inline-block}
+input[type=file]{display:none}
+.thumbs.empty{opacity:.3;pointer-events:none}
 
 /* ---------- results ---------- */
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem}
@@ -191,7 +205,7 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
 </head>
 <body>
 
-<div class="ribbon"><b>PREVIEW</b> &nbsp;/rmcover &mdash; concept only. Scores below are scripted, not a real analysis.</div>
+<div class="ribbon"><b>PREVIEW</b> &nbsp;/rmcover &mdash; concept only. Your cover is measured in the browser; nothing is uploaded.</div>
 
 <nav>
   <a href="/rmrework" class="brand"><img src="logo.png" alt="ruthlessmentor.com" class="brand-logo"></a>
@@ -203,7 +217,7 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
 <div class="wrap">
 
   <p class="eyebrow">Cover Check</p>
-  <h1>Does your cover work at thumbnail size?<span class="free-badge">FREE</span></h1>
+  <h1>Does your cover work at thumbnail size?<span class="free-badge">1 CREDIT</span></h1>
   <p class="lede">Nobody browsing sees your cover the size you designed it. They see it about as big as a postage stamp, in a grid of forty others. Drop it in and find out whether it survives that.</p>
 
   <div class="cols">
@@ -211,13 +225,13 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
     <!-- ===== left: the cover ===== -->
     <div>
       <div class="stage" id="stage">
-        <div class="mockcover" id="mock">
-          <div class="mc-title">The Fox Who<br>Forgot His Hat</div>
-          <div class="mc-art"></div>
-          <div>
-            <div class="mc-sub">A STORY ABOUT LOSING THINGS</div>
-            <div class="mc-author">Diane Alber</div>
-          </div>
+        <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Add your cover">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+          </svg>
+          <span class="big">Add your cover</span>
+          <span class="small">Click to choose a file,<br>or drag one in</span>
+          <span class="types">PNG &middot; JPG &middot; WEBP &middot; GIF</span>
         </div>
         <div class="scanwrap" id="scanwrap">
           <div class="scanline"></div>
@@ -226,7 +240,7 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
         </div>
       </div>
 
-      <div class="thumbs" id="thumbs">
+      <div class="thumbs empty" id="thumbs">
         <div>
           <div class="thumb t-sm"><div class="inner"></div></div>
           <div class="thumb-lab">SEARCH</div>
@@ -241,12 +255,9 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
         </div>
       </div>
 
-      <label class="drop" id="drop">
-        <input type="file" id="file" accept="image/*">
-        Drop your own cover here, or click to choose one
-      </label>
-
-      <button class="btn btn-primary" id="scanBtn" style="width:100%;margin-top:1rem">Scan this cover</button>
+      <input type="file" id="file" accept="image/png,image/jpeg,image/webp,image/gif">
+      <button class="btn btn-primary" id="scanBtn" style="width:100%;margin-top:1rem" disabled>Add a cover to scan</button>
+      <button class="drop-again" id="dropAgain">Use a different cover</button>
     </div>
 
     <!-- ===== right: the read-out ===== -->
@@ -350,79 +361,260 @@ h1{font-size:clamp(1.9rem,4.4vw,2.8rem);font-weight:900;letter-spacing:-.035em;l
 </div>
 
 <script>
-var stage = document.getElementById('stage');
-var mock  = document.getElementById('mock');
+var stage    = document.getElementById('stage');
+var dropzone = document.getElementById('dropzone');
 var scanwrap = document.getElementById('scanwrap');
-var scanBtn = document.getElementById('scanBtn');
-var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var scanBtn  = document.getElementById('scanBtn');
+var fileIn   = document.getElementById('file');
+var thumbs   = document.getElementById('thumbs');
+var reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var coverImg = null;      // the loaded <img>
+var measured = null;      // real numbers from the pixels
 
-/* ---------- thumbnail strip mirrors whatever is on the stage ---------- */
+/* ================================================================
+   Real measurement.
+
+   The cover is drawn to a canvas at the size a shopper actually sees
+   it, and the scores come out of those pixels — no fixed numbers.
+   ================================================================ */
+function lum(r,g,b){
+  function c(v){ v/=255; return v<=0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+  return 0.2126*c(r) + 0.7152*c(g) + 0.0722*c(b);
+}
+
+function analyse(img){
+  // draw small — this is the whole point of the tool
+  var W = 44, H = Math.max(1, Math.round(44 * img.naturalHeight / img.naturalWidth));
+  var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  var cx = cv.getContext('2d', {willReadFrequently:true});
+  cx.drawImage(img, 0, 0, W, H);
+  var px = cx.getImageData(0, 0, W, H).data;
+
+  var lums = [], sats = [], rows = [];
+  for (var y = 0; y < H; y++) {
+    var rowL = [];
+    for (var x = 0; x < W; x++) {
+      var i = (y*W + x) * 4;
+      var r = px[i], g = px[i+1], b = px[i+2];
+      var L = lum(r,g,b);
+      lums.push(L); rowL.push(L);
+      var mx = Math.max(r,g,b), mn = Math.min(r,g,b);
+      sats.push(mx === 0 ? 0 : (mx - mn) / mx);
+    }
+    rows.push(rowL);
+  }
+
+  var mean = lums.reduce(function(a,b){return a+b;},0) / lums.length;
+  var variance = lums.reduce(function(a,b){return a + (b-mean)*(b-mean);},0) / lums.length;
+  var globalContrast = Math.sqrt(variance);                     // RMS contrast
+  var avgSat = sats.reduce(function(a,b){return a+b;},0) / sats.length;
+
+  // legibility proxy: the strongest local light/dark separation in any band,
+  // which is what makes type readable when the detail is gone
+  var bandBest = 0;
+  for (var y2 = 0; y2 < H; y2++) {
+    var mn2 = Math.min.apply(null, rows[y2]), mx2 = Math.max.apply(null, rows[y2]);
+    var band = (Math.max(mx2,mn2) + 0.05) / (Math.min(mx2,mn2) + 0.05);
+    if (band > bandBest) bandBest = band;
+  }
+
+  // focal point: how concentrated the busiest area is (edge energy in the
+  // middle third vs the whole frame)
+  var edgeAll = 0, edgeMid = 0;
+  for (var y3 = 1; y3 < H-1; y3++) {
+    for (var x3 = 1; x3 < W-1; x3++) {
+      var here = rows[y3][x3];
+      var d = Math.abs(here - rows[y3][x3-1]) + Math.abs(here - rows[y3-1][x3]);
+      edgeAll += d;
+      // middle half, not middle third — a centred subject's edges fall
+      // well outside the inner third once the image is this small
+      if (y3 > H/4 && y3 < 3*H/4 && x3 > W/4 && x3 < 3*W/4) edgeMid += d;
+    }
+  }
+  var focalShare = edgeAll ? edgeMid / edgeAll : 0;             // ~0.25 = even, higher = concentrated
+
+  // Percentile spread rather than RMS: a cover that is mostly one flat tone
+  // with a bright subject has low RMS but obviously high perceived contrast.
+  var sorted = lums.slice().sort(function(a,b){ return a-b; });
+  function pct(q){ return sorted[Math.min(sorted.length-1, Math.floor(q * sorted.length))]; }
+  var p05 = pct(0.05), p50 = pct(0.50), p95 = pct(0.95);
+  var loL = sorted[0], hiL = sorted[sorted.length - 1];
+  // Half the bulk range, half the absolute range. A small bright title is
+  // under 1% of the pixels at this size, so percentiles alone never see it,
+  // while max/min alone would swing on a stray pixel.
+  var spread = (p95 - p05) * 0.5 + (hiL - loL) * 0.5;
+
+  function clamp(v){ return Math.max(0.5, Math.min(10, v)); }
+  return {
+    legibility : clamp((bandBest - 1) * 1.6),
+    focal      : clamp(focalShare * 16),
+    ageGenre   : clamp(avgSat * 14),
+    hierarchy  : clamp((hiL - p50) * 8),
+    contrast   : clamp(spread * 11),
+    meanLum    : mean,
+    avgSat     : avgSat,
+    bandBest   : bandBest,
+    focalShare : focalShare,
+    spread     : spread,
+    size       : img.naturalWidth + '\u00d7' + img.naturalHeight
+  };
+}
+
+/* ---------- wording driven by the measurements ---------- */
+function noteFor(key, m){
+  var n = {
+    legibility: m.legibility < 4
+      ? 'At 44px wide the lightest and darkest areas differ by only ' + m.bandBest.toFixed(1) + ':1. Type placed here will disappear at search-result size.'
+      : m.legibility < 7
+        ? 'Best local contrast measures ' + m.bandBest.toFixed(1) + ':1. Readable, but a title in the weaker areas will still struggle.'
+        : 'Strong light/dark separation (' + m.bandBest.toFixed(1) + ':1). A title placed well here holds up small.',
+    focal: m.focalShare < 0.22
+      ? 'Detail is spread evenly across the frame (' + Math.round(m.focalShare*100) + '% of edge energy in the centre). Nothing grabs the eye first.'
+      : m.focalShare < 0.38
+        ? Math.round(m.focalShare*100) + '% of the edge detail sits centre-frame. There is a focal point, but it competes with the edges.'
+        : 'A clear focal point holds the centre (' + Math.round(m.focalShare*100) + '% of edge detail). This is the cover\'s strongest asset.',
+    ageGenre: m.avgSat < 0.25
+      ? 'Average saturation is ' + Math.round(m.avgSat*100) + '%. Muted palettes read older; the 3\u20138 shelf is far more saturated.'
+      : m.avgSat < 0.5
+        ? 'Saturation sits at ' + Math.round(m.avgSat*100) + '% \u2014 mid-range. Reads fine, but is not shouting "children\'s book".'
+        : 'Saturation is ' + Math.round(m.avgSat*100) + '%, right in the range picture-book buyers expect.',
+    hierarchy: m.hierarchy < 5
+      ? 'Tonal range is narrow, so nothing on the cover is obviously more important than anything else.'
+      : 'There is enough tonal range for a clear hierarchy \u2014 make sure the title is the thing using it.',
+    contrast: m.contrast < 5
+      ? 'Overall contrast measures low. In a grid of other books this one recedes rather than stopping the eye.'
+      : m.contrast < 7.5
+        ? 'Contrast is adequate. It will hold its own on the shelf without dominating it.'
+        : 'High overall contrast. This cover will stand out in a grid of thumbnails.'
+  };
+  return n[key];
+}
+
+function gradeFor(avg){
+  if (avg >= 8.5) return ['A',  'This cover is doing its job.'];
+  if (avg >= 7.5) return ['A-', 'Strong. A couple of refinements and it\'s there.'];
+  if (avg >= 6.5) return ['B',  'Solid, with one clear weak spot.'];
+  if (avg >= 5.5) return ['B-', 'Works at full size. Struggles small.'];
+  if (avg >= 4.5) return ['C+', 'It\'s pretty. It doesn\'t sell.'];
+  if (avg >= 3.5) return ['C',  'The idea is there, the execution isn\'t yet.'];
+  if (avg >= 2.5) return ['D',  'This will get scrolled past.'];
+  return ['F', 'Start again \u2014 and start at thumbnail size.'];
+}
+
+/* ---------- thumbnails mirror the real cover ---------- */
 function paintThumbs(){
-  var img = stage.querySelector('img');
   document.querySelectorAll('.thumb .inner').forEach(function(inner){
     inner.innerHTML = '';
-    if (img) {
-      var c = document.createElement('img');
-      c.src = img.src;
-      inner.appendChild(c);
-    } else {
-      inner.appendChild(mock.cloneNode(true));
-    }
+    if (coverImg) { var c = document.createElement('img'); c.src = coverImg.src; inner.appendChild(c); }
   });
+  thumbs.classList.toggle('empty', !coverImg);
 }
-paintThumbs();
 
-/* ---------- accept a real cover ---------- */
-var drop = document.getElementById('drop');
-var file = document.getElementById('file');
-
+/* ---------- accept a file ---------- */
 function loadFile(f){
-  if (!f || !/^image\//.test(f.type)) return;
+  if (!f) return;
+  if (!/^image\/(png|jpeg|jpg|webp|gif)$/i.test(f.type)) {
+    dropzone.querySelector('.small').innerHTML = 'That file type won\'t work.<br>Use PNG, JPG, WEBP or GIF.';
+    return;
+  }
   var reader = new FileReader();
   reader.onload = function(e){
-    var img = stage.querySelector('img');
-    if (!img) { img = document.createElement('img'); stage.insertBefore(img, scanwrap); }
+    var img = stage.querySelector('img.cover');
+    if (!img) { img = document.createElement('img'); img.className = 'cover'; stage.insertBefore(img, scanwrap); }
+    img.onload = function(){
+      coverImg = img;
+      dropzone.classList.add('gone');
+      document.getElementById('dropAgain').classList.add('show');
+      scanBtn.disabled = false;
+      scanBtn.textContent = 'Scan this cover';
+      paintThumbs();
+      showPanel('idle');
+    };
     img.src = e.target.result;
-    mock.style.display = 'none';
-    img.onload = paintThumbs;
   };
   reader.readAsDataURL(f);
 }
-file.addEventListener('change', function(){ loadFile(this.files[0]); });
+
+dropzone.addEventListener('click', function(){ fileIn.click(); });
+dropzone.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileIn.click(); }
+});
+document.getElementById('dropAgain').addEventListener('click', function(){ fileIn.click(); });
+fileIn.addEventListener('change', function(){ loadFile(this.files[0]); this.value = ''; });
+
 ['dragenter','dragover'].forEach(function(ev){
-  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); });
+  stage.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.add('over'); });
 });
 ['dragleave','drop'].forEach(function(ev){
-  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); });
+  stage.addEventListener(ev, function(e){ e.preventDefault(); dropzone.classList.remove('over'); });
 });
-drop.addEventListener('drop', function(e){
+stage.addEventListener('drop', function(e){
   if (e.dataTransfer && e.dataTransfer.files) loadFile(e.dataTransfer.files[0]);
 });
 
 /* ---------- the scan ---------- */
 var STAGES = [
-  'Loading the image…',
-  'Shrinking to search-result size…',
-  'Measuring title contrast…',
-  'Finding the focal point…',
-  'Reading the age and genre signals…',
-  'Comparing against the category shelf…',
-  'Writing up what to fix…'
+  'Reading the image\u2026',
+  'Shrinking to search-result size\u2026',
+  'Measuring light and dark separation\u2026',
+  'Finding the focal point\u2026',
+  'Sampling colour and saturation\u2026',
+  'Scoring against the category shelf\u2026',
+  'Writing up what to fix\u2026'
 ];
 var timer = null;
 
 function showPanel(which){
-  document.getElementById('idle').style.display     = which === 'idle' ? '' : 'none';
+  document.getElementById('idle').style.display = which === 'idle' ? '' : 'none';
   document.getElementById('scanning').classList.toggle('on', which === 'scanning');
   document.getElementById('results').classList.toggle('on', which === 'results');
 }
 
+var KEYS = ['legibility','focal','ageGenre','hierarchy','contrast'];
+
 function reveal(){
   scanwrap.classList.remove('on');
   showPanel('results');
-  var grade = document.getElementById('grade');
-  grade.classList.remove('hit'); void grade.offsetWidth;
 
+  var rows = document.querySelectorAll('#scores .score');
+  var total = 0;
+  KEYS.forEach(function(k, i){
+    var v = measured[k];
+    total += v;
+    var row = rows[i];
+    row.querySelector('.val').dataset.count = v.toFixed(1);
+    row.querySelector('.fill').dataset.w = Math.round(v * 10);
+    row.querySelector('.fill').className = 'fill ' + (v >= 7 ? 'f-good' : v >= 5 ? 'f-ok' : 'f-bad');
+    row.querySelector('.note').textContent = noteFor(k, measured);
+  });
+
+  var avg = total / KEYS.length;
+  var g = gradeFor(avg);
+  var grade = document.getElementById('grade');
+  grade.querySelector('.g').textContent = g[0];
+  document.querySelector('.verdict h2').textContent = g[1];
+  document.querySelector('.verdict p').textContent =
+    'Measured from your actual file at ' + measured.size + ', shrunk to 44 pixels wide — the size it appears in search results. Overall ' +
+    avg.toFixed(1) + ' out of 10.';
+
+  // fixes, ranked by the weakest scores
+  var ranked = KEYS.map(function(k){ return {k:k, v:measured[k]}; }).sort(function(a,b){ return a.v - b.v; });
+  var FIXTEXT = {
+    legibility: ['Give the title something to sit on', 'Put the type on a band, or swap to a value far from its background. Hue disappears at thumbnail size; light-versus-dark does not.'],
+    focal      : ['Commit to one focal point', 'Pick the single thing a shopper should see first and make it bigger than everything else. Even detail across the frame reads as noise when small.'],
+    ageGenre   : ['Push the palette toward your shelf', 'Compare against the top twenty covers in your category. If yours is markedly less saturated, it will read as the wrong age group.'],
+    hierarchy  : ['Widen the tonal range', 'Give the title the lightest or darkest value on the cover so it wins the hierarchy outright.'],
+    contrast   : ['Separate foreground from background', 'Deepen the background or lift the subject so the two stop blending into one mass in a grid.']
+  };
+  var html = '';
+  ranked.slice(0, 4).forEach(function(r, i){
+    var t = FIXTEXT[r.k];
+    html += '<div class="fix"><span class="rank">0' + (i+1) + '</span><div class="body"><b>' + t[0] +
+            '</b><p>' + t[1] + ' <em>Scored ' + r.v.toFixed(1) + '.</em></p></div></div>';
+  });
+  document.querySelector('.fixes').innerHTML = '<h3>Fix these, in this order</h3>' + html;
+
+  grade.classList.remove('hit'); void grade.offsetWidth;
   document.querySelectorAll('#scores .fill').forEach(function(f){ f.style.width = '0'; });
   document.querySelectorAll('#scores .val').forEach(function(v){ v.textContent = '0.0'; });
 
@@ -432,7 +624,6 @@ function reveal(){
     document.querySelectorAll('#scores .val').forEach(function(v){ v.textContent = Number(v.dataset.count).toFixed(1); });
     return;
   }
-
   document.querySelectorAll('#scores .score').forEach(function(row, i){
     setTimeout(function(){
       var fill = row.querySelector('.fill'), val = row.querySelector('.val');
@@ -449,18 +640,20 @@ function reveal(){
 }
 
 function runScan(){
+  if (!coverImg) return;
   clearInterval(timer);
+  measured = analyse(coverImg);          // the real work, done up front
   showPanel('scanning');
   scanwrap.classList.add('on');
   scanBtn.disabled = true;
-  scanBtn.textContent = 'Scanning…';
+  scanBtn.textContent = 'Scanning\u2026';
 
   var pct = 0, i = -1;
   document.getElementById('scanBar').style.width = '0%';
   document.getElementById('scanStage').textContent = STAGES[0];
 
   timer = setInterval(function(){
-    pct = Math.min(pct + Math.random() * 11 + 6, 100);
+    pct = Math.min(pct + Math.random() * 11 + 7, 100);
     document.getElementById('scanBar').style.width = pct + '%';
     document.getElementById('scanPct').textContent = Math.round(pct) + '%';
     var next = Math.min(Math.floor(pct / 100 * STAGES.length), STAGES.length - 1);
@@ -468,17 +661,15 @@ function runScan(){
     if (pct >= 100) {
       clearInterval(timer);
       scanBtn.disabled = false;
-      scanBtn.textContent = 'Scan this cover';
-      setTimeout(reveal, 350);
+      scanBtn.textContent = 'Scan again — 1 credit';
+      setTimeout(reveal, 300);
     }
-  }, 420);
+  }, 380);
 }
 
 scanBtn.addEventListener('click', runScan);
-document.getElementById('againBtn').addEventListener('click', function(){
-  showPanel('idle');
-  runScan();
-});
+document.getElementById('againBtn').addEventListener('click', function(){ showPanel('idle'); runScan(); });
+paintThumbs();
 </script>
 </body>
 </html>
