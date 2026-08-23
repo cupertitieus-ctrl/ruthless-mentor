@@ -200,3 +200,14 @@ nav{background:var(--nav-bg) !important}
 @media(max-width:880px){
   .nav-right > .btn{display:none}
 }
+
+/* ============================================================
+   Reveal fail-safe
+
+   The pages hide every section at opacity:0 and rely on an
+   IntersectionObserver to add .in. If that observer never runs — JS
+   blocked, a throttled background tab, low-power mode — the content
+   stays invisible forever. Default to visible, and only opt into the
+   hidden-then-revealed state once rmtheme.js confirms JS is alive.
+   ============================================================ */
+html:not(.rm-anim) .rv{opacity:1 !important;transform:none !important}

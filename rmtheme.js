@@ -1,6 +1,38 @@
 /* Shared light/dark toggle for the rework previews.
    Runs before paint (the pages load it in <head>) so there's no flash of
    the wrong theme on load. */
+/* Signals that JS is running, so the reveal animations may hide content.
+   Without this class the fail-safe in rmtheme.css keeps everything visible. */
+document.documentElement.classList.add('rm-anim');
+
+/* Belt-and-braces reveal: runs alongside each page's IntersectionObserver
+   and catches anything the observer misses (throttled tab, resize, a hash
+   jump that lands mid-page). Idempotent — .in is only ever added. */
+(function () {
+  function revealInView() {
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var pending = document.querySelectorAll('.rv:not(.in)');
+    for (var i = 0; i < pending.length; i++) {
+      var r = pending[i].getBoundingClientRect();
+      if (r.top < vh * 0.98 && r.bottom > 0) pending[i].classList.add('in');
+    }
+  }
+  function start() {
+    revealInView();
+    window.addEventListener('scroll', revealInView, { passive: true });
+    window.addEventListener('resize', revealInView);
+    window.addEventListener('hashchange', function () { setTimeout(revealInView, 60); });
+    document.addEventListener('visibilitychange', revealInView);
+    window.addEventListener('load', revealInView);
+    setTimeout(revealInView, 1200);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+
 (function () {
   var KEY = 'rm-theme';
   var root = document.documentElement;
