@@ -88,7 +88,6 @@ document.documentElement.classList.add('rm-anim');
   var TOOLS = [
     {href:'/rmreview', name:'Manuscript Review', desc:'Full 8-part report &middot; 1 credit'},
     {href:'/rmeditor', name:'Advanced Editor',   desc:'Write with the notes beside you', tier:'writer'},
-    {href:'/rmpages',  name:'Page Planner',      desc:'Lay your text out across 32 pages', tier:'writer'},
     {href:'/rmcover', name:'Cover Check', desc:'Scanned and graded &middot; 1 credit'}
   ];
   var LINKS = [

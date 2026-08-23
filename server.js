@@ -159,9 +159,6 @@ app.get(['/rmeditor', '/rework-editor'], (req, res) => {
 app.get(['/rmcover', '/rework-cover'], (req, res) => {
   res.sendFile(path.join(__dirname, 'rmcover.html'));
 });
-app.get(['/rmpages', '/rework-pages'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'rmpages.html'));
-});
 
 // Anthropic client
 const client = new Anthropic();
