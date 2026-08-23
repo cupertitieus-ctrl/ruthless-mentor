@@ -347,3 +347,10 @@ html:not(.rm-anim) .rv{opacity:1 !important;transform:none !important}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 4px rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.28);
 }
 .plan-badge.badge-inline::after{height:44%}
+
+/* tier badge inside the Tools menu */
+.plan-badge.badge-tiny{
+  font-size:.58rem;padding:.06rem .42rem;letter-spacing:-.01em;vertical-align:middle;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 3px rgba(0,0,0,.25),0 1px 4px rgba(0,0,0,.25);
+}
+.plan-badge.badge-tiny::after{height:44%}

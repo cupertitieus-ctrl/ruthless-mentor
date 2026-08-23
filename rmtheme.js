@@ -87,7 +87,8 @@ document.documentElement.classList.add('rm-anim');
 (function () {
   var TOOLS = [
     {href:'/rmreview', name:'Manuscript Review', desc:'Full 8-part report &middot; 1 credit'},
-    {href:'/rmeditor', name:'Advanced Editor',   desc:'Write with the notes beside you'},
+    {href:'/rmeditor', name:'Advanced Editor',   desc:'Write with the notes beside you', tier:'writer'},
+    {href:'/rmpages',  name:'Page Planner',      desc:'Lay your text out across 32 pages', tier:'writer'},
     {href:'/rmcover', name:'Cover Check', desc:'Scanned and graded &middot; 1 credit'}
   ];
   var LINKS = [
@@ -113,7 +114,8 @@ document.documentElement.classList.add('rm-anim');
       '<path d="M2 4l4 4 4-4"/></svg></button><div class="dd-panel">';
     TOOLS.forEach(function (t) {
       tools += '<a href="' + t.href + '"><span class="t">' + t.name +
-        (t.free ? ' <i class="free-tag">FREE</i>' : '') + '</span>' +
+        (t.tier ? ' <i class="plan-badge badge-' + t.tier + ' badge-tiny">' +
+                  t.tier.charAt(0).toUpperCase() + t.tier.slice(1) + '</i>' : '') + '</span>' +
         '<span class="d">' + t.desc + '</span></a>';
     });
     tools += '</div></div>';
