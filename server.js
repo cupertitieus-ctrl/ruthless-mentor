@@ -153,6 +153,9 @@ app.get(['/rmdash', '/rework-dashboard'], (req, res) => {
 app.get(['/rmreview', '/rework-review'], (req, res) => {
   res.sendFile(path.join(__dirname, 'rmreview.html'));
 });
+app.get(['/rmeditor', '/rework-editor'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'rmeditor.html'));
+});
 
 // Anthropic client
 const client = new Anthropic();

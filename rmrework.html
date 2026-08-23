@@ -265,11 +265,13 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
       </button>
       <div class="dd-panel">
         <a href="/rmreview"><span class="t">Manuscript Review</span><span class="d">Full 8-part report &middot; 1 credit</span></a>
+        <a href="/rmeditor"><span class="t">Advanced Editor</span><span class="d">Write with the notes in the margin</span></a>
         <a href="#pricing"><span class="t">Cover Check <i class="free-tag">FREE</i></span><span class="d">Instant score, no account needed</span></a>
         <a href="#pricing"><span class="t">Description Maker</span><span class="d">A ready-to-paste blurb from your book</span></a>
       </div>
     </div>
     <a href="/rmreview">New review</a>
+    <a href="/rmeditor">Editor</a>
     <a href="/rmdash">Dashboard</a>
     <a href="#pricing">Pricing</a>
     <a href="#story">About</a>
@@ -395,6 +397,25 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
   </div>
 </section>
 
+<!-- ============ ADVANCED EDITOR ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow rv">New &mdash; Writer plan and above</p>
+    <h2 class="rv d1">The Advanced Editor</h2>
+    <p class="lede rv d2" style="margin-top:.9rem">A review tells you what's wrong once. The editor tells you while you're still writing. Type straight into the document, and every problem is highlighted where it happens with a line drawn out to the note explaining it.</p>
+    <div class="grid" style="margin-top:2rem">
+      <div class="card rv"><div class="n">01</div><h3>Write in the document</h3><p>Not a form, not a paste box. A real page you can type in, with your draft saved as you go.</p></div>
+      <div class="card rv d1"><div class="n">02</div><h3>Problems shown in place</h3><p>The exact words get highlighted, and a line runs to the margin note that explains what's wrong and offers a rewrite.</p></div>
+      <div class="card rv d2"><div class="n">03</div><h3>Spelling is free</h3><p>Spell check runs as you type and costs nothing. Only a full re-read of the manuscript spends a credit.</p></div>
+      <div class="card rv d3"><div class="n">04</div><h3>Apply a fix in one click</h3><p>Take the rewrite, or dismiss it and keep your words. The highlight clears either way.</p></div>
+    </div>
+    <div class="strip rv d2">
+      <p>Spell check is <b>free as you type</b>. A full re-check reads the whole manuscript and costs <b>1 credit</b> &mdash; the same credit as a review.</p>
+      <a href="/rmeditor" class="btn btn-primary btn-sm">Open the editor</a>
+    </div>
+  </div>
+</section>
+
 <!-- ============ WORK IN PROGRESS ============ -->
 <section>
   <div class="wrap split flip">
@@ -459,7 +480,8 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
 
     <div class="plans">
       <div class="plan rv">
-        <h3>Starter</h3>
+        <span class="plan-badge badge-starter">Starter</span>
+        <h3 class="sr-name">Starter</h3>
         <p class="for">For the author with one book on the go.</p>
         <div class="amt" data-m="$19" data-a="$190">$19<span class="per" data-m="/mo" data-a="/yr">/mo</span></div>
         <div class="each" data-m="$19.00 PER REVIEW" data-a="$15.83 PER REVIEW">$19.00 PER REVIEW</div>
@@ -474,7 +496,8 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
 
       <div class="plan best rv d1">
         <span class="plan-tag">MOST POPULAR</span>
-        <h3>Writer</h3>
+        <span class="plan-badge badge-writer">Writer</span>
+        <h3 class="sr-name">Writer</h3>
         <p class="for">Review a draft, then re-check it after you've revised.</p>
         <div class="amt" data-m="$29" data-a="$290">$29<span class="per" data-m="/mo" data-a="/yr">/mo</span></div>
         <div class="each" data-m="$14.50 PER REVIEW" data-a="$12.08 PER REVIEW">$14.50 PER REVIEW</div>
@@ -482,6 +505,7 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
           <li><b>2 credits</b> a month</li>
           <li>Rolls over up to <b>12</b></li>
           <li>Everything in Starter</li>
+          <li><b>Advanced Editor</b> &mdash; write with the notes beside you</li>
           <li><b>Every third review free</b></li>
           <li>Priority queue</li>
         </ul>
@@ -489,7 +513,8 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
       </div>
 
       <div class="plan rv d2">
-        <h3>Author</h3>
+        <span class="plan-badge badge-author">Author</span>
+        <h3 class="sr-name">Author</h3>
         <p class="for">For the serial self-publisher shipping a few books a year.</p>
         <div class="amt" data-m="$59" data-a="$590">$59<span class="per" data-m="/mo" data-a="/yr">/mo</span></div>
         <div class="each" data-m="$11.80 PER REVIEW" data-a="$9.83 PER REVIEW">$11.80 PER REVIEW</div>

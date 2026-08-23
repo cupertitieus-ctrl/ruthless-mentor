@@ -211,3 +211,43 @@ nav{background:var(--nav-bg) !important}
    hidden-then-revealed state once rmtheme.js confirms JS is alive.
    ============================================================ */
 html:not(.rm-anim) .rv{opacity:1 !important;transform:none !important}
+
+/* ============================================================
+   Plan badges — glossy pill wordmarks for the subscription tiers
+   ============================================================ */
+.plan-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:.42rem 1.35rem;border-radius:999px;
+  font-family:var(--sans);font-style:italic;font-weight:900;
+  font-size:1.45rem;letter-spacing:-.025em;line-height:1.15;
+  color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.35);
+  border:1px solid rgba(0,0,0,.28);
+  position:relative;overflow:hidden;isolation:isolate;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -3px 8px rgba(0,0,0,.28),
+    0 4px 14px rgba(0,0,0,.32);
+}
+/* the top-half shine that makes it read as moulded plastic */
+.plan-badge::after{
+  content:"";position:absolute;left:3px;right:3px;top:2px;height:46%;
+  border-radius:999px 999px 60% 60% / 999px 999px 22px 22px;
+  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.06));
+  pointer-events:none;z-index:-1;
+}
+.badge-starter{background:linear-gradient(180deg,#8fdc6a,#3d8f28)}
+.badge-writer {background:linear-gradient(180deg,#6fb6f7,#1c5cc9)}
+.badge-author {background:linear-gradient(180deg,#ffb659,#e0641a)}
+
+.plan .plan-badge{margin-bottom:.9rem;align-self:flex-start}
+
+/* "Most popular" reads as a chip straddling the card edge */
+.plan-tag{
+  background:var(--surface3) !important;color:var(--text) !important;
+  border:1px solid var(--border2);font-weight:700;padding:.28rem .7rem !important;
+  letter-spacing:.1em;box-shadow:0 3px 10px rgba(0,0,0,.3);
+}
+:root[data-theme="light"] .plan-tag{background:#fff !important;color:var(--text) !important}
+/* the badge carries the name visually; keep the heading for screen readers */
+.sr-name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}

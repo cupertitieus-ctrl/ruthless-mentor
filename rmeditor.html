@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Editor — Ruthless Mentor rework preview</title>
+<meta name="description" content="Preview of the Advanced Editor — write in the document, see what's wrong in the margin, with a line drawn to the exact words.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0b09; --surface:#161310; --surface2:#1c1915; --surface3:#221e19;
+  --border:#2a2420; --border2:#3a332c;
+  --text:#e8e0d6; --text2:#9a8e80; --text3:#5c5246;
+  --accent:#c4956a; --accent2:#d9b489;
+  --accent-bg:rgba(196,149,106,.08); --accent-brd:rgba(196,149,106,.22);
+  --red:#c25a4d; --red-bg:rgba(194,90,77,.10); --red-brd:rgba(194,90,77,.3);
+  --green:#7f9a6b; --green-bg:rgba(127,154,107,.10);
+  --amber:#c9a227; --amber-bg:rgba(201,162,39,.12); --amber-brd:rgba(201,162,39,.35);
+  --blue:#6b8fb0; --blue-bg:rgba(107,143,176,.12); --blue-brd:rgba(107,143,176,.35);
+  --mono:'Courier Prime','Courier New',monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --serif:'Lora',Georgia,serif;
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.ribbon{background:var(--red-bg);border-bottom:1px solid var(--red-brd);color:var(--text2);
+  font-family:var(--mono);font-size:.72rem;text-align:center;padding:.45rem 1rem}
+.ribbon b{color:var(--red);font-weight:700}
+
+nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  gap:1rem;padding:0 1.75rem;height:64px;background:rgba(13,11,9,.85);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.brand{justify-self:start;display:flex;align-items:center;gap:.6rem;font-weight:800}
+.nav-mid{justify-self:center;display:flex;gap:.35rem}
+.nav-mid a{font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;transition:.18s}
+.nav-mid a:hover{color:var(--text);background:var(--surface2)}
+.nav-mid a.on{color:var(--text);background:var(--surface2)}
+.nav-right{justify-self:end;display:flex;align-items:center;gap:.75rem}
+.avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:inherit;
+  font-size:.85rem;font-weight:600;padding:.6rem 1.1rem;border-radius:10px;cursor:pointer;
+  border:1px solid transparent;transition:.18s}
+.btn-primary{background:var(--accent);color:#1a1206}
+.btn-primary:hover{background:var(--accent2)}
+.btn-primary:disabled{background:var(--surface3);color:var(--text3);cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border2)}
+.btn-ghost:hover{background:var(--surface2)}
+.btn-sm{padding:.4rem .75rem;font-size:.78rem}
+
+/* ---------- doc toolbar ---------- */
+.docbar{
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding:.9rem 1.75rem;border-bottom:1px solid var(--border);background:var(--surface);
+  position:sticky;top:64px;z-index:40;
+}
+.doc-id{flex:1;min-width:200px}
+.doc-title{font-size:1rem;font-weight:700;letter-spacing:-.02em}
+.doc-meta{font-family:var(--mono);font-size:.72rem;color:var(--text3);margin-top:.15rem}
+.saved{color:var(--green)}
+.credit-chip{
+  font-family:var(--mono);font-size:.74rem;color:var(--accent);background:var(--accent-bg);
+  border:1px solid var(--accent-brd);padding:.35rem .7rem;border-radius:999px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+
+/* ---------- the workspace ---------- */
+.work{position:relative;max-width:1180px;margin:0 auto;padding:2rem 1.75rem 5rem}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:2.5rem;align-items:start;position:relative}
+
+/* connector layer sits between the two columns */
+#wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible}
+#wires path{fill:none;stroke:var(--border2);stroke-width:1.5;transition:stroke .2s,stroke-width .2s}
+#wires path.hot{stroke:var(--accent);stroke-width:2}
+
+/* ---------- the page ---------- */
+.sheet{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:3rem 3.25rem;box-shadow:0 18px 50px rgba(0,0,0,.35);position:relative;z-index:2;
+}
+.sheet:focus{outline:none}
+.sheet h1{font-family:var(--serif);font-size:1.7rem;font-weight:500;margin-bottom:1.4rem;letter-spacing:-.01em}
+.sheet p{font-family:var(--serif);font-size:1.02rem;line-height:2;margin-bottom:1.1rem;color:var(--text)}
+
+/* ---------- inline marks ---------- */
+mark{background:none;color:inherit;cursor:pointer;border-radius:3px;padding:.05em .1em;
+  transition:background .18s,box-shadow .18s}
+mark.mk-spell{text-decoration:underline wavy var(--red);text-decoration-skip-ink:none;text-underline-offset:4px}
+mark.mk-style{background:var(--amber-bg);box-shadow:inset 0 -2px 0 var(--amber-brd)}
+mark.mk-struct{background:var(--blue-bg);box-shadow:inset 0 -2px 0 var(--blue-brd)}
+mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
+
+/* ---------- margin notes ---------- */
+.notes{display:flex;flex-direction:column;gap:.85rem;position:relative;z-index:2}
+.note{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.95rem 1rem;
+  cursor:pointer;transition:border-color .18s,transform .18s,box-shadow .18s;
+}
+.note:hover{border-color:var(--border2);transform:translateX(-3px)}
+.note.active{border-color:var(--accent-brd);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.note-k{
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  display:inline-block;padding:.15rem .45rem;border-radius:4px;margin-bottom:.55rem;
+}
+.k-spell{color:var(--red);background:var(--red-bg)}
+.k-style{color:var(--amber);background:var(--amber-bg)}
+.k-struct{color:var(--blue);background:var(--blue-bg)}
+.note-q{font-family:var(--serif);font-style:italic;font-size:.86rem;color:var(--text2);
+  border-left:2px solid var(--border2);padding-left:.6rem;margin-bottom:.5rem}
+.note-why{font-size:.83rem;color:var(--text2);line-height:1.6}
+.note-fix{font-size:.83rem;color:var(--text);line-height:1.6;margin-top:.5rem;
+  padding:.5rem .6rem;background:var(--green-bg);border-radius:7px}
+.note-fix b{color:var(--green);font-weight:600}
+.note-acts{display:flex;gap:.4rem;margin-top:.75rem}
+
+.notes-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.9rem}
+.notes-head h2{font-size:.95rem;font-weight:700}
+.notes-head .count{font-family:var(--mono);font-size:.75rem;color:var(--text3)}
+.all-clear{border:1px dashed var(--border2);border-radius:12px;padding:1.5rem 1rem;text-align:center;
+  font-size:.85rem;color:var(--text3);display:none}
+.all-clear.show{display:block}
+
+/* ---------- legend ---------- */
+.legend{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:2rem;padding-top:1.25rem;
+  border-top:1px solid var(--border);font-family:var(--mono);font-size:.72rem;color:var(--text3)}
+.legend span{display:flex;align-items:center;gap:.45rem}
+.sw{width:22px;height:8px;border-radius:3px;display:inline-block}
+.sw-spell{border-bottom:2px wavy solid var(--red);background:transparent;
+  box-shadow:inset 0 -2px 0 var(--red)}
+.sw-style{background:var(--amber-bg);box-shadow:inset 0 -2px 0 var(--amber-brd)}
+.sw-struct{background:var(--blue-bg);box-shadow:inset 0 -2px 0 var(--blue-brd)}
+
+/* ---------- plan gate ---------- */
+.gate{max-width:1180px;margin:0 auto;padding:0 1.75rem}
+.gate-in{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;padding:1.2rem 1.4rem;
+  border:1px solid var(--accent-brd);background:var(--accent-bg);border-radius:14px;margin-top:1.5rem}
+.gate-in p{font-size:.88rem;color:var(--text2);flex:1;min-width:250px}
+.gate-in b{color:var(--text)}
+
+@media(max-width:980px){
+  .cols{grid-template-columns:1fr;gap:1.5rem}
+  #wires{display:none}
+  .sheet{padding:2rem 1.5rem}
+  .nav-mid{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="rmtheme.css">
+<script src="rmtheme.js"></script>
+</head>
+<body>
+
+<div class="ribbon"><b>PREVIEW</b> &nbsp;/rmeditor &mdash; concept only. Nothing is saved or charged.</div>
+
+<nav>
+  <a href="/rmrework" class="brand"><img src="logo.png" alt="ruthlessmentor.com" class="brand-logo"></a>
+  <div class="nav-mid">
+    <a href="/rmrework">Tools</a>
+    <a href="/rmreview">New review</a>
+    <a href="#" class="on">Advanced Editor</a>
+    <a href="/rmdash">Dashboard</a>
+    <a href="/rmrework#pricing">Pricing</a>
+  </div>
+  <div class="nav-right">
+    <a href="/rmdash" class="avatar" title="Account">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+  </div>
+</nav>
+
+<div class="docbar">
+  <div class="doc-id">
+    <div class="doc-title" id="docTitle">The Fox Who Forgot His Hat</div>
+    <div class="doc-meta"><span id="wc">0</span> WORDS &middot; DRAFT 3 &middot; <span class="saved" id="saved">SAVED</span></div>
+  </div>
+  <span class="credit-chip"><span id="credits">5</span> credits</span>
+  <button class="btn btn-ghost btn-sm" id="spellBtn">Spell check: on</button>
+  <button class="btn btn-primary btn-sm" id="checkBtn">Re-check document &mdash; 1 credit</button>
+</div>
+
+<div class="work">
+  <div class="cols" id="cols">
+    <svg id="wires" aria-hidden="true"></svg>
+
+    <!-- the document -->
+    <div class="sheet" id="sheet" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Manuscript">
+      <h1>The Fox Who Forgot His Hat</h1>
+      <p>The little blue fox went running down the hill, <mark class="mk-style" data-n="n1">and he did not ever stop, and he never will.</mark></p>
+      <p>He lost his hat on Tuesday in a puddle by the tree, and everybody told him it was <mark class="mk-spell" data-n="n2">gonne</mark> into the sea.</p>
+      <p><mark class="mk-struct" data-n="n3">The fox was very sad about the hat because it was his favourite hat and he had owned it for a long time and it kept his ears warm in the winter.</mark></p>
+      <p>So he packed a little bag and he walked down to the shore, and he asked the crashing waves if they had seen it <mark class="mk-spell" data-n="n4">therre</mark> before.</p>
+      <p>The waves said nothing back to him. The waves just rolled and rolled. And the fox sat down beside them <mark class="mk-style" data-n="n5">feeling very sad and cold.</mark></p>
+    </div>
+
+    <!-- the margin -->
+    <div>
+      <div class="notes-head">
+        <h2>What's wrong</h2>
+        <span class="count"><span id="openCount">5</span> OPEN</span>
+      </div>
+      <div class="notes" id="notes">
+
+        <div class="note" data-n="n1">
+          <span class="note-k k-style">METER</span>
+          <div class="note-q">"and he did not ever stop, and he never will"</div>
+          <div class="note-why">13 beats against the 11 you set in the first half. Read it aloud &mdash; the stumble is on <em>did not ever</em>.</div>
+          <div class="note-fix"><b>Try:</b> and he never stopped, and he never will</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="and he never stopped, and he never will">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="note" data-n="n2">
+          <span class="note-k k-spell">SPELLING</span>
+          <div class="note-q">"gonne"</div>
+          <div class="note-why">Not a word. You likely meant <em>gone</em>.</div>
+          <div class="note-fix"><b>Try:</b> gone</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="gone">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="note" data-n="n3">
+          <span class="note-k k-struct">PAGE TURN</span>
+          <div class="note-q">"The fox was very sad about the hat because&hellip;"</div>
+          <div class="note-why">This spread explains instead of showing, and it's 29 words where a picture book wants about 12. Nothing here makes a child want to turn the page &mdash; and the illustrator has nothing to draw.</div>
+          <div class="note-fix"><b>Try:</b> The fox sat down. The hat had been his since he was small.</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="The fox sat down. The hat had been his since he was small.">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="note" data-n="n4">
+          <span class="note-k k-spell">SPELLING</span>
+          <div class="note-q">"therre"</div>
+          <div class="note-why">Not a word. You likely meant <em>there</em>.</div>
+          <div class="note-fix"><b>Try:</b> there</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="there">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="note" data-n="n5">
+          <span class="note-k k-style">TELLING</span>
+          <div class="note-q">"feeling very sad and cold"</div>
+          <div class="note-why">You're naming the emotion instead of letting the picture carry it. In a picture book this is the illustrator's half of the page.</div>
+          <div class="note-fix"><b>Try:</b> with his tail wrapped round his feet</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="with his tail wrapped round his feet">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="all-clear" id="allClear">Nothing left flagged.<br>Re-check the document when you've written more.</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw sw-spell"></i> Spelling &mdash; free, instant</span>
+    <span><i class="sw sw-style"></i> Meter &amp; telling</span>
+    <span><i class="sw sw-struct"></i> Structure &amp; page turns</span>
+  </div>
+</div>
+
+<div class="gate">
+  <div class="gate-in">
+    <p><b>Advanced Editor</b> comes with the Writer plan and above. Spell check runs free as you type; a full re-check reads the whole manuscript and costs <b>1 credit</b>.</p>
+    <a href="/rmrework#pricing" class="btn btn-primary btn-sm">See plans</a>
+  </div>
+</div>
+
+<script>
+var sheet = document.getElementById('sheet');
+var notes = document.getElementById('notes');
+var wires = document.getElementById('wires');
+var cols  = document.getElementById('cols');
+
+/* ---------- word count + save state ---------- */
+function countWords(){
+  var t = sheet.innerText.replace(/\s+/g,' ').trim();
+  document.getElementById('wc').textContent = t ? t.split(' ').length : 0;
+}
+var saveTimer;
+sheet.addEventListener('input', function(){
+  countWords();
+  var s = document.getElementById('saved');
+  s.textContent = 'SAVING…'; s.style.color = 'var(--text3)';
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){ s.textContent = 'SAVED'; s.style.color = ''; }, 700);
+  drawWires();
+});
+countWords();
+
+/* ---------- connector lines ----------
+   A line is drawn from the right edge of each highlighted phrase to the
+   left edge of its note, so it's obvious which words a comment is about. */
+function drawWires(){
+  if (window.innerWidth <= 980) { wires.innerHTML = ''; return; }
+  var box = cols.getBoundingClientRect();
+  wires.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+  wires.setAttribute('width', box.width);
+  wires.setAttribute('height', box.height);
+  var out = '';
+  var live = notes.querySelectorAll('.note');
+  for (var i = 0; i < live.length; i++) {
+    var note = live[i];
+    var id = note.dataset.n;
+    var mk = sheet.querySelector('mark[data-n="' + id + '"]');
+    if (!mk) continue;
+    var m = mk.getBoundingClientRect(), n = note.getBoundingClientRect();
+    var x1 = m.right - box.left, y1 = m.top + m.height / 2 - box.top;
+    var x2 = n.left - box.left,  y2 = n.top + 22 - box.top;
+    var mid = x1 + (x2 - x1) / 2;
+    out += '<path d="M ' + x1 + ' ' + y1 + ' C ' + mid + ' ' + y1 + ', ' + mid + ' ' + y2 + ', ' + x2 + ' ' + y2 +
+           '" data-n="' + id + '"' + (note.classList.contains('active') ? ' class="hot"' : '') + '/>';
+  }
+  wires.innerHTML = out;
+}
+
+/* ---------- linking a mark to its note ---------- */
+function setActive(id){
+  sheet.querySelectorAll('mark').forEach(function(m){ m.classList.toggle('active', m.dataset.n === id); });
+  notes.querySelectorAll('.note').forEach(function(n){ n.classList.toggle('active', n.dataset.n === id); });
+  drawWires();
+}
+
+sheet.addEventListener('click', function(e){
+  var mk = e.target.closest('mark');
+  if (!mk) return;
+  setActive(mk.dataset.n);
+  var note = notes.querySelector('.note[data-n="' + mk.dataset.n + '"]');
+  if (note) note.scrollIntoView({block:'nearest', behavior:'smooth'});
+});
+
+notes.addEventListener('click', function(e){
+  var note = e.target.closest('.note');
+  if (!note) return;
+
+  if (e.target.classList.contains('act-fix')) {
+    var mk = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
+    if (mk) {
+      var text = document.createTextNode(e.target.dataset.fix);
+      mk.parentNode.replaceChild(text, mk);
+    }
+    resolve(note);
+    countWords();
+    return;
+  }
+  if (e.target.classList.contains('act-dismiss')) {
+    var m2 = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
+    if (m2) { // keep the words, drop the highlight
+      while (m2.firstChild) m2.parentNode.insertBefore(m2.firstChild, m2);
+      m2.parentNode.removeChild(m2);
+    }
+    resolve(note);
+    return;
+  }
+  setActive(note.dataset.n);
+});
+
+function resolve(note){
+  note.remove();
+  var left = notes.querySelectorAll('.note').length;
+  document.getElementById('openCount').textContent = left;
+  document.getElementById('allClear').classList.toggle('show', left === 0);
+  drawWires();
+}
+
+/* ---------- spell check switch ---------- */
+var spellOn = true;
+document.getElementById('spellBtn').addEventListener('click', function(){
+  spellOn = !spellOn;
+  sheet.setAttribute('spellcheck', spellOn ? 'true' : 'false');
+  this.textContent = 'Spell check: ' + (spellOn ? 'on' : 'off');
+});
+
+/* ---------- a full re-check spends a credit ---------- */
+document.getElementById('checkBtn').addEventListener('click', function(){
+  var el = document.getElementById('credits');
+  var n = Number(el.textContent);
+  if (n <= 0) { this.textContent = 'Out of credits'; this.disabled = true; return; }
+  var btn = this;
+  btn.disabled = true; btn.textContent = 'Reading the whole draft…';
+  setTimeout(function(){
+    el.textContent = n - 1;
+    btn.disabled = false;
+    btn.textContent = 'Re-check document — 1 credit';
+    var left = notes.querySelectorAll('.note').length;
+    document.getElementById('allClear').classList.toggle('show', left === 0);
+  }, 1600);
+});
+
+window.addEventListener('resize', drawWires);
+window.addEventListener('scroll', drawWires, {passive:true});
+window.addEventListener('load', drawWires);
+setTimeout(drawWires, 200);
+drawWires();
+</script>
+</body>
+</html>
