@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruthless Mentor — rework preview</title>
+<meta name="description" content="Preview of the reworked ruthlessmentor.com — new navigation, mascot, animated reports, and credit pricing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0b09; --surface:#161310; --surface2:#1c1915; --surface3:#221e19;
+  --border:#2a2420; --border2:#3a332c;
+  --text:#e8e0d6; --text2:#9a8e80; --text3:#5c5246;
+  --accent:#c4956a; --accent2:#d9b489;
+  --accent-bg:rgba(196,149,106,.08); --accent-brd:rgba(196,149,106,.22);
+  --red:#c25a4d; --red-bg:rgba(194,90,77,.10); --red-brd:rgba(194,90,77,.3);
+  --green:#7f9a6b; --green-bg:rgba(127,154,107,.10);
+  --mono:'Courier Prime','Courier New',monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* Soft vignette instead of an SVG-filter grain — a full-viewport feTurbulence
+   layer is expensive enough to stall compositing on slower machines. */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:radial-gradient(ellipse 90% 70% at 50% 40%,transparent 55%,rgba(0,0,0,.35) 100%);
+}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* ---------- preview ribbon ---------- */
+.ribbon{
+  background:var(--red-bg);border-bottom:1px solid var(--red-brd);color:var(--text2);
+  font-family:var(--mono);font-size:.72rem;text-align:center;padding:.45rem 1rem;
+  position:relative;z-index:60;
+}
+.ribbon b{color:var(--red);font-weight:700}
+
+/* ---------- nav ---------- */
+nav{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:1.5rem;
+  padding:0 1.75rem;height:64px;background:rgba(13,11,9,.82);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em;font-size:1rem;flex:none}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red);flex:none}
+.nav-mid{display:flex;align-items:center;gap:.35rem;margin-left:.75rem}
+.nav-mid > a,.dd > button{
+  font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;
+  background:none;border:none;font-family:inherit;cursor:pointer;display:flex;
+  align-items:center;gap:.35rem;transition:color .18s,background .18s;
+}
+.nav-mid > a:hover,.dd > button:hover{color:var(--text);background:var(--surface2)}
+.nav-mid > a.active{color:var(--text)}
+.nav-mid > a.active::after{
+  content:"";display:block;position:absolute;margin-top:1.5rem;width:18px;height:2px;
+  background:var(--accent);border-radius:2px;
+}
+.dd{position:relative}
+.dd-panel{
+  position:absolute;top:calc(100% + 10px);left:0;min-width:290px;background:var(--surface);
+  border:1px solid var(--border2);border-radius:12px;padding:.4rem;
+  box-shadow:0 18px 40px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(-6px);
+  transition:opacity .18s,transform .18s,visibility .18s;
+}
+.dd.open .dd-panel{opacity:1;visibility:visible;transform:translateY(0)}
+.dd-panel a{display:block;padding:.6rem .7rem;border-radius:8px;transition:background .15s}
+.dd-panel a:hover{background:var(--surface3)}
+.dd-panel .t{font-size:.86rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
+.dd-panel .d{font-size:.75rem;color:var(--text3);margin-top:.1rem}
+.free-tag{
+  font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.08em;
+  color:var(--green);background:var(--green-bg);padding:.1rem .35rem;border-radius:4px;
+}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
+.credit-pill{
+  display:flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.76rem;
+  color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);
+  padding:.35rem .7rem;border-radius:999px;font-variant-numeric:tabular-nums;
+}
+.credit-pill .d{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.avatar{
+  width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);
+  background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:border-color .18s;
+}
+.avatar:hover{border-color:var(--accent-brd)}
+.nav-burger{display:none;margin-left:auto;background:none;border:none;cursor:pointer;padding:.4rem;flex-direction:column;gap:4px}
+.nav-burger span{display:block;width:20px;height:1.5px;background:var(--text2)}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  font-family:inherit;font-size:.88rem;font-weight:600;padding:.72rem 1.3rem;
+  border-radius:10px;cursor:pointer;border:1px solid transparent;transition:transform .15s,background .18s,border-color .18s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:#1a1206;box-shadow:0 6px 26px rgba(196,149,106,.22)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border2)}
+.btn-ghost:hover{border-color:var(--text3);background:var(--surface2)}
+.btn-sm{padding:.5rem .9rem;font-size:.8rem}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.75rem}
+section{padding:5rem 0;position:relative;z-index:2}
+.eyebrow{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1rem;
+}
+h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:900;letter-spacing:-.04em;line-height:1.02;text-wrap:balance}
+h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:800;letter-spacing:-.032em;line-height:1.1;text-wrap:balance}
+h3{font-size:1rem;font-weight:600}
+.lede{color:var(--text2);font-size:1.02rem;max-width:56ch;line-height:1.7}
+.center{text-align:center;margin-left:auto;margin-right:auto}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:4.5rem 0 4rem;
+  background:radial-gradient(ellipse 70% 60% at 22% 0%,rgba(196,149,106,.10),transparent 68%);
+}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
+.hero h1{max-width:13ch}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lede{margin:1.4rem 0 2rem}
+.hero-cta{display:flex;gap:.7rem;flex-wrap:wrap}
+.hero-meta{
+  display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.8rem;padding-top:1.5rem;
+  border-top:1px solid var(--border);font-family:var(--mono);font-size:.76rem;color:var(--text3);
+}
+.hero-meta b{color:var(--text2);font-weight:400}
+
+/* ---------- mascot ---------- */
+.mascot-stage{display:flex;align-items:center;justify-content:center;position:relative}
+.mascot-stage::after{
+  content:"";position:absolute;width:190px;height:26px;border-radius:50%;bottom:26px;
+  background:rgba(0,0,0,.45);filter:blur(16px);
+}
+.mascot{width:min(300px,80%);height:auto;position:relative;z-index:2;animation:bob 4.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(2deg)}}
+.blink{animation:blink 5.2s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+.mascot-name{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.74rem;color:var(--text3);
+}
+.mascot-name b{color:var(--red);font-weight:700}
+
+/* ---------- report demo ---------- */
+.report-demo{
+  background:var(--surface);border:1px solid var(--border2);border-radius:18px;
+  overflow:hidden;box-shadow:0 26px 70px rgba(0,0,0,.5);
+}
+.rd-bar{
+  display:flex;align-items:center;gap:.5rem;padding:.85rem 1.1rem;
+  border-bottom:1px solid var(--border);background:var(--surface2);
+}
+.rd-dot{width:10px;height:10px;border-radius:50%;background:var(--border2)}
+.rd-title{font-family:var(--mono);font-size:.76rem;color:var(--text3);margin-left:.6rem}
+.rd-body{padding:2rem 1.75rem}
+.rd-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1.5rem;flex-wrap:wrap}
+.rd-book{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
+.rd-sub{font-family:var(--mono);font-size:.75rem;color:var(--text3);margin-top:.2rem}
+
+/* grade stamp */
+.stamp{
+  flex:none;width:96px;height:96px;border-radius:50%;border:3px solid var(--red);
+  color:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-weight:900;transform:rotate(-14deg) scale(2.4);opacity:0;
+}
+.stamp.hit{animation:stampin .5s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes stampin{to{transform:rotate(-14deg) scale(1);opacity:.92}}
+.stamp .g{font-size:2.5rem;line-height:1;letter-spacing:-.05em}
+.stamp .l{font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;margin-top:.15rem}
+
+/* score bars */
+.scores{display:flex;flex-direction:column;gap:1.15rem;margin-top:2rem}
+.score .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.45rem}
+.score .lab{font-size:.86rem;font-weight:600}
+.score .val{font-family:var(--mono);font-size:.9rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.track{height:7px;border-radius:99px;background:var(--surface3);overflow:hidden}
+.fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--accent));transition:width 1.3s cubic-bezier(.2,.7,.2,1)}
+.callout{
+  margin-top:1.75rem;padding:1rem 1.15rem;border-left:3px solid var(--red);
+  background:var(--red-bg);border-radius:0 8px 8px 0;
+}
+.callout .k{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;color:var(--red);margin-bottom:.35rem}
+.callout p{font-size:.88rem;color:var(--text2);line-height:1.65}
+.replay{margin-top:1.5rem}
+
+/* ---------- feature cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:2.5rem}
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.4rem;transition:border-color .2s,transform .2s;
+}
+.card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.card .n{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.1em;margin-bottom:.7rem}
+.card p{font-size:.85rem;color:var(--text2);margin-top:.35rem;line-height:1.6}
+
+/* ---------- loyalty ---------- */
+.loyalty{
+  background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:2rem 1.9rem;
+  display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;
+}
+.pips{display:flex;gap:.6rem;margin-top:1.2rem}
+.pip{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+  font-size:.8rem;color:var(--text3);
+}
+.pip.done{background:var(--accent-bg);border-color:var(--accent-brd);color:var(--accent)}
+.pip.next{border-style:dashed;border-color:var(--accent-brd)}
+.loyalty-prize{
+  text-align:center;padding:1.2rem 1.5rem;border:1px dashed var(--accent-brd);
+  border-radius:12px;background:var(--accent-bg);
+}
+.loyalty-prize .big{font-size:1.5rem;font-weight:800;color:var(--accent);letter-spacing:-.02em}
+.loyalty-prize .sm{font-family:var(--mono);font-size:.7rem;color:var(--text3);margin-top:.2rem}
+
+/* ---------- pricing ---------- */
+.packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2.5rem}
+.pack{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.5rem 1.3rem;text-align:center;position:relative;transition:border-color .2s,transform .2s;
+}
+.pack:hover{transform:translateY(-3px)}
+.pack.best{border-color:var(--accent-brd);background:linear-gradient(180deg,var(--accent-bg),var(--surface))}
+.pack .qty{font-family:var(--mono);font-size:.72rem;color:var(--text3);letter-spacing:.12em}
+.pack .price{font-size:2.1rem;font-weight:800;letter-spacing:-.03em;margin:.4rem 0 .1rem}
+.pack .each{font-family:var(--mono);font-size:.76rem;color:var(--accent);font-variant-numeric:tabular-nums}
+.pack .save{
+  display:inline-block;margin-top:.7rem;font-family:var(--mono);font-size:.64rem;
+  letter-spacing:.1em;color:var(--green);background:var(--green-bg);padding:.18rem .45rem;border-radius:4px;
+}
+.pack .btn{margin-top:1.2rem;width:100%}
+.tag{
+  position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:#1a1206;background:var(--accent);
+  padding:.2rem .55rem;border-radius:4px;white-space:nowrap;
+}
+.sub-card{
+  margin-top:1.5rem;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);
+  padding:1.7rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;
+}
+.sub-card ul{list-style:none;display:flex;flex-direction:column;gap:.45rem;margin-top:.9rem}
+.sub-card li{font-size:.85rem;color:var(--text2);display:flex;gap:.55rem;align-items:flex-start}
+.sub-card li::before{content:"+";color:var(--accent);font-family:var(--mono);flex:none}
+.sub-price{text-align:right}
+.sub-price .p{font-size:2.3rem;font-weight:800;letter-spacing:-.03em}
+.sub-price .u{font-family:var(--mono);font-size:.74rem;color:var(--text3)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-index:2}
+.foot{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:center;
+  font-family:var(--mono);font-size:.75rem;color:var(--text3)}
+.foot a{color:var(--text3)}
+.foot a:hover{color:var(--accent)}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+
+@media(max-width:880px){
+  .hero-grid{grid-template-columns:1fr;gap:2rem}
+  .mascot-stage{order:-1}
+  .nav-mid{display:none}
+  .nav-burger{display:flex}
+  .credit-pill{display:none}
+  .loyalty,.sub-card{grid-template-columns:1fr}
+  .sub-price{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition-duration:.01ms!important}
+  .rv{opacity:1;transform:none}
+  .stamp{opacity:.92;transform:rotate(-14deg) scale(1)}
+}
+</style>
+</head>
+<body>
+
+<div class="ribbon"><b>PREVIEW</b> &nbsp;/rmrework &mdash; concept only. ruthlessmentor.com is untouched. Numbers and balances below are sample data.</div>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <a href="#" class="brand"><span class="dot"></span> ruthless mentor</a>
+  <div class="nav-mid">
+    <div class="dd" id="dd">
+      <button aria-expanded="false" aria-haspopup="true">Tools
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
+      </button>
+      <div class="dd-panel">
+        <a href="#report"><span class="t">Manuscript Review</span><span class="d">Full 8-part report &middot; 1 credit</span></a>
+        <a href="#pricing"><span class="t">Cover Check <i class="free-tag">FREE</i></span><span class="d">Instant score, no account needed</span></a>
+        <a href="#pricing"><span class="t">Description Maker</span><span class="d">A ready-to-paste blurb from your book</span></a>
+      </div>
+    </div>
+    <a href="#pricing">Pricing</a>
+    <a href="#report">Sample report</a>
+    <a href="#story">About</a>
+  </div>
+  <div class="nav-right">
+    <span class="credit-pill" title="Your credit balance"><span class="d"></span> 3 credits</span>
+    <a href="#pricing" class="btn btn-primary btn-sm">New review</a>
+    <div class="avatar" title="Account">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+  </div>
+  <button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow rv">Honest feedback in about three minutes</p>
+      <h1 class="rv d1">Everyone says it's great. <em>One of us won't.</em></h1>
+      <p class="lede rv d2">Paste your manuscript. Get a report that names what's broken, quotes the line it broke on, and tells you how to fix it &mdash; before you pay an illustrator, an editor, or a printer.</p>
+      <div class="hero-cta rv d3">
+        <a href="#pricing" class="btn btn-primary">Review my manuscript</a>
+        <a href="#report" class="btn btn-ghost">See a real report</a>
+      </div>
+      <div class="hero-meta rv d3">
+        <span><b>No subscription required</b></span>
+        <span><b>Rhyming &amp; non-rhyming</b></span>
+        <span><b>Never trained on</b></span>
+      </div>
+    </div>
+    <div class="mascot-stage rv d2">
+      <!-- NIB — the red pencil mentor -->
+      <svg class="mascot" viewBox="0 0 200 300" role="img" aria-label="Nib, the red pencil mascot">
+        <defs>
+          <linearGradient id="barrel" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#a8483d"/><stop offset=".45" stop-color="#c25a4d"/>
+            <stop offset=".7" stop-color="#d4695b"/><stop offset="1" stop-color="#9e4238"/>
+          </linearGradient>
+          <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#c9a274"/><stop offset=".5" stop-color="#e5c79b"/><stop offset="1" stop-color="#b88f60"/>
+          </linearGradient>
+        </defs>
+        <!-- eraser -->
+        <rect x="66" y="14" width="68" height="30" rx="14" fill="#e3a9a0"/>
+        <!-- ferrule -->
+        <rect x="64" y="40" width="72" height="20" rx="4" fill="#c4956a"/>
+        <rect x="64" y="46" width="72" height="3" fill="#9c7248" opacity=".55"/>
+        <rect x="64" y="53" width="72" height="3" fill="#9c7248" opacity=".55"/>
+        <!-- barrel -->
+        <rect x="64" y="58" width="72" height="150" fill="url(#barrel)"/>
+        <!-- wooden tip -->
+        <polygon points="64,208 136,208 100,262" fill="url(#wood)"/>
+        <!-- graphite -->
+        <polygon points="88,244 112,244 100,262" fill="#3a332c"/>
+        <!-- face -->
+        <g class="blink" style="transform-origin:100px 118px">
+          <ellipse cx="84" cy="118" rx="10" ry="11" fill="#fff"/>
+          <ellipse cx="116" cy="118" rx="10" ry="11" fill="#fff"/>
+          <circle cx="86" cy="120" r="4.6" fill="#241d18"/>
+          <circle cx="118" cy="120" r="4.6" fill="#241d18"/>
+        </g>
+        <!-- the skeptical brow — this is the whole personality -->
+        <path d="M73 100 q11 -9 22 -3" stroke="#241d18" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M107 96 q11 -3 21 4" stroke="#241d18" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <!-- unimpressed mouth -->
+        <path d="M86 148 q14 -6 28 0" stroke="#241d18" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <!-- arms, crossed -->
+        <path d="M64 170 q-22 8 -6 20" stroke="#9e4238" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M136 170 q22 8 6 20" stroke="#9e4238" stroke-width="9" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="mascot-name">meet <b>Nib</b> &mdash; he has notes</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REPORT DEMO ============ -->
+<section id="report">
+  <div class="wrap">
+    <p class="eyebrow rv">The report</p>
+    <h2 class="rv d1">Scores land. Grades get stamped.</h2>
+    <p class="lede rv d2" style="margin-top:.9rem;margin-bottom:2.5rem">The report is the product, so it should feel like something arriving &mdash; not a wall of text appearing. Scroll it into view and it plays.</p>
+
+    <div class="report-demo rv d2">
+      <div class="rd-bar">
+        <span class="rd-dot"></span><span class="rd-dot"></span><span class="rd-dot"></span>
+        <span class="rd-title">report.html?id=8f2c&hellip;</span>
+      </div>
+      <div class="rd-body">
+        <div class="rd-head">
+          <div>
+            <div class="rd-book">The Fox Who Forgot His Hat</div>
+            <div class="rd-sub">Picture book &middot; rhyming &middot; 512 words</div>
+          </div>
+          <div class="stamp" id="stamp"><span class="g">B&minus;</span><span class="l">OVERALL</span></div>
+        </div>
+
+        <div class="scores" id="scores">
+          <div class="score">
+            <div class="top"><span class="lab">Author's Voice</span><span class="val" data-count="7.5">0.0</span></div>
+            <div class="track"><span class="fill" data-w="75"></span></div>
+          </div>
+          <div class="score">
+            <div class="top"><span class="lab">Meter &amp; Scansion</span><span class="val" data-count="6.0">0.0</span></div>
+            <div class="track"><span class="fill" data-w="60"></span></div>
+          </div>
+          <div class="score">
+            <div class="top"><span class="lab">Page-Turn Power</span><span class="val" data-count="8.5">0.0</span></div>
+            <div class="track"><span class="fill" data-w="85"></span></div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="k">FIX &mdash; LINE 14</div>
+          <p>"and he did not ever stop, and he never will" runs 13 beats against the 11 you set on line 13. Read it aloud and you'll hear the stumble on <em>did not ever</em>. Cut to "and he never stopped, and he never will" &mdash; 11 beats, same meaning, and it keeps your AABB scheme intact.</p>
+        </div>
+
+        <button class="btn btn-ghost btn-sm replay" id="replay">Replay animation</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT YOU GET ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow rv">What's in it</p>
+    <h2 class="rv d1">Eight parts. No shortcuts.</h2>
+    <div class="grid">
+      <div class="card rv"><div class="n">01</div><h3>First Impressions</h3><p>The gut reaction, before the analysis. What landed and what made him stop reading.</p></div>
+      <div class="card rv d1"><div class="n">02</div><h3>Page-Turn Power</h3><p>Every spread checked: does it earn the turn, or does it read like continuous prose?</p></div>
+      <div class="card rv d2"><div class="n">03</div><h3>Meter &amp; Scansion</h3><p>Your rhyme scheme identified first, then every line checked against it. Fixes come back in your scheme.</p></div>
+      <div class="card rv d3"><div class="n">04</div><h3>Repeat Words</h3><p>"Sharp" fourteen times in twenty pages? All fourteen, counted and located.</p></div>
+      <div class="card rv"><div class="n">05</div><h3>Character Grades</h3><p>A through F on motivation, backstory, voice, and arc &mdash; for every character who matters.</p></div>
+      <div class="card rv d1"><div class="n">06</div><h3>Line-Level Callouts</h3><p>Specific passages, quoted exactly, each with the reason it fails and a rewrite that doesn't.</p></div>
+      <div class="card rv d2"><div class="n">07</div><h3>Room for the Art</h3><p>Where you're describing what an illustrator should be showing &mdash; and where you've left them nothing.</p></div>
+      <div class="card rv d3"><div class="n">08</div><h3>Final Verdict</h3><p>The honest answer to the question you actually came with: is this ready?</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOYALTY ============ -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow rv">Coming back</p>
+    <h2 class="rv d1">Every third review is free.</h2>
+    <p class="lede rv d2" style="margin-top:.9rem;margin-bottom:2.2rem">Set at three, not ten &mdash; because that's where writers actually are. The counter sits in your dashboard so you always know how close you are.</p>
+    <div class="loyalty rv d2">
+      <div>
+        <h3 style="font-size:1.05rem">Your progress</h3>
+        <p style="font-size:.87rem;color:var(--text2);margin-top:.3rem">Two down. One more and the next one's on us.</p>
+        <div class="pips">
+          <span class="pip done">&#10003;</span>
+          <span class="pip done">&#10003;</span>
+          <span class="pip next">3</span>
+        </div>
+      </div>
+      <div class="loyalty-prize">
+        <div class="big">Free</div>
+        <div class="sm">REVIEW UNLOCKED AT 3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing">
+  <div class="wrap">
+    <p class="eyebrow rv">Pricing</p>
+    <h2 class="rv d1">One review is $15. Buying ahead costs less.</h2>
+    <p class="lede rv d2" style="margin-top:.9rem">A credit is one full review, any length. Buy one to try it, or buy a few and skip the checkout every time.</p>
+
+    <div class="packs">
+      <div class="pack rv">
+        <div class="qty">1 CREDIT</div>
+        <div class="price">$15</div>
+        <div class="each">$15 per review</div>
+        <a href="#" class="btn btn-ghost">Buy one</a>
+      </div>
+      <div class="pack best rv d1">
+        <span class="tag">MOST POPULAR</span>
+        <div class="qty">3 CREDITS</div>
+        <div class="price">$39</div>
+        <div class="each">$13 per review</div>
+        <span class="save">SAVE 13%</span>
+        <a href="#" class="btn btn-primary">Buy 3</a>
+      </div>
+      <div class="pack rv d2">
+        <div class="qty">5 CREDITS</div>
+        <div class="price">$60</div>
+        <div class="each">$12 per review</div>
+        <span class="save">SAVE 20%</span>
+        <a href="#" class="btn btn-ghost">Buy 5</a>
+      </div>
+      <div class="pack rv d3">
+        <div class="qty">10 CREDITS</div>
+        <div class="price">$110</div>
+        <div class="each">$11 per review</div>
+        <span class="save">SAVE 27%</span>
+        <a href="#" class="btn btn-ghost">Buy 10</a>
+      </div>
+    </div>
+
+    <div class="sub-card rv d2">
+      <div>
+        <p class="eyebrow" style="margin-bottom:.5rem">Or subscribe</p>
+        <h3 style="font-size:1.3rem;letter-spacing:-.02em">The Writer plan</h3>
+        <ul>
+          <li>2 credits every month</li>
+          <li>Unused credits roll over, up to 12</li>
+          <li>Revision tracking &mdash; watch a manuscript's scores climb draft over draft</li>
+          <li>Cancel from your account in one click</li>
+        </ul>
+      </div>
+      <div class="sub-price">
+        <div class="p">$29</div>
+        <div class="u">PER MONTH &middot; $14.50 A REVIEW</div>
+        <a href="#" class="btn btn-primary" style="margin-top:1rem">Start the plan</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STORY ============ -->
+<section id="story">
+  <div class="wrap" style="max-width:660px">
+    <p class="eyebrow rv">Why this exists</p>
+    <h2 class="rv d1">Everyone told me my book was amazing.</h2>
+    <div class="lede rv d2" style="margin-top:1.2rem;display:flex;flex-direction:column;gap:1rem">
+      <p>When I was writing my first chapter book, everyone told me it was great. Friends, family, everyone. And I believed them &mdash; of course I did. It was my first book.</p>
+      <p>Then one guy I met in public told me it had no plot. Not to be mean. Just honest. I had to rewrite the whole thing.</p>
+      <p>I wasn't mad at him. I was mad that I'd spent months hearing "it's great!" from everyone around me, and a stranger was the first person to tell me the truth.</p>
+      <p style="color:var(--text);font-weight:500">That's what this is. The stranger, on demand, before you've spent the money.</p>
+      <p style="font-family:var(--mono);font-size:.8rem;color:var(--text3)">&mdash; Ryan</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>&copy; 2026 ruthlessmentor.com</span>
+    <span><a href="/privacy.html">Privacy</a> &nbsp;&middot;&nbsp; <a href="/terms.html">Terms</a> &nbsp;&middot;&nbsp; <a href="/contact.html">Contact</a></span>
+  </div>
+</footer>
+
+<script>
+// ---- scroll reveal ----
+var io = new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+// ---- tools dropdown: click to open, no hover dead zone ----
+var dd = document.getElementById('dd');
+var ddBtn = dd.querySelector('button');
+ddBtn.addEventListener('click', function(e){
+  e.stopPropagation();
+  var open = dd.classList.toggle('open');
+  ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+document.addEventListener('click', function(){
+  dd.classList.remove('open'); ddBtn.setAttribute('aria-expanded','false');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){ dd.classList.remove('open'); ddBtn.setAttribute('aria-expanded','false'); }
+});
+
+// ---- report animation ----
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function playReport(){
+  var stamp = document.getElementById('stamp');
+  stamp.classList.remove('hit');
+  void stamp.offsetWidth;                       // restart the animation
+  document.querySelectorAll('#scores .fill').forEach(function(f){ f.style.width = '0'; });
+  document.querySelectorAll('#scores .val').forEach(function(v){ v.textContent = '0.0'; });
+
+  if(reduce){
+    stamp.classList.add('hit');
+    document.querySelectorAll('#scores .fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; });
+    document.querySelectorAll('#scores .val').forEach(function(v){ v.textContent = Number(v.dataset.count).toFixed(1); });
+    return;
+  }
+
+  document.querySelectorAll('#scores .score').forEach(function(row, i){
+    setTimeout(function(){
+      var fill = row.querySelector('.fill');
+      var val  = row.querySelector('.val');
+      fill.style.width = fill.dataset.w + '%';
+      var target = Number(val.dataset.count), start = performance.now(), dur = 1300;
+      (function tick(now){
+        var p = Math.min((now - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        val.textContent = (target * eased).toFixed(1);
+        if(p < 1) requestAnimationFrame(tick);
+      })(start);
+    }, i * 220);
+  });
+
+  setTimeout(function(){ stamp.classList.add('hit'); }, 1000);
+}
+
+var demo = document.querySelector('.report-demo');
+var demoIO = new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ playReport(); demoIO.unobserve(e.target); } });
+}, {threshold:.35});
+demoIO.observe(demo);
+document.getElementById('replay').addEventListener('click', playReport);
+</script>
+</body>
+</html>

@@ -141,6 +141,12 @@ app.get(['/version3', '/v3'], (req, res) => {
 app.get(['/creditsystem', '/credits'], (req, res) => {
   res.sendFile(path.join(__dirname, 'creditsystem.html'));
 });
+app.get(['/picturebook', '/pb'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'picturebook.html'));
+});
+app.get(['/rmrework', '/rework'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'rmrework.html'));
+});
 
 // Anthropic client
 const client = new Anthropic();
