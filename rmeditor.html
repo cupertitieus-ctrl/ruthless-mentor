@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advanced Editor — Ruthless Mentor rework preview</title>
-<meta name="description" content="Preview of the Advanced Editor — write in the document, with spelling, grammar, meter and structure flagged in a side panel and a line drawn to the exact words.">
+<meta name="description" content="Preview of the Advanced Editor — write in the document, with spelling, grammar, meter and structure flagged in a side panel and a Show me button that jumps to the exact words.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -71,9 +71,9 @@ nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto
 /* ---------- workspace ---------- */
 .work{position:relative;max-width:1240px;margin:0 auto;padding:1.75rem 1.75rem 4rem}
 .cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:2.25rem;align-items:start;position:relative}
-#wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible}
-#wires path{fill:none;stroke:var(--border2);stroke-width:1.5;transition:stroke .2s,stroke-width .2s}
-#wires path.hot{stroke:var(--accent);stroke-width:2}
+/* Pasted content keeps its own fonts, sizes and colours: the inline styles
+   that come with it outrank the defaults below, which apply only to text
+   typed fresh. Nothing here needs to force that — just don't undo it. */
 
 .sheet{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:3rem 3.25rem;box-shadow:0 18px 50px rgba(0,0,0,.35);position:relative;z-index:2}
@@ -89,6 +89,22 @@ mark.mk-grammar{text-decoration:underline wavy var(--violet);text-decoration-ski
 mark.mk-style{background:var(--amber-bg);box-shadow:inset 0 -2px 0 var(--amber-brd)}
 mark.mk-struct{background:var(--blue-bg);box-shadow:inset 0 -2px 0 var(--blue-brd)}
 mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
+mark.flash{animation:flash 1.5s ease-out}
+@keyframes flash{
+  0%,100%{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
+  15%,55%{background:rgba(196,149,106,.42);box-shadow:0 0 0 5px rgba(196,149,106,.22)}
+}
+
+/* export menu */
+.exp{position:relative}
+.exp-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:210px;background:var(--surface);
+  border:1px solid var(--border2);border-radius:11px;padding:.35rem;z-index:60;
+  box-shadow:0 16px 38px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(-6px);transition:.16s}
+.exp.open .exp-menu{opacity:1;visibility:visible;transform:none}
+.exp-menu button{display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;
+  font-family:inherit;color:var(--text);font-size:.84rem;padding:.55rem .65rem;border-radius:8px}
+.exp-menu button:hover{background:var(--surface3)}
+.exp-menu button small{display:block;color:var(--text3);font-size:.72rem;font-family:var(--mono);margin-top:.1rem}
 
 /* ---------- the side panel ---------- */
 .side{position:sticky;top:142px;height:calc(100vh - 168px);min-height:420px;
@@ -142,7 +158,6 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
 
 @media(max-width:1020px){
   .cols{grid-template-columns:1fr;gap:1.25rem}
-  #wires{display:none}
   .side{position:static;height:auto;min-height:0}
   .side-scroll{max-height:none;overflow:visible}
   .sheet{padding:2rem 1.5rem}
@@ -180,13 +195,19 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
   </div>
   <span class="credit-chip"><span id="credits">5</span> credits</span>
   <button class="btn btn-ghost btn-sm" id="spellBtn">Spelling &amp; grammar: on</button>
+  <span class="exp" id="exp">
+    <button class="btn btn-ghost btn-sm" id="expBtn" aria-haspopup="true" aria-expanded="false">Export &#9662;</button>
+    <div class="exp-menu">
+      <button data-fmt="doc">Word document<small>.DOC &middot; KEEPS YOUR FORMATTING</small></button>
+      <button data-fmt="html">Web page<small>.HTML &middot; EXACT FONTS</small></button>
+      <button data-fmt="txt">Plain text<small>.TXT &middot; WORDS ONLY</small></button>
+    </div>
+  </span>
   <button class="btn btn-primary btn-sm" id="checkBtn">Re-check document &mdash; 1 credit</button>
 </div>
 
 <div class="work">
   <div class="cols" id="cols">
-    <svg id="wires" aria-hidden="true"></svg>
-
     <div class="sheet" id="sheet" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Manuscript">
       <h1>The Fox Who Forgot His Hat</h1>
       <p>The little blue fox went running down the hill, <mark class="mk-style" data-n="n1">and he did not ever stop, and he never will.</mark></p>
@@ -217,6 +238,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">13 beats against the 11 you set in the first half. Read it aloud &mdash; the stumble is on <em>did not ever</em>.</div>
           <div class="note-fix"><b>Try:</b> and he never stopped, and he never will</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="and he never stopped, and he never will">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -228,6 +250,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">Not a word. You likely meant <em>gone</em>.</div>
           <div class="note-fix"><b>Try:</b> gone</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="gone">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -239,6 +262,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">This spread explains instead of showing, and it's 29 words where a picture book wants about 12. Nothing here makes a child want to turn the page &mdash; and the illustrator has nothing to draw.</div>
           <div class="note-fix"><b>Try:</b> The fox sat down. The hat had been his since he was small.</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="The fox sat down. The hat had been his since he was small.">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -250,6 +274,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">A very common one. <em>Of</em> isn't a verb &mdash; the contraction you're hearing is <em>should've</em>, which is short for <em>should have</em>.</div>
           <div class="note-fix"><b>Try:</b> should have</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="should have">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -261,6 +286,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">Not a word. You likely meant <em>there</em>.</div>
           <div class="note-fix"><b>Try:</b> there</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="there">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -272,6 +298,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">Subject and verb don't agree. <em>Waves</em> is plural, so it takes <em>were</em>.</div>
           <div class="note-fix"><b>Try:</b> waves were</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="waves were">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -283,6 +310,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           <div class="note-why">You're naming the emotion instead of letting the picture carry it. In a picture book this is the illustrator's half of the page.</div>
           <div class="note-fix"><b>Try:</b> with his tail wrapped round his feet</div>
           <div class="note-acts">
+            <button class="btn btn-ghost btn-sm act-show">Show me</button>
             <button class="btn btn-primary btn-sm act-fix" data-fix="with his tail wrapped round his feet">Apply fix</button>
             <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
           </div>
@@ -309,7 +337,6 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
 <script>
 var sheet = document.getElementById('sheet');
 var notes = document.getElementById('notes');
-var wires = document.getElementById('wires');
 var cols  = document.getElementById('cols');
 
 function countWords(){
@@ -323,39 +350,13 @@ sheet.addEventListener('input', function(){
   s.textContent = 'SAVING…'; s.style.color = 'var(--text3)';
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function(){ s.textContent = 'SAVED'; s.style.color = ''; }, 700);
-  drawWires();
 });
 countWords();
 
-/* ---------- connector lines ---------- */
-function drawWires(){
-  if (window.innerWidth <= 1020) { wires.innerHTML = ''; return; }
-  var box = cols.getBoundingClientRect();
-  wires.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
-  wires.setAttribute('width', box.width);
-  wires.setAttribute('height', box.height);
-  var out = '';
-  var live = notes.querySelectorAll('.note:not(.hide)');
-  for (var i = 0; i < live.length; i++) {
-    var note = live[i];
-    var mk = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
-    if (!mk) continue;
-    var m = mk.getBoundingClientRect(), n = note.getBoundingClientRect();
-    // skip notes scrolled out of the panel's viewport
-    if (n.height === 0) continue;
-    var x1 = m.right - box.left, y1 = m.top + m.height / 2 - box.top;
-    var x2 = n.left - box.left,  y2 = n.top + 20 - box.top;
-    var mid = x1 + (x2 - x1) / 2;
-    out += '<path d="M ' + x1 + ' ' + y1 + ' C ' + mid + ' ' + y1 + ', ' + mid + ' ' + y2 + ', ' + x2 + ' ' + y2 +
-           '"' + (note.classList.contains('active') ? ' class="hot"' : '') + '/>';
-  }
-  wires.innerHTML = out;
-}
 
 function setActive(id){
   sheet.querySelectorAll('mark').forEach(function(m){ m.classList.toggle('active', m.dataset.n === id); });
   notes.querySelectorAll('.note').forEach(function(n){ n.classList.toggle('active', n.dataset.n === id); });
-  drawWires();
 }
 
 sheet.addEventListener('click', function(e){
@@ -369,6 +370,7 @@ sheet.addEventListener('click', function(e){
 notes.addEventListener('click', function(e){
   var note = e.target.closest('.note');
   if (!note) return;
+  if (e.target.classList.contains('act-show')) { showMe(note.dataset.n); return; }
   if (e.target.classList.contains('act-fix')) {
     var mk = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
     if (mk) mk.parentNode.replaceChild(document.createTextNode(e.target.dataset.fix), mk);
@@ -394,7 +396,7 @@ function recount(){
   document.getElementById('allClear').classList.toggle('show', counts.all === 0);
 }
 
-function resolve(note){ note.remove(); recount(); applyFilter(); drawWires(); }
+function resolve(note){ note.remove(); recount(); applyFilter(); }
 
 /* ---------- filters ---------- */
 var activeCat = 'all';
@@ -402,7 +404,6 @@ function applyFilter(){
   notes.querySelectorAll('.note').forEach(function(n){
     n.classList.toggle('hide', activeCat !== 'all' && n.dataset.cat !== activeCat);
   });
-  drawWires();
 }
 document.getElementById('filters').addEventListener('click', function(e){
   var chip = e.target.closest('.chip');
@@ -435,11 +436,86 @@ document.getElementById('checkBtn').addEventListener('click', function(){
   }, 1600);
 });
 
-document.getElementById('notes').addEventListener('scroll', drawWires, {passive:true});
-window.addEventListener('resize', drawWires);
-window.addEventListener('scroll', drawWires, {passive:true});
-window.addEventListener('load', drawWires);
-recount(); setTimeout(drawWires, 200); drawWires();
+recount();
+/* ---------- "Show me" — jump to the words in the document ---------- */
+function showMe(id){
+  var mk = sheet.querySelector('mark[data-n="' + id + '"]');
+  if (!mk) return;
+  setActive(id);
+  mk.scrollIntoView({block:'center', behavior:'smooth'});
+  mk.classList.remove('flash');
+  void mk.offsetWidth;            // restart the animation
+  mk.classList.add('flash');
+  setTimeout(function(){ mk.classList.remove('flash'); }, 1600);
+}
+
+/* ---------- export ----------
+   The document keeps whatever formatting was pasted into it, so export
+   serialises the live HTML rather than re-typesetting it. Highlights are
+   unwrapped first so the exported file has no reviewer markup in it. */
+function cleanHTML(){
+  var clone = sheet.cloneNode(true);
+  clone.querySelectorAll('mark').forEach(function(m){
+    while (m.firstChild) m.parentNode.insertBefore(m.firstChild, m);
+    m.parentNode.removeChild(m);
+  });
+  return clone.innerHTML;
+}
+function fileName(){
+  var t = (sheet.querySelector('h1') ? sheet.querySelector('h1').innerText : 'manuscript').trim();
+  return t.replace(/[^\w \-]/g,'').replace(/\s+/g,'-').toLowerCase() || 'manuscript';
+}
+function download(name, mime, content){
+  var blob = new Blob([content], {type: mime});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 0);
+}
+var FONT_CSS = "body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.9;" +
+               "max-width:40em;margin:2em auto;color:#111}h1{font-size:20pt;font-weight:500}";
+
+function exportAs(fmt){
+  var name = fileName();
+  if (fmt === 'txt') {
+    download(name + '.txt', 'text/plain;charset=utf-8', sheet.innerText.trim() + '\n');
+    return;
+  }
+  var body = cleanHTML();
+  if (fmt === 'html') {
+    download(name + '.html', 'text/html;charset=utf-8',
+      '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8">' +
+      '<title>' + name + '</title><style>' + FONT_CSS + '</style></head><body>' + body + '</body></html>');
+    return;
+  }
+  // .doc — Word opens HTML happily and keeps the inline formatting
+  download(name + '.doc', 'application/msword',
+    '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+    '<head><meta charset="utf-8"><title>' + name + '</title><style>' + FONT_CSS + '</style></head>' +
+    '<body>' + body + '</body></html>');
+}
+
+var exp = document.getElementById('exp'), expBtn = document.getElementById('expBtn');
+expBtn.addEventListener('click', function(e){
+  e.stopPropagation();
+  var open = exp.classList.toggle('open');
+  expBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+exp.querySelector('.exp-menu').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if (!b) return;
+  exportAs(b.dataset.fmt);
+  exp.classList.remove('open');
+  expBtn.setAttribute('aria-expanded','false');
+});
+document.addEventListener('click', function(){
+  exp.classList.remove('open'); expBtn.setAttribute('aria-expanded','false');
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') { exp.classList.remove('open'); expBtn.setAttribute('aria-expanded','false'); }
+});
 </script>
 </body>
 </html>
