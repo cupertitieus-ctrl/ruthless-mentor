@@ -251,3 +251,52 @@ html:not(.rm-anim) .rv{opacity:1 !important;transform:none !important}
 /* the badge carries the name visually; keep the heading for screen readers */
 .sr-name{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ============================================================
+   Editor demo — the self-playing mock on the marketing page
+   ============================================================ */
+.edemo{border:1px solid var(--border2);border-radius:16px;overflow:hidden;background:var(--surface);
+  box-shadow:0 20px 50px rgba(0,0,0,.32);margin-top:2rem}
+.edemo-bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.7rem 1rem;
+  background:var(--surface2);border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:.7rem;color:var(--text3)}
+.edemo-bar .t{color:var(--text);font-family:var(--sans);font-weight:700;font-size:.85rem;flex:1;min-width:140px}
+.edemo-bar .free{color:var(--green)}
+.edemo-body{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:0}
+.edemo-doc{padding:1.6rem 1.7rem;font-family:'Lora',Georgia,serif;font-size:.95rem;line-height:2.05;
+  border-right:1px solid var(--border)}
+.edemo-doc p{margin-bottom:.85rem;color:var(--text)}
+.dm{border-radius:3px;padding:.05em .12em;transition:background .35s,box-shadow .35s,color .35s}
+.dm.on-spell{text-decoration:underline wavy #c25a4d;text-decoration-skip-ink:none;text-underline-offset:4px}
+.dm.on-grammar{text-decoration:underline wavy #9b82bd;text-decoration-skip-ink:none;text-underline-offset:4px}
+.dm.on-style{background:rgba(201,162,39,.16);box-shadow:inset 0 -2px 0 rgba(201,162,39,.45)}
+.dm.fixed{background:rgba(127,154,107,.20);box-shadow:inset 0 -2px 0 rgba(127,154,107,.5);
+  text-decoration:none}
+.edemo-panel{background:var(--surface2);display:flex;flex-direction:column;min-height:230px}
+.edemo-panel-head{padding:.75rem .95rem;border-bottom:1px solid var(--border);
+  font-size:.82rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.edemo-panel-head span{font-family:var(--mono);font-size:.68rem;color:var(--text3);font-weight:400}
+.edemo-cards{position:relative;flex:1;padding:.85rem .95rem}
+.dcard{position:absolute;left:.95rem;right:.95rem;top:.85rem;background:var(--surface);
+  border:1px solid var(--border2);border-radius:11px;padding:.85rem .9rem;
+  opacity:0;transform:translateX(14px);transition:opacity .35s,transform .35s;pointer-events:none}
+.dcard.show{opacity:1;transform:none}
+.dcard-k{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  display:inline-block;padding:.14rem .42rem;border-radius:4px;margin-bottom:.45rem}
+.dk-spell{color:#c25a4d;background:rgba(194,90,77,.14)}
+.dk-grammar{color:#9b82bd;background:rgba(155,130,189,.16)}
+.dk-style{color:#c9a227;background:rgba(201,162,39,.14)}
+.dcard-why{font-size:.79rem;color:var(--text2);line-height:1.55}
+.dcard-fix{font-size:.79rem;margin-top:.45rem;padding:.4rem .5rem;border-radius:6px;
+  background:rgba(127,154,107,.14);color:var(--text)}
+.dcard-fix b{color:var(--green)}
+.dbtn{margin-top:.65rem;display:inline-block;font-size:.75rem;font-weight:600;padding:.35rem .7rem;
+  border-radius:8px;background:var(--accent);color:#1a1206;transition:transform .18s,box-shadow .18s}
+.dbtn.press{transform:scale(.93);box-shadow:0 0 0 4px var(--accent-bg)}
+.edemo-foot{padding:.6rem 1rem;border-top:1px solid var(--border);background:var(--surface2);
+  font-family:var(--mono);font-size:.66rem;color:var(--text3);display:flex;justify-content:space-between;gap:.6rem}
+@media(max-width:760px){
+  .edemo-body{grid-template-columns:1fr}
+  .edemo-doc{border-right:none;border-bottom:1px solid var(--border);font-size:.9rem;padding:1.2rem}
+  .edemo-panel{min-height:200px}
+}

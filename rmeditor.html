@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Advanced Editor — Ruthless Mentor rework preview</title>
-<meta name="description" content="Preview of the Advanced Editor — write in the document, see what's wrong in the margin, with a line drawn to the exact words.">
+<meta name="description" content="Preview of the Advanced Editor — write in the document, with spelling, grammar, meter and structure flagged in a side panel and a line drawn to the exact words.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -15,10 +15,11 @@
   --text:#e8e0d6; --text2:#9a8e80; --text3:#5c5246;
   --accent:#c4956a; --accent2:#d9b489;
   --accent-bg:rgba(196,149,106,.08); --accent-brd:rgba(196,149,106,.22);
-  --red:#c25a4d; --red-bg:rgba(194,90,77,.10); --red-brd:rgba(194,90,77,.3);
-  --green:#7f9a6b; --green-bg:rgba(127,154,107,.10);
+  --red:#c25a4d; --red-bg:rgba(194,90,77,.12); --red-brd:rgba(194,90,77,.35);
+  --violet:#9b82bd; --violet-bg:rgba(155,130,189,.14); --violet-brd:rgba(155,130,189,.38);
   --amber:#c9a227; --amber-bg:rgba(201,162,39,.12); --amber-brd:rgba(201,162,39,.35);
   --blue:#6b8fb0; --blue-bg:rgba(107,143,176,.12); --blue-brd:rgba(107,143,176,.35);
+  --green:#7f9a6b; --green-bg:rgba(127,154,107,.12);
   --mono:'Courier Prime','Courier New',monospace;
   --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   --serif:'Lora',Georgia,serif;
@@ -56,35 +57,26 @@ nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto
 .btn-sm{padding:.4rem .75rem;font-size:.78rem}
 
 /* ---------- doc toolbar ---------- */
-.docbar{
-  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
-  padding:.9rem 1.75rem;border-bottom:1px solid var(--border);background:var(--surface);
-  position:sticky;top:64px;z-index:40;
-}
-.doc-id{flex:1;min-width:200px}
+.docbar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding:.85rem 1.75rem;border-bottom:1px solid var(--border);background:var(--surface);
+  position:sticky;top:64px;z-index:40;min-height:62px}
+.doc-id{flex:1;min-width:190px}
 .doc-title{font-size:1rem;font-weight:700;letter-spacing:-.02em}
 .doc-meta{font-family:var(--mono);font-size:.72rem;color:var(--text3);margin-top:.15rem}
 .saved{color:var(--green)}
-.credit-chip{
-  font-family:var(--mono);font-size:.74rem;color:var(--accent);background:var(--accent-bg);
+.credit-chip{font-family:var(--mono);font-size:.74rem;color:var(--accent);background:var(--accent-bg);
   border:1px solid var(--accent-brd);padding:.35rem .7rem;border-radius:999px;
-  font-variant-numeric:tabular-nums;white-space:nowrap;
-}
+  font-variant-numeric:tabular-nums;white-space:nowrap}
 
-/* ---------- the workspace ---------- */
-.work{position:relative;max-width:1180px;margin:0 auto;padding:2rem 1.75rem 5rem}
-.cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:2.5rem;align-items:start;position:relative}
-
-/* connector layer sits between the two columns */
+/* ---------- workspace ---------- */
+.work{position:relative;max-width:1240px;margin:0 auto;padding:1.75rem 1.75rem 4rem}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:2.25rem;align-items:start;position:relative}
 #wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible}
 #wires path{fill:none;stroke:var(--border2);stroke-width:1.5;transition:stroke .2s,stroke-width .2s}
 #wires path.hot{stroke:var(--accent);stroke-width:2}
 
-/* ---------- the page ---------- */
-.sheet{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
-  padding:3rem 3.25rem;box-shadow:0 18px 50px rgba(0,0,0,.35);position:relative;z-index:2;
-}
+.sheet{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:3rem 3.25rem;box-shadow:0 18px 50px rgba(0,0,0,.35);position:relative;z-index:2}
 .sheet:focus{outline:none}
 .sheet h1{font-family:var(--serif);font-size:1.7rem;font-weight:500;margin-bottom:1.4rem;letter-spacing:-.01em}
 .sheet p{font-family:var(--serif);font-size:1.02rem;line-height:2;margin-bottom:1.1rem;color:var(--text)}
@@ -93,60 +85,66 @@ nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto
 mark{background:none;color:inherit;cursor:pointer;border-radius:3px;padding:.05em .1em;
   transition:background .18s,box-shadow .18s}
 mark.mk-spell{text-decoration:underline wavy var(--red);text-decoration-skip-ink:none;text-underline-offset:4px}
+mark.mk-grammar{text-decoration:underline wavy var(--violet);text-decoration-skip-ink:none;text-underline-offset:4px}
 mark.mk-style{background:var(--amber-bg);box-shadow:inset 0 -2px 0 var(--amber-brd)}
 mark.mk-struct{background:var(--blue-bg);box-shadow:inset 0 -2px 0 var(--blue-brd)}
 mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
 
-/* ---------- margin notes ---------- */
-.notes{display:flex;flex-direction:column;gap:.85rem;position:relative;z-index:2}
-.note{
-  background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.95rem 1rem;
-  cursor:pointer;transition:border-color .18s,transform .18s,box-shadow .18s;
-}
+/* ---------- the side panel ---------- */
+.side{position:sticky;top:142px;height:calc(100vh - 168px);min-height:420px;
+  display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;z-index:2;box-shadow:0 12px 34px rgba(0,0,0,.28)}
+.side-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+  padding:.95rem 1.05rem;border-bottom:1px solid var(--border)}
+.side-head h2{font-size:.92rem;font-weight:700}
+.side-head .count{font-family:var(--mono);font-size:.73rem;color:var(--text3);white-space:nowrap}
+.side-filters{display:flex;gap:.3rem;flex-wrap:wrap;padding:.65rem 1.05rem;border-bottom:1px solid var(--border);
+  background:var(--surface2)}
+.chip{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.3rem .55rem;border-radius:999px;border:1px solid var(--border2);background:transparent;
+  color:var(--text3);cursor:pointer;transition:.16s;font-weight:700}
+.chip:hover{color:var(--text);border-color:var(--text3)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#1a1206}
+.chip .n{opacity:.75;margin-left:.25rem}
+.side-scroll{flex:1;overflow-y:auto;padding:.85rem 1.05rem 1.2rem;display:flex;flex-direction:column;gap:.8rem}
+.side-scroll::-webkit-scrollbar{width:9px}
+.side-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:9px}
+.side-foot{padding:.7rem 1.05rem;border-top:1px solid var(--border);background:var(--surface2);
+  font-family:var(--mono);font-size:.68rem;color:var(--text3);display:flex;justify-content:space-between;gap:.5rem}
+
+.note{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:.9rem .95rem;
+  cursor:pointer;transition:border-color .18s,transform .18s,box-shadow .18s}
 .note:hover{border-color:var(--border2);transform:translateX(-3px)}
-.note.active{border-color:var(--accent-brd);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.note-k{
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
-  display:inline-block;padding:.15rem .45rem;border-radius:4px;margin-bottom:.55rem;
-}
+.note.active{border-color:var(--accent-brd);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.note.hide{display:none}
+.note-k{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  display:inline-block;padding:.15rem .45rem;border-radius:4px;margin-bottom:.5rem}
 .k-spell{color:var(--red);background:var(--red-bg)}
+.k-grammar{color:var(--violet);background:var(--violet-bg)}
 .k-style{color:var(--amber);background:var(--amber-bg)}
 .k-struct{color:var(--blue);background:var(--blue-bg)}
-.note-q{font-family:var(--serif);font-style:italic;font-size:.86rem;color:var(--text2);
-  border-left:2px solid var(--border2);padding-left:.6rem;margin-bottom:.5rem}
-.note-why{font-size:.83rem;color:var(--text2);line-height:1.6}
-.note-fix{font-size:.83rem;color:var(--text);line-height:1.6;margin-top:.5rem;
-  padding:.5rem .6rem;background:var(--green-bg);border-radius:7px}
+.note-q{font-family:var(--serif);font-style:italic;font-size:.85rem;color:var(--text2);
+  border-left:2px solid var(--border2);padding-left:.6rem;margin-bottom:.45rem}
+.note-why{font-size:.82rem;color:var(--text2);line-height:1.6}
+.note-fix{font-size:.82rem;color:var(--text);line-height:1.6;margin-top:.5rem;
+  padding:.45rem .55rem;background:var(--green-bg);border-radius:7px}
 .note-fix b{color:var(--green);font-weight:600}
-.note-acts{display:flex;gap:.4rem;margin-top:.75rem}
-
-.notes-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.9rem}
-.notes-head h2{font-size:.95rem;font-weight:700}
-.notes-head .count{font-family:var(--mono);font-size:.75rem;color:var(--text3)}
-.all-clear{border:1px dashed var(--border2);border-radius:12px;padding:1.5rem 1rem;text-align:center;
-  font-size:.85rem;color:var(--text3);display:none}
+.note-acts{display:flex;gap:.4rem;margin-top:.7rem}
+.all-clear{border:1px dashed var(--border2);border-radius:11px;padding:1.6rem 1rem;text-align:center;
+  font-size:.84rem;color:var(--text3);display:none}
 .all-clear.show{display:block}
 
-/* ---------- legend ---------- */
-.legend{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:2rem;padding-top:1.25rem;
-  border-top:1px solid var(--border);font-family:var(--mono);font-size:.72rem;color:var(--text3)}
-.legend span{display:flex;align-items:center;gap:.45rem}
-.sw{width:22px;height:8px;border-radius:3px;display:inline-block}
-.sw-spell{border-bottom:2px wavy solid var(--red);background:transparent;
-  box-shadow:inset 0 -2px 0 var(--red)}
-.sw-style{background:var(--amber-bg);box-shadow:inset 0 -2px 0 var(--amber-brd)}
-.sw-struct{background:var(--blue-bg);box-shadow:inset 0 -2px 0 var(--blue-brd)}
-
-/* ---------- plan gate ---------- */
-.gate{max-width:1180px;margin:0 auto;padding:0 1.75rem}
+.gate{max-width:1240px;margin:0 auto;padding:0 1.75rem 4rem}
 .gate-in{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;padding:1.2rem 1.4rem;
-  border:1px solid var(--accent-brd);background:var(--accent-bg);border-radius:14px;margin-top:1.5rem}
+  border:1px solid var(--accent-brd);background:var(--accent-bg);border-radius:14px}
 .gate-in p{font-size:.88rem;color:var(--text2);flex:1;min-width:250px}
 .gate-in b{color:var(--text)}
 
-@media(max-width:980px){
-  .cols{grid-template-columns:1fr;gap:1.5rem}
+@media(max-width:1020px){
+  .cols{grid-template-columns:1fr;gap:1.25rem}
   #wires{display:none}
+  .side{position:static;height:auto;min-height:0}
+  .side-scroll{max-height:none;overflow:visible}
   .sheet{padding:2rem 1.5rem}
   .nav-mid{display:none}
 }
@@ -177,11 +175,11 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
 
 <div class="docbar">
   <div class="doc-id">
-    <div class="doc-title" id="docTitle">The Fox Who Forgot His Hat</div>
+    <div class="doc-title">The Fox Who Forgot His Hat</div>
     <div class="doc-meta"><span id="wc">0</span> WORDS &middot; DRAFT 3 &middot; <span class="saved" id="saved">SAVED</span></div>
   </div>
   <span class="credit-chip"><span id="credits">5</span> credits</span>
-  <button class="btn btn-ghost btn-sm" id="spellBtn">Spell check: on</button>
+  <button class="btn btn-ghost btn-sm" id="spellBtn">Spelling &amp; grammar: on</button>
   <button class="btn btn-primary btn-sm" id="checkBtn">Re-check document &mdash; 1 credit</button>
 </div>
 
@@ -189,25 +187,31 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
   <div class="cols" id="cols">
     <svg id="wires" aria-hidden="true"></svg>
 
-    <!-- the document -->
     <div class="sheet" id="sheet" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Manuscript">
       <h1>The Fox Who Forgot His Hat</h1>
       <p>The little blue fox went running down the hill, <mark class="mk-style" data-n="n1">and he did not ever stop, and he never will.</mark></p>
       <p>He lost his hat on Tuesday in a puddle by the tree, and everybody told him it was <mark class="mk-spell" data-n="n2">gonne</mark> into the sea.</p>
       <p><mark class="mk-struct" data-n="n3">The fox was very sad about the hat because it was his favourite hat and he had owned it for a long time and it kept his ears warm in the winter.</mark></p>
-      <p>So he packed a little bag and he walked down to the shore, and he asked the crashing waves if they had seen it <mark class="mk-spell" data-n="n4">therre</mark> before.</p>
-      <p>The waves said nothing back to him. The waves just rolled and rolled. And the fox sat down beside them <mark class="mk-style" data-n="n5">feeling very sad and cold.</mark></p>
+      <p>So he packed a little bag and walked down to the shore. He <mark class="mk-grammar" data-n="n6">should of</mark> brought a scarf as well, and he asked the crashing waves if they had seen it <mark class="mk-spell" data-n="n4">therre</mark> before.</p>
+      <p>The <mark class="mk-grammar" data-n="n7">waves was</mark> rolling and rolling. And the fox sat down beside them <mark class="mk-style" data-n="n5">feeling very sad and cold.</mark></p>
     </div>
 
-    <!-- the margin -->
-    <div>
-      <div class="notes-head">
+    <!-- ===== side panel ===== -->
+    <aside class="side" aria-label="Issues found">
+      <div class="side-head">
         <h2>What's wrong</h2>
-        <span class="count"><span id="openCount">5</span> OPEN</span>
+        <span class="count"><span id="openCount">7</span> OPEN</span>
       </div>
-      <div class="notes" id="notes">
+      <div class="side-filters" id="filters">
+        <button class="chip on" data-cat="all">All<span class="n" data-c="all">7</span></button>
+        <button class="chip" data-cat="spell">Spelling<span class="n" data-c="spell">2</span></button>
+        <button class="chip" data-cat="grammar">Grammar<span class="n" data-c="grammar">2</span></button>
+        <button class="chip" data-cat="style">Style<span class="n" data-c="style">2</span></button>
+        <button class="chip" data-cat="struct">Structure<span class="n" data-c="struct">1</span></button>
+      </div>
 
-        <div class="note" data-n="n1">
+      <div class="side-scroll" id="notes">
+        <div class="note" data-n="n1" data-cat="style">
           <span class="note-k k-style">METER</span>
           <div class="note-q">"and he did not ever stop, and he never will"</div>
           <div class="note-why">13 beats against the 11 you set in the first half. Read it aloud &mdash; the stumble is on <em>did not ever</em>.</div>
@@ -218,7 +222,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           </div>
         </div>
 
-        <div class="note" data-n="n2">
+        <div class="note" data-n="n2" data-cat="spell">
           <span class="note-k k-spell">SPELLING</span>
           <div class="note-q">"gonne"</div>
           <div class="note-why">Not a word. You likely meant <em>gone</em>.</div>
@@ -229,7 +233,7 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           </div>
         </div>
 
-        <div class="note" data-n="n3">
+        <div class="note" data-n="n3" data-cat="struct">
           <span class="note-k k-struct">PAGE TURN</span>
           <div class="note-q">"The fox was very sad about the hat because&hellip;"</div>
           <div class="note-why">This spread explains instead of showing, and it's 29 words where a picture book wants about 12. Nothing here makes a child want to turn the page &mdash; and the illustrator has nothing to draw.</div>
@@ -240,7 +244,18 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           </div>
         </div>
 
-        <div class="note" data-n="n4">
+        <div class="note" data-n="n6" data-cat="grammar">
+          <span class="note-k k-grammar">GRAMMAR</span>
+          <div class="note-q">"should of"</div>
+          <div class="note-why">A very common one. <em>Of</em> isn't a verb &mdash; the contraction you're hearing is <em>should've</em>, which is short for <em>should have</em>.</div>
+          <div class="note-fix"><b>Try:</b> should have</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="should have">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="note" data-n="n4" data-cat="spell">
           <span class="note-k k-spell">SPELLING</span>
           <div class="note-q">"therre"</div>
           <div class="note-why">Not a word. You likely meant <em>there</em>.</div>
@@ -251,7 +266,18 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           </div>
         </div>
 
-        <div class="note" data-n="n5">
+        <div class="note" data-n="n7" data-cat="grammar">
+          <span class="note-k k-grammar">GRAMMAR</span>
+          <div class="note-q">"The waves was rolling"</div>
+          <div class="note-why">Subject and verb don't agree. <em>Waves</em> is plural, so it takes <em>were</em>.</div>
+          <div class="note-fix"><b>Try:</b> waves were</div>
+          <div class="note-acts">
+            <button class="btn btn-primary btn-sm act-fix" data-fix="waves were">Apply fix</button>
+            <button class="btn btn-ghost btn-sm act-dismiss">Dismiss</button>
+          </div>
+        </div>
+
+        <div class="note" data-n="n5" data-cat="style">
           <span class="note-k k-style">TELLING</span>
           <div class="note-q">"feeling very sad and cold"</div>
           <div class="note-why">You're naming the emotion instead of letting the picture carry it. In a picture book this is the illustrator's half of the page.</div>
@@ -262,21 +288,20 @@ mark.active{background:var(--accent-bg);box-shadow:inset 0 -2px 0 var(--accent)}
           </div>
         </div>
 
+        <div class="all-clear" id="allClear">Nothing left flagged.<br>Re-check the document when you've written more.</div>
       </div>
-      <div class="all-clear" id="allClear">Nothing left flagged.<br>Re-check the document when you've written more.</div>
-    </div>
-  </div>
 
-  <div class="legend">
-    <span><i class="sw sw-spell"></i> Spelling &mdash; free, instant</span>
-    <span><i class="sw sw-style"></i> Meter &amp; telling</span>
-    <span><i class="sw sw-struct"></i> Structure &amp; page turns</span>
+      <div class="side-foot">
+        <span>SPELLING &amp; GRAMMAR: FREE</span>
+        <span>FULL RE-CHECK: 1 CREDIT</span>
+      </div>
+    </aside>
   </div>
 </div>
 
 <div class="gate">
   <div class="gate-in">
-    <p><b>Advanced Editor</b> comes with the Writer plan and above. Spell check runs free as you type; a full re-check reads the whole manuscript and costs <b>1 credit</b>.</p>
+    <p><b>Advanced Editor</b> comes with the Writer plan and above. Spelling and grammar run free as you type; a full re-check reads the whole manuscript for meter, structure and telling, and costs <b>1 credit</b>.</p>
     <a href="/rmrework#pricing" class="btn btn-primary btn-sm">See plans</a>
   </div>
 </div>
@@ -287,7 +312,6 @@ var notes = document.getElementById('notes');
 var wires = document.getElementById('wires');
 var cols  = document.getElementById('cols');
 
-/* ---------- word count + save state ---------- */
 function countWords(){
   var t = sheet.innerText.replace(/\s+/g,' ').trim();
   document.getElementById('wc').textContent = t ? t.split(' ').length : 0;
@@ -303,33 +327,31 @@ sheet.addEventListener('input', function(){
 });
 countWords();
 
-/* ---------- connector lines ----------
-   A line is drawn from the right edge of each highlighted phrase to the
-   left edge of its note, so it's obvious which words a comment is about. */
+/* ---------- connector lines ---------- */
 function drawWires(){
-  if (window.innerWidth <= 980) { wires.innerHTML = ''; return; }
+  if (window.innerWidth <= 1020) { wires.innerHTML = ''; return; }
   var box = cols.getBoundingClientRect();
   wires.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
   wires.setAttribute('width', box.width);
   wires.setAttribute('height', box.height);
   var out = '';
-  var live = notes.querySelectorAll('.note');
+  var live = notes.querySelectorAll('.note:not(.hide)');
   for (var i = 0; i < live.length; i++) {
     var note = live[i];
-    var id = note.dataset.n;
-    var mk = sheet.querySelector('mark[data-n="' + id + '"]');
+    var mk = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
     if (!mk) continue;
     var m = mk.getBoundingClientRect(), n = note.getBoundingClientRect();
+    // skip notes scrolled out of the panel's viewport
+    if (n.height === 0) continue;
     var x1 = m.right - box.left, y1 = m.top + m.height / 2 - box.top;
-    var x2 = n.left - box.left,  y2 = n.top + 22 - box.top;
+    var x2 = n.left - box.left,  y2 = n.top + 20 - box.top;
     var mid = x1 + (x2 - x1) / 2;
     out += '<path d="M ' + x1 + ' ' + y1 + ' C ' + mid + ' ' + y1 + ', ' + mid + ' ' + y2 + ', ' + x2 + ' ' + y2 +
-           '" data-n="' + id + '"' + (note.classList.contains('active') ? ' class="hot"' : '') + '/>';
+           '"' + (note.classList.contains('active') ? ' class="hot"' : '') + '/>';
   }
   wires.innerHTML = out;
 }
 
-/* ---------- linking a mark to its note ---------- */
 function setActive(id){
   sheet.querySelectorAll('mark').forEach(function(m){ m.classList.toggle('active', m.dataset.n === id); });
   notes.querySelectorAll('.note').forEach(function(n){ n.classList.toggle('active', n.dataset.n === id); });
@@ -347,66 +369,77 @@ sheet.addEventListener('click', function(e){
 notes.addEventListener('click', function(e){
   var note = e.target.closest('.note');
   if (!note) return;
-
   if (e.target.classList.contains('act-fix')) {
     var mk = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
-    if (mk) {
-      var text = document.createTextNode(e.target.dataset.fix);
-      mk.parentNode.replaceChild(text, mk);
-    }
-    resolve(note);
-    countWords();
-    return;
+    if (mk) mk.parentNode.replaceChild(document.createTextNode(e.target.dataset.fix), mk);
+    resolve(note); countWords(); return;
   }
   if (e.target.classList.contains('act-dismiss')) {
     var m2 = sheet.querySelector('mark[data-n="' + note.dataset.n + '"]');
-    if (m2) { // keep the words, drop the highlight
-      while (m2.firstChild) m2.parentNode.insertBefore(m2.firstChild, m2);
-      m2.parentNode.removeChild(m2);
-    }
-    resolve(note);
-    return;
+    if (m2) { while (m2.firstChild) m2.parentNode.insertBefore(m2.firstChild, m2); m2.parentNode.removeChild(m2); }
+    resolve(note); return;
   }
   setActive(note.dataset.n);
 });
 
-function resolve(note){
-  note.remove();
-  var left = notes.querySelectorAll('.note').length;
-  document.getElementById('openCount').textContent = left;
-  document.getElementById('allClear').classList.toggle('show', left === 0);
-  drawWires();
+function recount(){
+  var live = notes.querySelectorAll('.note');
+  var counts = {all:live.length, spell:0, grammar:0, style:0, struct:0};
+  for (var i = 0; i < live.length; i++) counts[live[i].dataset.cat]++;
+  Object.keys(counts).forEach(function(k){
+    var el = document.querySelector('.chip .n[data-c="' + k + '"]');
+    if (el) el.textContent = counts[k];
+  });
+  document.getElementById('openCount').textContent = counts.all;
+  document.getElementById('allClear').classList.toggle('show', counts.all === 0);
 }
 
-/* ---------- spell check switch ---------- */
+function resolve(note){ note.remove(); recount(); applyFilter(); drawWires(); }
+
+/* ---------- filters ---------- */
+var activeCat = 'all';
+function applyFilter(){
+  notes.querySelectorAll('.note').forEach(function(n){
+    n.classList.toggle('hide', activeCat !== 'all' && n.dataset.cat !== activeCat);
+  });
+  drawWires();
+}
+document.getElementById('filters').addEventListener('click', function(e){
+  var chip = e.target.closest('.chip');
+  if (!chip) return;
+  activeCat = chip.dataset.cat;
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === chip); });
+  applyFilter();
+});
+
+/* ---------- spelling & grammar switch ---------- */
 var spellOn = true;
 document.getElementById('spellBtn').addEventListener('click', function(){
   spellOn = !spellOn;
   sheet.setAttribute('spellcheck', spellOn ? 'true' : 'false');
-  this.textContent = 'Spell check: ' + (spellOn ? 'on' : 'off');
+  sheet.querySelectorAll('mark.mk-spell, mark.mk-grammar').forEach(function(m){
+    m.style.textDecoration = spellOn ? '' : 'none';
+  });
+  this.textContent = 'Spelling & grammar: ' + (spellOn ? 'on' : 'off');
 });
 
-/* ---------- a full re-check spends a credit ---------- */
+/* ---------- full re-check costs a credit ---------- */
 document.getElementById('checkBtn').addEventListener('click', function(){
-  var el = document.getElementById('credits');
-  var n = Number(el.textContent);
-  if (n <= 0) { this.textContent = 'Out of credits'; this.disabled = true; return; }
-  var btn = this;
+  var el = document.getElementById('credits'), n = Number(el.textContent), btn = this;
+  if (n <= 0) { btn.textContent = 'Out of credits'; btn.disabled = true; return; }
   btn.disabled = true; btn.textContent = 'Reading the whole draft…';
   setTimeout(function(){
     el.textContent = n - 1;
-    btn.disabled = false;
-    btn.textContent = 'Re-check document — 1 credit';
-    var left = notes.querySelectorAll('.note').length;
-    document.getElementById('allClear').classList.toggle('show', left === 0);
+    btn.disabled = false; btn.textContent = 'Re-check document — 1 credit';
+    recount();
   }, 1600);
 });
 
+document.getElementById('notes').addEventListener('scroll', drawWires, {passive:true});
 window.addEventListener('resize', drawWires);
 window.addEventListener('scroll', drawWires, {passive:true});
 window.addEventListener('load', drawWires);
-setTimeout(drawWires, 200);
-drawWires();
+recount(); setTimeout(drawWires, 200); drawWires();
 </script>
 </body>
 </html>
