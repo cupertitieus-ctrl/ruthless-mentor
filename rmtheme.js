@@ -85,14 +85,8 @@ document.documentElement.classList.add('rm-anim');
    (theme toggle, CTA) so the bar is identical everywhere.
    ------------------------------------------------------------------ */
 (function () {
-  var TOOLS = [
-    {href:'/rmreview', name:'Manuscript Review', desc:'Full 8-part report &middot; 1 credit'},
-    {href:'/rmeditor', name:'Advanced Editor',   desc:'Write with the notes beside you', tier:'writer'},
-    {href:'/rmcover', name:'Cover Check', desc:'Scanned and graded &middot; 1 credit'}
-  ];
   var LINKS = [
     {href:'/rmreview',        label:'New review'},
-    {href:'/rmeditor',        label:'Editor'},
     {href:'/rmdash',          label:'Dashboard'},
     {href:'/rmrework#pricing',label:'Pricing'},
     {href:'/rmrework#story',  label:'About'}
@@ -108,17 +102,6 @@ document.documentElement.classList.add('rm-anim');
     var here = location.pathname.replace(/\/$/, '') || '/rmrework';
 
     /* ---- centre ---- */
-    var tools = '<div class="dd" id="dd"><button aria-expanded="false" aria-haspopup="true">Tools' +
-      '<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8">' +
-      '<path d="M2 4l4 4 4-4"/></svg></button><div class="dd-panel">';
-    TOOLS.forEach(function (t) {
-      tools += '<a href="' + t.href + '"><span class="t">' + t.name +
-        (t.tier ? ' <i class="plan-badge badge-' + t.tier + ' badge-tiny">' +
-                  t.tier.charAt(0).toUpperCase() + t.tier.slice(1) + '</i>' : '') + '</span>' +
-        '<span class="d">' + t.desc + '</span></a>';
-    });
-    tools += '</div></div>';
-
     var links = '';
     LINKS.forEach(function (l) {
       var path = l.href.split('#')[0];
@@ -127,7 +110,7 @@ document.documentElement.classList.add('rm-anim');
       var on = (path === here && l.href.indexOf('#') === -1) ? ' class="on"' : '';
       links += '<a href="' + l.href + '"' + on + '>' + l.label + '</a>';
     });
-    mid.innerHTML = tools + links;
+    mid.innerHTML = links;
 
     /* ---- right: theme, CTA, account, burger (burger added later) ---- */
     var toggle = right.querySelector('.theme-toggle');
@@ -158,23 +141,6 @@ document.documentElement.classList.add('rm-anim');
     right.appendChild(cta);
     right.appendChild(avatar);
 
-    /* dd-panel toggle — click to open, no hover dead zone */
-    var dd = mid.querySelector('.dd');
-    if (dd) {
-      var ddBtn = dd.querySelector('button');
-      ddBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var open = dd.classList.toggle('open');
-        ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-      dd.querySelector('.dd-panel').addEventListener('click', function (e) { e.stopPropagation(); });
-      document.addEventListener('click', function () {
-        dd.classList.remove('open'); ddBtn.setAttribute('aria-expanded', 'false');
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { dd.classList.remove('open'); ddBtn.setAttribute('aria-expanded','false'); }
-      });
-    }
   }
 
   if (document.readyState === 'loading') {
@@ -212,25 +178,12 @@ document.documentElement.classList.add('rm-anim');
     // Sit inside .nav-right so it shares the grid's end track.
     right.appendChild(burger);
 
-    // Panel mirrors the centre links, flattening the Tools dropdown.
+    // Panel mirrors the centre links.
     var panel = document.createElement('div');
     panel.className = 'mobile-panel';
 
     Array.prototype.forEach.call(mid.children, function (node) {
-      if (node.classList.contains('dd')) {
-        var sub = document.createElement('div');
-        sub.className = 'mp-sub';
-        sub.textContent = 'Tools';
-        panel.appendChild(sub);
-        Array.prototype.forEach.call(node.querySelectorAll('.dd-panel a'), function (a) {
-          var link = document.createElement('a');
-          link.href = a.getAttribute('href');
-          // .t holds the tool name; .d is the description we don't need here
-          var t = a.querySelector('.t');
-          if (t) { link.innerHTML = t.innerHTML; } else { link.textContent = a.textContent.trim(); }
-          panel.appendChild(link);
-        });
-      } else if (node.tagName === 'A') {
+      if (node.tagName === 'A') {
         var copy = document.createElement('a');
         copy.href = node.getAttribute('href');
         copy.textContent = node.textContent.trim();

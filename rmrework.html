@@ -40,21 +40,11 @@ nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto
 .brand{justify-self:start;display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em;font-size:1rem}
 .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red);flex:none}
 .nav-mid{justify-self:center;display:flex;align-items:center;gap:.25rem}
-.nav-mid > a,.dd > button{font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;
-  background:none;border:none;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:.35rem;
-  transition:color .18s,background .18s}
-.nav-mid > a:hover,.dd > button:hover{color:var(--text);background:var(--surface2)}
-.dd{position:relative}
-.dd-panel{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-6px);
+.nav-mid > a{font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;
+  display:flex;align-items:center;transition:color .18s,background .18s}
+.nav-mid > a:hover{color:var(--text);background:var(--surface2)}
   min-width:290px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:.4rem;
   box-shadow:0 18px 40px rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:.18s}
-.dd.open .dd-panel{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
-.dd-panel a{display:block;padding:.6rem .7rem;border-radius:8px;transition:background .15s}
-.dd-panel a:hover{background:var(--surface3)}
-.dd-panel .t{font-size:.86rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
-.dd-panel .d{font-size:.75rem;color:var(--text3);margin-top:.1rem}
-.free-tag{font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.08em;
-  color:var(--green);background:var(--green-bg);padding:.1rem .35rem;border-radius:4px}
 .nav-right{justify-self:end;display:flex;align-items:center;gap:.75rem}
 .avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);
   display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .18s}
@@ -196,7 +186,7 @@ h3{font-size:1rem;font-weight:600}
   font-variant-numeric:tabular-nums}
 .plan ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:1.3rem 0}
 /* block, not flex — a flex li turns every inline child into its own column,
-   which split "Advanced Editor" away from the text that follows it */
+   which split a bolded label away from the text that followed it */
 .plan li{display:block;position:relative;padding-left:1.15rem;font-size:.85rem;
   color:var(--text2);line-height:1.6}
 .plan li::before{content:"+";position:absolute;left:0;top:0;color:var(--accent);font-family:var(--mono)}
@@ -262,18 +252,7 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
 <nav>
   <a href="#" class="brand"><img src="logo.png" alt="ruthlessmentor.com" class="brand-logo"></a>
   <div class="nav-mid">
-    <div class="dd" id="dd">
-      <button aria-expanded="false" aria-haspopup="true">Tools
-        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l4 4 4-4"/></svg>
-      </button>
-      <div class="dd-panel">
-        <a href="/rmreview"><span class="t">Manuscript Review</span><span class="d">Full 8-part report &middot; 1 credit</span></a>
-        <a href="/rmeditor"><span class="t">Advanced Editor</span><span class="d">Write with the notes in the margin</span></a>
-        <a href="/rmcover"><span class="t">Cover Check</span><span class="d">Scanned and graded &middot; 1 credit</span></a>
-      </div>
-    </div>
     <a href="/rmreview">New review</a>
-    <a href="/rmeditor">Editor</a>
     <a href="/rmdash">Dashboard</a>
     <a href="#pricing">Pricing</a>
     <a href="#story">About</a>
@@ -425,7 +404,6 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
           <li><b>4 credits</b> a month</li>
           <li>Rolls over up to <b>24</b></li>
           <li>Everything in Starter</li>
-          <li><span class="plan-badge badge-writer badge-inline">Writer</span> <b>Advanced Editor</b> &mdash; write with the notes beside you</li>
           <li><b>Every third review free</b></li>
           <li>Priority queue</li>
         </ul>
@@ -442,7 +420,6 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
           <li><b>10 credits</b> a month</li>
           <li>Rolls over up to <b>60</b></li>
           <li>Everything in Writer</li>
-          <li>Cover Check included</li>
           <li>Series tracking across books</li>
         </ul>
         <a href="#" class="btn btn-ghost">Choose Author</a>
@@ -471,85 +448,6 @@ footer{border-top:1px solid var(--border);padding:2.5rem 0;position:relative;z-i
     <div class="strip rv d2">
       <p>The rebuilt submission flow: <b>a sticky cost panel</b>, questions grouped instead of stacked, and <b>a real progress screen</b> for the ninety seconds it takes to write your report.</p>
       <a href="/rmreview" class="btn btn-primary btn-sm">Open the review screen</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ ADVANCED EDITOR ============ -->
-<section>
-  <div class="wrap">
-    <p class="eyebrow rv">New &mdash; Writer plan and above</p>
-    <h2 class="rv d1">The Advanced Editor</h2>
-    <p class="lede rv d2" style="margin-top:.9rem">A review tells you what's wrong once. The editor tells you while you're still writing. Type straight into the document. Every problem is listed in a side panel, and <em>Show me</em> jumps you straight to the words it's about.</p>
-    <div class="grid" style="margin-top:2rem">
-      <div class="card rv"><div class="n">01</div><h3>Write in the document</h3><p>Not a form, not a paste box. A real page you can type in, with your draft saved as you go.</p></div>
-      <div class="card rv d1"><div class="n">02</div><h3>Everything in one panel</h3><p>Spelling, grammar, meter and structure, filtered by kind. Hit <em>Show me</em> and the document scrolls to the exact words.</p></div>
-      <div class="card rv d2"><div class="n">03</div><h3>Spelling &amp; grammar free</h3><p>Both run as you type and cost nothing. Only a full re-read of the manuscript spends a credit.</p></div>
-      <div class="card rv d3"><div class="n">04</div><h3>Export when you're done</h3><p>Word, web page, or plain text &mdash; keeping the fonts and formatting you pasted in, with none of the review markup.</p></div>
-    </div>
-
-    <div class="edemo rv d2" id="edemo">
-      <div class="edemo-bar">
-        <span class="t">The Fox Who Forgot His Hat</span>
-        <span class="free">SPELLING &amp; GRAMMAR: FREE</span>
-        <span>FULL RE-CHECK: 1 CREDIT</span>
-      </div>
-      <div class="edemo-body">
-        <div class="edemo-doc">
-          <p>He lost his hat on Tuesday in a puddle by the tree, and everybody told him it was <span class="dm" data-i="0">gonne</span> into the sea.</p>
-          <p>He <span class="dm" data-i="1">should of</span> brought a scarf as well, and he asked the crashing waves if they had seen it.</p>
-          <p>The little blue fox went running down the hill, <span class="dm" data-i="2">and he did not ever stop, and he never will.</span></p>
-        </div>
-        <div class="edemo-panel">
-          <div class="edemo-panel-head">What's wrong <span id="edemoCount">3 OPEN</span></div>
-          <div class="edemo-cards">
-            <div class="dcard" data-i="0">
-              <span class="dcard-k dk-spell">SPELLING</span>
-              <div class="dcard-why">"gonne" isn't a word. You likely meant <em>gone</em>.</div>
-              <div class="dcard-fix"><b>Try:</b> gone</div>
-              <span class="dbtn">Apply fix</span>
-            </div>
-            <div class="dcard" data-i="1">
-              <span class="dcard-k dk-grammar">GRAMMAR</span>
-              <div class="dcard-why"><em>Of</em> isn't a verb. The contraction you're hearing is <em>should've</em> &mdash; short for <em>should have</em>.</div>
-              <div class="dcard-fix"><b>Try:</b> should have</div>
-              <span class="dbtn">Apply fix</span>
-            </div>
-            <div class="dcard" data-i="2">
-              <span class="dcard-k dk-style">METER</span>
-              <div class="dcard-why">13 beats against the 11 you set in the first half. The stumble is on <em>did not ever</em>.</div>
-              <div class="dcard-fix"><b>Try:</b> and he never stopped, and he never will</div>
-              <span class="dbtn">Apply fix</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="edemo-foot">
-        <span>LIVE DEMO &mdash; PLAYS ON ITS OWN</span>
-        <span>THE REAL EDITOR LETS YOU TYPE</span>
-      </div>
-    </div>
-    <div class="strip rv d2">
-      <p>Spelling and grammar are <b>free as you type</b>. A full re-check reads the whole manuscript for meter, structure and telling, and costs <b>1 credit</b>.</p>
-      <a href="/rmeditor" class="btn btn-primary btn-sm">Open the editor</a>
-    </div>
-  </div>
-</section>
-
-<!-- ============ COVER CHECK ============ -->
-<section>
-  <div class="wrap">
-    <p class="eyebrow rv">Cover Check &middot; 1 credit</p>
-    <h2 class="rv d1">Cover Check</h2>
-    <p class="lede rv d2" style="margin-top:.9rem">Nobody browsing sees your cover the size you designed it. They see it about as big as a postage stamp, in a grid of forty others. Drop yours in, watch it get scanned, and get a grade plus a ranked list of what to fix.</p>
-    <div class="grid" style="margin-top:2rem">
-      <div class="card rv"><div class="n">01</div><h3>Thumbnail legibility</h3><p>Your cover shown at search, browse and listing size, side by side. If the title dies at 44 pixels, you'll see it die.</p></div>
-      <div class="card rv d1"><div class="n">02</div><h3>A grade, not a vibe</h3><p>Scored on legibility, focal point, age and genre signal, title hierarchy, and contrast &mdash; each with the reason behind the number.</p></div>
-      <div class="card rv d2"><div class="n">03</div><h3>Fixes in order</h3><p>Not a list of everything wrong. The four things to change, ranked by what will move the needle most.</p></div>
-    </div>
-    <div class="strip rv d2">
-      <p><b>One credit a scan.</b> It's the fastest way to find out whether the thing you spent months on survives being small.</p>
-      <a href="/rmcover" class="btn btn-primary btn-sm">Check my cover</a>
     </div>
   </div>
 </section>
