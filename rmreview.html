@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New review — Ruthless Mentor rework preview</title>
+<meta name="description" content="Preview of the rebuilt submission screen — grouped questions, live word count and cost, and a real progress screen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0b09; --surface:#161310; --surface2:#1c1915; --surface3:#221e19;
+  --border:#2a2420; --border2:#3a332c;
+  --text:#e8e0d6; --text2:#9a8e80; --text3:#5c5246;
+  --accent:#c4956a; --accent2:#d9b489;
+  --accent-bg:rgba(196,149,106,.08); --accent-brd:rgba(196,149,106,.22);
+  --red:#c25a4d; --red-bg:rgba(194,90,77,.10); --red-brd:rgba(194,90,77,.3);
+  --green:#7f9a6b; --green-bg:rgba(127,154,107,.10);
+  --mono:'Courier Prime','Courier New',monospace;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.ribbon{background:var(--red-bg);border-bottom:1px solid var(--red-brd);color:var(--text2);
+  font-family:var(--mono);font-size:.72rem;text-align:center;padding:.45rem 1rem}
+.ribbon b{color:var(--red);font-weight:700}
+
+nav{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  gap:1rem;padding:0 1.75rem;height:64px;background:rgba(13,11,9,.85);backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.brand{justify-self:start;display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--red)}
+.nav-mid{justify-self:center;display:flex;gap:.35rem}
+.nav-mid a{font-size:.85rem;color:var(--text2);padding:.45rem .7rem;border-radius:8px;transition:.18s}
+.nav-mid a:hover{color:var(--text);background:var(--surface2)}
+.nav-mid a.on{color:var(--text);background:var(--surface2)}
+.nav-right{justify-self:end;display:flex;align-items:center;gap:.75rem}
+.credit-pill{display:flex;align-items:center;gap:.45rem;font-family:var(--mono);font-size:.76rem;
+  color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-brd);padding:.35rem .7rem;
+  border-radius:999px;font-variant-numeric:tabular-nums}
+.credit-pill .d{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.avatar{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:inherit;
+  font-size:.88rem;font-weight:600;padding:.72rem 1.3rem;border-radius:10px;cursor:pointer;
+  border:1px solid transparent;transition:.18s}
+.btn-primary{background:var(--accent);color:#1a1206}
+.btn-primary:hover{background:var(--accent2)}
+.btn-primary:disabled{background:var(--surface3);color:var(--text3);cursor:not-allowed;box-shadow:none}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border2)}
+.btn-ghost:hover{background:var(--surface2)}
+.btn-sm{padding:.5rem .9rem;font-size:.8rem}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.75rem}
+.page{padding:2.5rem 0 5rem}
+h1{font-size:1.9rem;font-weight:800;letter-spacing:-.03em}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--text2);font-size:.9rem}
+
+/* ---------- two-column: form + sticky cost panel ---------- */
+.cols{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;margin-top:1.75rem;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem}
+.panel + .panel{margin-top:1rem}
+.panel h2{font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+.panel .step{font-family:var(--mono);font-size:.7rem;color:var(--accent);letter-spacing:.12em;margin-bottom:.4rem}
+.panel .hint{font-size:.83rem;color:var(--text3);margin-top:.25rem}
+
+/* grouped fields instead of one long stack */
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.3rem}
+.field.full{grid-column:1 / -1}
+label{display:block;font-size:.82rem;font-weight:600;margin-bottom:.4rem}
+label .opt{color:var(--text3);font-weight:400;font-family:var(--mono);font-size:.72rem}
+input[type=text],input[type=email],select,textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;
+  padding:.65rem .8rem;color:var(--text);font-family:inherit;font-size:.88rem;transition:border-color .18s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent-brd)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+select{cursor:pointer}
+textarea{min-height:280px;resize:vertical;line-height:1.7;font-size:.9rem}
+
+.ta-wrap{position:relative;margin-top:1rem}
+.ta-foot{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  margin-top:.6rem;font-family:var(--mono);font-size:.75rem;color:var(--text3)}
+.ta-foot b{color:var(--text2);font-weight:400}
+.demo-fill{background:none;border:none;color:var(--accent);font-family:var(--mono);font-size:.75rem;
+  cursor:pointer;text-decoration:underline;padding:0}
+
+/* ---------- sticky cost panel ---------- */
+.side{position:sticky;top:84px}
+.cost{background:linear-gradient(180deg,var(--accent-bg),var(--surface) 70%);
+  border:1px solid var(--accent-brd);border-radius:var(--r);padding:1.5rem}
+.cost .row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+  padding:.6rem 0;border-bottom:1px solid var(--border);font-size:.86rem}
+.cost .row:last-of-type{border-bottom:none}
+.cost .row .k{color:var(--text2)}
+.cost .row .v{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.cost .row .v.big{font-size:1.05rem;font-weight:700;color:var(--text)}
+.cost .total{margin-top:.8rem;padding-top:1rem;border-top:1px solid var(--accent-brd);
+  display:flex;justify-content:space-between;align-items:center}
+.cost .total .k{font-size:.8rem;font-family:var(--mono);letter-spacing:.1em;color:var(--text3)}
+.cost .total .v{font-size:2rem;font-weight:900;letter-spacing:-.04em}
+.cost .btn{width:100%;margin-top:1.1rem}
+.cost .after{font-family:var(--mono);font-size:.7rem;color:var(--text3);text-align:center;margin-top:.7rem}
+.badge-free{display:inline-block;font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;
+  color:var(--green);background:var(--green-bg);padding:.15rem .45rem;border-radius:4px;margin-left:.4rem}
+
+.upsell{margin-top:1rem;padding:1rem 1.1rem;border:1px dashed var(--border2);border-radius:12px}
+.upsell p{font-size:.82rem;color:var(--text2);line-height:1.6}
+.upsell b{color:var(--text)}
+.upsell a{color:var(--accent);font-weight:600}
+
+/* ---------- progress overlay ---------- */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(13,11,9,.96);display:none;
+  align-items:center;justify-content:center;padding:2rem}
+.overlay.on{display:flex}
+.prog{max-width:460px;width:100%;text-align:center}
+.prog h2{font-size:1.4rem;font-weight:800;letter-spacing:-.03em}
+.prog .track{height:6px;border-radius:99px;background:var(--surface3);overflow:hidden;margin:1.5rem 0 .9rem}
+.prog .bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--red),var(--accent));
+  transition:width .5s ease}
+.prog .stage{font-family:var(--mono);font-size:.82rem;color:var(--accent);min-height:1.5em}
+.prog .pct{font-family:var(--mono);font-size:.75rem;color:var(--text3);margin-top:.3rem}
+.prog .note{font-size:.83rem;color:var(--text3);margin-top:1.6rem;line-height:1.6}
+
+@media(max-width:880px){
+  .nav-mid{display:none}
+  .cols{grid-template-columns:1fr}
+  .side{position:static}
+  .fields{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="ribbon"><b>PREVIEW</b> &nbsp;/rmreview &mdash; concept only. Nothing is submitted or charged.</div>
+
+<nav>
+  <a href="/rmrework" class="brand"><span class="dot"></span> ruthless mentor</a>
+  <div class="nav-mid">
+    <a href="/rmrework">Tools</a>
+    <a href="#" class="on">New review</a>
+    <a href="/rmdash">Dashboard</a>
+    <a href="/rmrework#pricing">Pricing</a>
+  </div>
+  <div class="nav-right">
+    <span class="credit-pill"><span class="d"></span> <span id="pillCredits">5</span> credits</span>
+    <a href="/rmdash" class="avatar" title="Account">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+<div class="wrap">
+
+  <h1>New review</h1>
+  <p class="muted" style="margin-top:.3rem">Tell us what this is, paste it in, and we'll have your report in about ninety seconds.</p>
+
+  <div class="cols">
+
+    <!-- ===== left: the form ===== -->
+    <div>
+      <div class="panel">
+        <div class="step">STEP 1</div>
+        <h2>About your book</h2>
+        <p class="hint">These change how your manuscript gets judged &mdash; a picture book isn't graded like a novel.</p>
+        <div class="fields">
+          <div class="field full">
+            <label for="title">Title <span class="opt">optional, but it groups your drafts</span></label>
+            <input type="text" id="title" placeholder="The Fox Who Forgot His Hat">
+          </div>
+          <div class="field">
+            <label for="genre">Genre</label>
+            <select id="genre">
+              <option value="15">Children's / Picture Book</option>
+              <option value="15">Early Reader</option>
+              <option value="15">Chapter Book</option>
+              <option value="20">Middle Grade</option>
+              <option value="20">Young Adult</option>
+              <option value="25">Literary Fiction</option>
+              <option value="25">Genre Fiction</option>
+              <option value="25">Memoir</option>
+              <option value="25">Screenplay</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="stage">Stage</label>
+            <select id="stage">
+              <option>First draft</option>
+              <option>Revised draft</option>
+              <option>Ready to query</option>
+              <option>Already published</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rhyme">Rhyming?</label>
+            <select id="rhyme"><option>Non-rhyming</option><option>Rhyming</option></select>
+          </div>
+          <div class="field">
+            <label for="pov">Point of view</label>
+            <select id="pov">
+              <option>Third person limited</option><option>Third person omniscient</option>
+              <option>First person</option><option>Second person</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="step">STEP 2</div>
+        <h2>Paste your manuscript</h2>
+        <p class="hint">Copy and paste straight from your document. Up to 150,000 words.</p>
+        <div class="ta-wrap">
+          <textarea id="ms" placeholder="Paste your manuscript here..."></textarea>
+        </div>
+        <div class="ta-foot">
+          <span><b id="wc">0</b> words &middot; <b id="tierName">&mdash;</b></span>
+          <button class="demo-fill" id="demoFill">Paste a sample manuscript</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== right: sticky cost ===== -->
+    <div class="side">
+      <div class="cost">
+        <div class="eyebrow">This review</div>
+        <div class="row"><span class="k">Length</span><span class="v" id="sWords">0 words</span></div>
+        <div class="row"><span class="k">Tier</span><span class="v" id="sTier">&mdash;</span></div>
+        <div class="row"><span class="k">Cost</span><span class="v big" id="sCost">1 credit</span></div>
+        <div class="row"><span class="k">Your balance</span><span class="v" id="sBal">5 credits</span></div>
+
+        <div class="total">
+          <span class="k">YOU PAY</span>
+          <span class="v" id="sTotal">$0</span>
+        </div>
+
+        <button class="btn btn-primary" id="submit" disabled>Paste your text to start</button>
+        <p class="after" id="sAfter">4 CREDITS LEFT AFTERWARDS</p>
+      </div>
+
+      <div class="upsell">
+        <p><b>2 of 3</b> toward a free review. Your next one after this is on us.</p>
+        <p style="margin-top:.6rem">Out of credits? <a href="/rmrework#pricing">The Writer plan</a> is $29 a month for 2, and they roll over.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ===== progress overlay ===== -->
+<div class="overlay" id="overlay">
+  <div class="prog">
+    <div class="eyebrow">Reading your manuscript</div>
+    <h2 id="progTitle">The Fox Who Forgot His Hat</h2>
+    <div class="track"><div class="bar" id="bar"></div></div>
+    <div class="stage" id="progStage">Counting words and checking length&hellip;</div>
+    <div class="pct" id="pct">0%</div>
+    <p class="note">This takes about ninety seconds. You'll get an email with a link either way, so you can close this tab if you'd rather.</p>
+    <button class="btn btn-ghost btn-sm" id="cancel" style="margin-top:1.5rem">Cancel (preview only)</button>
+  </div>
+</div>
+
+<script>
+var BALANCE = 5;
+var SAMPLE = "The little blue fox went running down the hill, and he did not ever stop, and he never will. " +
+  "He lost his hat on Tuesday in a puddle by the tree, and everybody told him it was gone into the sea. ";
+
+var ms = document.getElementById('ms');
+var genre = document.getElementById('genre');
+
+function words(t){ var s = t.trim(); return s ? s.split(/\s+/).length : 0; }
+
+function tierFor(n){
+  if(n === 0) return null;
+  var price = Number(genre.value);
+  var name = genre.options[genre.selectedIndex].text;
+  return {name:name, price:price};
+}
+
+function update(){
+  var n = words(ms.value), t = tierFor(n);
+  document.getElementById('wc').textContent = n.toLocaleString();
+  document.getElementById('sWords').textContent = n.toLocaleString() + ' words';
+  document.getElementById('tierName').textContent = t ? t.name : '—';
+  document.getElementById('sTier').textContent = t ? t.name : '—';
+
+  var btn = document.getElementById('submit');
+  if(n === 0){
+    document.getElementById('sCost').textContent = '1 credit';
+    document.getElementById('sTotal').textContent = '$0';
+    document.getElementById('sAfter').textContent = BALANCE + ' CREDITS LEFT AFTERWARDS';
+    btn.disabled = true; btn.textContent = 'Paste your text to start';
+    return;
+  }
+  if(n > 150000){
+    btn.disabled = true; btn.textContent = 'Too long — 150,000 word limit';
+    document.getElementById('sCost').textContent = '—';
+    return;
+  }
+  // credits cover it, so there is no checkout at all
+  if(BALANCE > 0){
+    document.getElementById('sCost').textContent = '1 credit';
+    document.getElementById('sTotal').innerHTML = '$0 <span class="badge-free">COVERED</span>';
+    document.getElementById('sAfter').textContent = (BALANCE - 1) + ' CREDITS LEFT AFTERWARDS';
+    btn.disabled = false; btn.textContent = 'Use 1 credit — start review';
+  } else {
+    document.getElementById('sCost').textContent = '$' + t.price;
+    document.getElementById('sTotal').textContent = '$' + t.price;
+    document.getElementById('sAfter').textContent = 'NO CREDITS — PAID CHECKOUT';
+    btn.disabled = false; btn.textContent = 'Pay $' + t.price + ' and start';
+  }
+}
+
+ms.addEventListener('input', update);
+genre.addEventListener('change', update);
+
+document.getElementById('demoFill').addEventListener('click', function(){
+  var t = '';
+  for(var i = 0; i < 6; i++) t += SAMPLE;
+  ms.value = t;
+  document.getElementById('title').value = 'The Fox Who Forgot His Hat';
+  update();
+  ms.focus();
+});
+
+// ----- progress screen: named stages, not a spinner -----
+var STAGES = [
+  'Counting words and checking length…',
+  'Identifying your rhyme scheme…',
+  'Reading for structure and page turns…',
+  'Scanning every line for meter…',
+  'Counting repeated words…',
+  'Grading your characters…',
+  'Writing the line-level callouts…',
+  'Putting the report together…'
+];
+var timer = null;
+
+document.getElementById('submit').addEventListener('click', function(){
+  var title = document.getElementById('title').value.trim();
+  document.getElementById('progTitle').textContent = title || 'Your manuscript';
+  document.getElementById('overlay').classList.add('on');
+  var i = 0, pct = 0;
+  document.getElementById('bar').style.width = '0%';
+  timer = setInterval(function(){
+    pct = Math.min(pct + Math.random() * 9 + 4, 100);
+    document.getElementById('bar').style.width = pct + '%';
+    document.getElementById('pct').textContent = Math.round(pct) + '%';
+    var next = Math.min(Math.floor(pct / 100 * STAGES.length), STAGES.length - 1);
+    if(next !== i){ i = next; document.getElementById('progStage').textContent = STAGES[i]; }
+    if(pct >= 100){
+      clearInterval(timer);
+      document.getElementById('progStage').textContent = 'Done — opening your report…';
+    }
+  }, 700);
+});
+
+document.getElementById('cancel').addEventListener('click', function(){
+  clearInterval(timer);
+  document.getElementById('overlay').classList.remove('on');
+});
+
+update();
+</script>
+</body>
+</html>
